@@ -7,8 +7,8 @@
 #ifndef IIR1P_H
 #define IIR1P_H
 
-const int LPF1P	= 0;
-const int HPF1P	= 1;
+const int LPF1P = 0;
+const int HPF1P = 1;
 
 typedef struct iir_1p_t
 {

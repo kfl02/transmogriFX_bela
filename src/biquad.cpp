@@ -99,7 +99,7 @@ make_biquad(int type, biquad_coeffs* cf, float fs, float f0, float Q)
 {
 
     cf = (biquad_coeffs*) malloc(sizeof(biquad_coeffs));
-	biquad_update_coeffs(type, cf, fs, f0, Q);
+    biquad_update_coeffs(type, cf, fs, f0, Q);
     cf->y1 = 0.0;
     cf->y2 = 0.0;
     cf->x1 = 0.0;

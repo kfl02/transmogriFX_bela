@@ -236,8 +236,8 @@ void Reverb::init (float fsamp, bool ambis, size_t frame_size)
     _vdelay1.init ((int)(0.1f * _fsamp));
     for (i = 0; i < 8; i++)
     {
-	k1 = (int)(floorf (_tdiff1 [i] * _fsamp + 0.5f));
-	k2 = (int)(floorf (_tdelay [i] * _fsamp + 0.5f));
+    k1 = (int)(floorf (_tdiff1 [i] * _fsamp + 0.5f));
+    k2 = (int)(floorf (_tdelay [i] * _fsamp + 0.5f));
         _diff1 [i].init (k1, (i & 1) ? -0.6f : 0.6f);
         _delay [i].init (k2 - k1);
     }
@@ -265,8 +265,8 @@ void Reverb::prepare (int nfram)
 
     if (a != _cntA2)
     {
-	if (_ipdel < 0.02f) _ipdel = 0.02f;
-	if (_ipdel > 0.10f) _ipdel = 0.10f;
+    if (_ipdel < 0.02f) _ipdel = 0.02f;
+    if (_ipdel > 0.10f) _ipdel = 0.10f;
         k = (int)(floorf ((_ipdel - 0.02f) * _fsamp + 0.5f));
         _vdelay0.set_delay (k);
         _vdelay1.set_delay (k);
@@ -275,21 +275,21 @@ void Reverb::prepare (int nfram)
 
     if (b != _cntB2)
     {
-	if (_xover < 50.0f)  _xover = 50.0f;
-	if (_xover > 1.0e3f) _xover = 1.0e3f;
-	if (_rtlow < 1.0f) _rtlow = 1.0f;
-	if (_rtlow > 8.0f) _rtlow = 8.0f;
-	if (_rtmid < 1.0f) _rtmid = 1.0f;
-	if (_rtmid > 8.0f) _rtmid = 8.0f;
-	if (_fdamp <  1.5e3f) _fdamp =  1.5e3f;
-	if (_fdamp > 24.0e3f) _fdamp = 24.0e3f;
+    if (_xover < 50.0f)  _xover = 50.0f;
+    if (_xover > 1.0e3f) _xover = 1.0e3f;
+    if (_rtlow < 1.0f) _rtlow = 1.0f;
+    if (_rtlow > 8.0f) _rtlow = 8.0f;
+    if (_rtmid < 1.0f) _rtmid = 1.0f;
+    if (_rtmid > 8.0f) _rtmid = 8.0f;
+    if (_fdamp <  1.5e3f) _fdamp =  1.5e3f;
+    if (_fdamp > 24.0e3f) _fdamp = 24.0e3f;
          wlo = 6.2832f * _xover / _fsamp;
-	 if (_fdamp > 0.49f * _fsamp) chi = 2;
-	 else chi = 1 - cosf (6.2832f * _fdamp / _fsamp);
+     if (_fdamp > 0.49f * _fsamp) chi = 2;
+     else chi = 1 - cosf (6.2832f * _fdamp / _fsamp);
          for (i = 0; i < 8; i++)
-	 {
+     {
              _filt1 [i].set_params (_tdelay [i], _rtmid, _rtlow, wlo, 0.5f * _rtmid, chi);
-	 }
+     }
          _cntB2 = b;
     }
 
@@ -297,20 +297,20 @@ void Reverb::prepare (int nfram)
     {
         if (_rtmid < 1.0f) _rtmid = 1.0f;
         if (_rtmid > 8.0f) _rtmid = 8.0f;
-	if (_ambis)
-	{
-	    if (_rgxyz < -9.0f) _rgxyz = -9.0f;
-	    if (_rgxyz >  9.0f) _rgxyz =  9.0f;
-	    t0 = 1.0f / sqrtf (_rtmid);
-	    t1 = t0 * powf (10.0f, 0.05f * _rgxyz);
-	}
-	else
-	{
-	    if (_opmix < 0.0f) _opmix = 0.0f;
-	    if (_opmix > 1.0f) _opmix = 1.0f;
-	    t0 = (1 - _opmix) * (1 + _opmix);
-	    t1 = 0.7f * _opmix * (2 - _opmix) / sqrtf (_rtmid);
-	}
+    if (_ambis)
+    {
+        if (_rgxyz < -9.0f) _rgxyz = -9.0f;
+        if (_rgxyz >  9.0f) _rgxyz =  9.0f;
+        t0 = 1.0f / sqrtf (_rtmid);
+        t1 = t0 * powf (10.0f, 0.05f * _rgxyz);
+    }
+    else
+    {
+        if (_opmix < 0.0f) _opmix = 0.0f;
+        if (_opmix > 1.0f) _opmix = 1.0f;
+        t0 = (1 - _opmix) * (1 + _opmix);
+        t1 = 0.7f * _opmix * (2 - _opmix) / sqrtf (_rtmid);
+    }
         _d0 = (t0 - _g0) / nfram;
         _d1 = (t1 - _g1) / nfram;
         _cntC2 = c;

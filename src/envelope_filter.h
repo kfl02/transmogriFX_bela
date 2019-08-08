@@ -17,7 +17,7 @@
 
 typedef struct env_filter_t
 {
-	//Operating conditions
+    //Operating conditions
     float fs, ts;   //Sampling Frequency
     float nyquist;
     int N;
@@ -40,7 +40,7 @@ typedef struct env_filter_t
     float thrs, knee, knee_db;
     float* y;
 
-	//Attack and release filter and state variables
+    //Attack and release filter and state variables
     float atk_a, atk_b;
     float rls_a, rls_b;
     float yn;  //attack release filter state variable

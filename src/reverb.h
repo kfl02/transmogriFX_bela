@@ -44,11 +44,11 @@ private:
 
     float process (float x)
     {
-	float z = _line [_i];
-	x -= _c * z;
+    float z = _line [_i];
+    x -= _c * z;
         _line [_i] = x;
         if (++_i == _size) _i = 0;
-	return z + _c * x;
+    return z + _c * x;
     }
 
     int     _i;
@@ -77,7 +77,7 @@ private:
         _slo += _wlo * (x - _slo) + 1e-10f;
         x += _glo * _slo;
         _shi += _whi * (x - _shi);
-	return _gmf * _shi;
+    return _gmf * _shi;
     }
     float   _gmf;
     float   _glo;
@@ -105,13 +105,13 @@ private:
 
     float read (void)
     {
-	return _line [_i];
+    return _line [_i];
     }
 
     void write (float x)
     {
-	_line [_i++] = x;
-	if (_i == _size) _i = 0;
+    _line [_i++] = x;
+    if (_i == _size) _i = 0;
     }
 
     int     _i;
@@ -138,15 +138,15 @@ private:
 
     float read (void)
     {
-	float x = _line [_ir++];
-	if (_ir == _size) _ir = 0;
-	return x;
+    float x = _line [_ir++];
+    if (_ir == _size) _ir = 0;
+    return x;
     }
 
     void write (float x)
     {
-	_line [_iw++] = x;
-	if (_iw == _size) _iw = 0;
+    _line [_iw++] = x;
+    if (_iw == _size) _iw = 0;
     }
 
     int     _ir;

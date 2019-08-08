@@ -15,7 +15,7 @@ void compute_filter_coeffs_1p(iir_1p* cf, unsigned int type, float fs, float f0)
     cf->fs = fs;
 
     switch(type){
-    	 default:
+         default:
          case LPF1P:
             //1-pole high pass filter coefficients
             // H(z) = g * (1 - z^-1)/(1 - a1*z^-1)

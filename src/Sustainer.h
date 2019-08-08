@@ -45,18 +45,18 @@ public:
     bool setBypass ();
     void get_envelope(float* env);
 
-	//can use the envelope generator elsewhere
-	float *envelope;
-	
+    //can use the envelope generator elsewhere
+    float *envelope;
+    
     int Ppreset;
 
 private:
     //Parameters
-    int Pvolume;	//Output Level
-    int Psustain;	//Compression amount
+    int Pvolume;    //Output Level
+    int Psustain;   //Compression amount
     bool bypass;
 
-	int PERIOD;
+    int PERIOD;
     int timer, hold;
     float level, fsustain, input,tmpgain;
     float prls, compeak, compg;

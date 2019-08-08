@@ -3,9 +3,9 @@
 #ifndef EQ_H
 #define EQ_H
 
-const int PK_EQ			= 5;
-const int LOW_SHELF		= 6;
-const int HIGH_SHELF	= 7;
+const int PK_EQ         = 5;
+const int LOW_SHELF     = 6;
+const int HIGH_SHELF    = 7;
 
 typedef struct cx_t {
     float r;  //magnitude or //real

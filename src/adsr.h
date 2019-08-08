@@ -8,10 +8,10 @@
 #define ADSR_H
 
 //ADSR States
-const int ADSR_STATE_ATTACK		= 0;
-const int ADSR_STATE_DECAY		= 1;
-const int ADSR_STATE_SUSTAIN	= 2;
-const int ADSR_STATE_RELEASE	= 3;
+const int ADSR_STATE_ATTACK     = 0;
+const int ADSR_STATE_DECAY      = 1;
+const int ADSR_STATE_SUSTAIN    = 2;
+const int ADSR_STATE_RELEASE    = 3;
 
 typedef struct adsr_t
 {
@@ -23,7 +23,7 @@ typedef struct adsr_t
     float amplitude;//Final peak value 
     float sustain;  //Expressed as aratio of amplitude: 0.0 to 1.0
     float velocity; //Expressed as aratio of amplitude: 1.0 to inf
-    float pk;		//computed from velocity and amplitude
+    float pk;       //computed from velocity and amplitude
     float atk;      //A
     float dcy;      //D
     float sus;      //S

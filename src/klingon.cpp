@@ -101,7 +101,7 @@ klingon* make_klingon(klingon* kot, unsigned int oversample, unsigned int bsz, f
 
 void klingon_cleanup(klingon* kot)
 {
-	vi_trace_cleanup(&(kot->clip));
+    vi_trace_cleanup(&(kot->clip));
     free(kot->procbuf);
     free(kot);
 }
@@ -152,45 +152,45 @@ void compute_s_biquad(float r1, float r2, float c1, float c2, float* num, float*
 void clipper_tick(klingon* kot, int N, float* x, float* clean)  // Add in gain processing and dry mix
 {
 
-	float xn = 0.0;
-	float dx = 0.0;
-	float delta = 0.0;
-	float tmp = 0.0;
+    float xn = 0.0;
+    float dx = 0.0;
+    float delta = 0.0;
+    float tmp = 0.0;
 
     for(int i=0; i<N; i++)
     {
-    	// Compute deltas for linear interpolation (upsampling)
-    	dx = (x[i] - kot->xn1)*kot->inverse_oversample_float;
-    	
-    	// Run clipping function at higher sample rate
-    	for(int n = 0; n < kot->oversample; n++)
-    	{
-    		xn = tick_filter_1p(&(kot->post_emph), kot->xn1 + delta); // Linear interpolation up-sampling
-    		delta += dx;
-    		
-    		if(xn > 300.0e-6) 
-    			xn = 300.0e-6;
-    		if(xn < -300.0e-6) 
-    			xn = -300.0e-6;
-    			
-    		tmp = xn;
-    		
-    		// Run nonlinear function defined from text file
-    		xn = vi_trace_interp(&(kot->clip), tmp);
-    		tmp = vi_trace_interp(&(kot->hard_clip), tmp);
-    		
-    		xn = kot->hard*tmp + (1.0 - kot->hard)*xn;
+        // Compute deltas for linear interpolation (upsampling)
+        dx = (x[i] - kot->xn1)*kot->inverse_oversample_float;
+        
+        // Run clipping function at higher sample rate
+        for(int n = 0; n < kot->oversample; n++)
+        {
+            xn = tick_filter_1p(&(kot->post_emph), kot->xn1 + delta); // Linear interpolation up-sampling
+            delta += dx;
+            
+            if(xn > 300.0e-6) 
+                xn = 300.0e-6;
+            if(xn < -300.0e-6) 
+                xn = -300.0e-6;
+                
+            tmp = xn;
+            
+            // Run nonlinear function defined from text file
+            xn = vi_trace_interp(&(kot->clip), tmp);
+            tmp = vi_trace_interp(&(kot->hard_clip), tmp);
+            
+            xn = kot->hard*tmp + (1.0 - kot->hard)*xn;
 
-	        // Run anti-aliasing filter
-	        xn = tick_filter_1p(&(kot->anti_alias), xn);
-    	}
+            // Run anti-aliasing filter
+            xn = tick_filter_1p(&(kot->anti_alias), xn);
+        }
 
-    	// Reset linear interpolator state variables
-    	kot->xn1 = x[i];
-	    delta = 0.0;
+        // Reset linear interpolator state variables
+        kot->xn1 = x[i];
+        delta = 0.0;
 
-	    // Zero-order hold downsampling assumes de-emphasis filter and anti-aliasing
-	    // filters sufficiently rejected harmonics > 1/2 base sample rate
+        // Zero-order hold downsampling assumes de-emphasis filter and anti-aliasing
+        // filters sufficiently rejected harmonics > 1/2 base sample rate
         x[i] = xn;
     }
 }
@@ -241,9 +241,9 @@ void kot_set_drive(klingon* kot, float drive_db)   // 0 dB to 45 dB
 // 
 void kot_set_tone(klingon* kot, float hf_level_db) 
 {
-	// Range limiting and converter from logarithmic function
-	// to linear function of pot resistance ratios used for
-	// computing tonestack IIR coefficients
+    // Range limiting and converter from logarithmic function
+    // to linear function of pot resistance ratios used for
+    // computing tonestack IIR coefficients
     float tone = hf_level_db;
     if (tone < -60.0)
         tone = -60.0;
@@ -264,14 +264,14 @@ void kot_set_boost(klingon* kot, float boost) // second high pass cut
 
 void kot_set_mix(klingon* kot, float hard)  // Dry/Wet control, 0.0 to 1.0
 {
-	float mix = hard;
-	if(hard > 1.0)
-		mix = 1.0;
-	else if (hard < 0.0)
-		mix = 0.0;
-	else
-		mix = hard;
-	kot->hard = mix;
+    float mix = hard;
+    if(hard > 1.0)
+        mix = 1.0;
+    else if (hard < 0.0)
+        mix = 0.0;
+    else
+        mix = hard;
+    kot->hard = mix;
 }
 
 void kot_set_level(klingon* kot, float outlevel_db) // -40 dB to +0 dB
@@ -287,21 +287,21 @@ void kot_set_level(klingon* kot, float outlevel_db) // -40 dB to +0 dB
 
 bool kot_set_bypass(klingon* kot, bool bypass)
 {
-	if(!bypass)
-	{
-		if(kot->bypass)
-			kot->bypass = false;
-		else
+    if(!bypass)
+    {
+        if(kot->bypass)
+            kot->bypass = false;
+        else
         {
             kot->bypass = true;
         }
-	}
-	else
-	{
-		kot->bypass = true;
-	}
+    }
+    else
+    {
+        kot->bypass = true;
+    }
 
-	return kot->bypass;
+    return kot->bypass;
 }
 
 // Run the klingon effect
@@ -315,7 +315,7 @@ void klingon_tick(klingon* kot, float* x)
     // Run pre-emphasis filters
     for(int i = 0; i<n; i++)
     {
-    	// "Matsumin" schematic rendering (likely incorrect)
+        // "Matsumin" schematic rendering (likely incorrect)
         //kot->procbuf[i] = tick_filter_1p(&(kot->pre_emph589), kot->g589*x[i]);
         //kot->procbuf[i] += tick_filter_1p(&(kot->pre_emph482), kot->g482*x[i]);
         
@@ -337,8 +337,8 @@ void klingon_tick(klingon* kot, float* x)
     // Output level and tone control
     for(int i = 0; i<n; i++)
     {
-    	x[i] = kot->level*kotstack_tick(&(kot->stack), kot->procbuf[i]);
-    	x[i] = vi_trace_interp(&(kot->output_limit), x[i]); //limit to -1.0 to 1.0, but more gracefully than digital clip/limit
-    	
+        x[i] = kot->level*kotstack_tick(&(kot->stack), kot->procbuf[i]);
+        x[i] = vi_trace_interp(&(kot->output_limit), x[i]); //limit to -1.0 to 1.0, but more gracefully than digital clip/limit
+        
     }
 }

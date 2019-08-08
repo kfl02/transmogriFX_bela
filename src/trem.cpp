@@ -41,9 +41,9 @@ make_trem(trem_coeffs* cf, float fs)
     cf->lfo = init_lfo(cf->lfo, 1.0, fs, 0.0);
     cf->fs = fs;
 
-	//Default to mild mannered tremolo
-	trem_circuit_preset( cf, MODERATE );
-	cf->bypass = true;
+    //Default to mild mannered tremolo
+    trem_circuit_preset( cf, MODERATE );
+    cf->bypass = true;
 
     return cf;
 }
@@ -51,7 +51,7 @@ make_trem(trem_coeffs* cf, float fs)
 inline float
 trem_tick(trem_coeffs* cf, float x_)
 {
-	float out = x_;
+    float out = x_;
     float lfo = cf->gain*(1.0 - cf->depth*run_lfo(cf->lfo));
 
     return lfo*out;
@@ -60,7 +60,7 @@ trem_tick(trem_coeffs* cf, float x_)
 void
 trem_tick_n(trem_coeffs* cf, float *x, int n)
 {
-	if(cf->bypass == true) return;
+    if(cf->bypass == true) return;
     for(int i=0; i<n; i++) x[i] = trem_tick(cf, x[i]);
 }
 
@@ -91,7 +91,7 @@ trem_set_lfo_type(trem_coeffs* cf, unsigned int type)
 
 bool trem_toggle_bypass(trem_coeffs* cf)
 {
-	if(cf->bypass == true) cf->bypass = false;
-	else cf->bypass = true;
-	return cf->bypass;
+    if(cf->bypass == true) cf->bypass = false;
+    else cf->bypass = true;
+    return cf->bypass;
 }

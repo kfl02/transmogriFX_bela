@@ -173,9 +173,9 @@ svf_tick_fmod_soft_clip_n(sv_filter* s, float* x, float *f, int N)
 void
 svf_set_q(sv_filter* s, float Q)
 {
-	float qq = Q;
-	if(Q < 0.5)
-		qq = 0.5;
+    float qq = Q;
+    if(Q < 0.5)
+        qq = 0.5;
     s->q = 1.0/qq;
 }
 

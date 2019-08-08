@@ -111,10 +111,10 @@ void update_lfo(lfoparams* lp, float fosc, float fs)
     lp->exp_k = 1.0/k;
     
     if(lp->exp_x >= 1.0)
-    	lp->exp_x = lp->exp_k;
-	else
-		lp->exp_x = lp->exp_ik;
-		
+        lp->exp_x = lp->exp_k;
+    else
+        lp->exp_x = lp->exp_ik;
+        
     lp->exp_min = 1.0/M_E;
     lp->exp_max = 1.0 + 1.0/M_E;
     if(lp->exp_sv < lp->exp_min) lp->exp_sv = lp->exp_min;
@@ -280,14 +280,14 @@ float run_lfo(lfoparams* lp)
             break;
             
         case HYPER: //smooth bottom, triangular top
-        	lfo_out = run_integrated_triangle_lfo(lp);
-        	lfo_out = 1.0 - fabs(lfo_out - 0.5);
-        	break;
-    	
-    	case HYPER_SINE:  //Sine bottom, triangular top
-        	lfo_out = run_sine_lfo(lp);
-        	lfo_out = 1.0 - fabs(lfo_out - 0.5);
-        	break;    	
+            lfo_out = run_integrated_triangle_lfo(lp);
+            lfo_out = 1.0 - fabs(lfo_out - 0.5);
+            break;
+        
+        case HYPER_SINE:  //Sine bottom, triangular top
+            lfo_out = run_sine_lfo(lp);
+            lfo_out = 1.0 - fabs(lfo_out - 0.5);
+            break;      
             
         default:
             lfo_out = run_integrated_triangle_lfo(lp);
@@ -299,10 +299,10 @@ float run_lfo(lfoparams* lp)
 
 void get_lfo_name(unsigned int type, char* outstring)
 {
-	int i;
-	for(i=0; i<30; i++)
-		outstring[i] = '\0';
-		
+    int i;
+    for(i=0; i<30; i++)
+        outstring[i] = '\0';
+        
    switch(type)
     {
         case INT_TRI: //integrated triangle

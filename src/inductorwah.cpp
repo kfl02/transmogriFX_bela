@@ -63,195 +63,195 @@ void commit_circuit_config(iwah_coeffs* cf, float fs)
 
 void iwah_circuit_preset(int ckt, iwah_coeffs* cf, float fs )
 {
-	//Useful multipliers for short-hand expression of component values
-	float k = 1000.0;
-	float n = 1.0e-9;
-	
-	//helper variables 
-	float ro = 0.0;
-	float re = 0.0;
-	float Req = 0.0;
-	float ic = 0.0;
-	float beta = 0.0;
-	switch(ckt)
-	{
-		case GCB: //Dunlop GCB-95 variant 
-		    //Default values from Crybaby GCB-95 circuit
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 390.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 250.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 10.0*n;
-		    cf->Ci = 10.0*n;
-		    cf->Rp = 33.0*k*cf->re/(cf->re + 33.0*k);
-		    cf->Lp = 0.5;
-		    cf->Ri = 68.0*k;
-		    cf->Rs = 1.5*k;
-		break;
-		
-		case VOX: //Vox V-847 voicing
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 510.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 650.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 10.0*n;
-		    cf->Ci = 10.0*n;
-		    cf->Ri = 68.0*k;
-		    cf->Rp = 33.0*k;
-		    cf->Rp = cf->Rp*cf->Ri/(cf->Rp + cf->Ri);
-		    cf->Lp = 0.5;
-		    cf->Rs = 1.5*k;
-		break;
-		
-		case DUNLOP: //Original Crybaby voicing
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 470.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 250.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 10.0*n;
-		    cf->Ci = 10.0*n;
-		    cf->Rp = 33.0*k*cf->re/(cf->re + 33.0*k);
-		    cf->Lp = 0.66;
-		    cf->Ri = 68.0*k;
-		    cf->Rs = 1.5*k;
-		break;	
-		
-		case MCCOY: //Clyde McCoy voicing
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 470.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 250.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 10.0*n;
-		    cf->Ci = 10.0*n;
-		    cf->Rp = 100.0*k*cf->re/(cf->re + 100.0*k);
-		    cf->Lp = 0.5;
-		    cf->Ri = 68.0*k;
-		    cf->Rs = 1.5*k;
-		break;	
-		
-		case VOCAL: //Vox with a little more vocal voicing that also cuts through distortion
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 510.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 250.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 15.0*n;
-		    cf->Ci = 8.0*n;
-		    cf->Rp = 47.0*k*cf->re/(cf->re + 47.0*k);
-		    cf->Lp = 0.5;
-		    cf->Ri = 68.0*k;
-		    cf->Rs = 800.0;
-		break;
-		
-		case EXTREME: //Vox with a little more vocal voicing that also cuts through distortion
-		    cf->Rc = 22.0*k ; //BJT gain stage collector resistor
-		    cf->Rpot = 100.0*k ; //Pot resistance value
-		    cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
-		    cf->Re = 150.0 ; //BJT gain stage emitter resistor
-		    
-		    //Equivalent output resistance seen from BJT collector
-		    ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
-		    ro = ro * cf->Rbias / (ro + cf->Rbias) ;
-		    
-		    ic = 3.7/cf->Rc ;  //Typical bias current
-		    re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
-		                         // gm = Ic/Vt, re = 1/gm
-		    Req = cf->Re + re ;
-		    
-		    cf->gf = -ro/Req;  //forward gain of transistor stage
-		    
-		    beta = 1200.0;  //BJT forward gain
-		    cf->re = beta*Req; //Resistance looking into BJT emitter
-		
-		    cf->Cf = 10.0*n;
-		    cf->Ci = 47.0*n;
-		    cf->Rp = 150.0*k;
-		    cf->Lp = 0.5;
-		    cf->Ri = 220.0*k;
-		    cf->Rs = 100;
-		break;	
-		
-		default:
-		
-		break;
-	}
-	
-		//Compute DSP filter coefficients 
-	commit_circuit_config(cf, fs);
+    //Useful multipliers for short-hand expression of component values
+    float k = 1000.0;
+    float n = 1.0e-9;
+    
+    //helper variables 
+    float ro = 0.0;
+    float re = 0.0;
+    float Req = 0.0;
+    float ic = 0.0;
+    float beta = 0.0;
+    switch(ckt)
+    {
+        case GCB: //Dunlop GCB-95 variant 
+            //Default values from Crybaby GCB-95 circuit
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 390.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 250.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 10.0*n;
+            cf->Ci = 10.0*n;
+            cf->Rp = 33.0*k*cf->re/(cf->re + 33.0*k);
+            cf->Lp = 0.5;
+            cf->Ri = 68.0*k;
+            cf->Rs = 1.5*k;
+        break;
+        
+        case VOX: //Vox V-847 voicing
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 510.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 650.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 10.0*n;
+            cf->Ci = 10.0*n;
+            cf->Ri = 68.0*k;
+            cf->Rp = 33.0*k;
+            cf->Rp = cf->Rp*cf->Ri/(cf->Rp + cf->Ri);
+            cf->Lp = 0.5;
+            cf->Rs = 1.5*k;
+        break;
+        
+        case DUNLOP: //Original Crybaby voicing
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 470.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 250.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 10.0*n;
+            cf->Ci = 10.0*n;
+            cf->Rp = 33.0*k*cf->re/(cf->re + 33.0*k);
+            cf->Lp = 0.66;
+            cf->Ri = 68.0*k;
+            cf->Rs = 1.5*k;
+        break;  
+        
+        case MCCOY: //Clyde McCoy voicing
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 470.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 250.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 10.0*n;
+            cf->Ci = 10.0*n;
+            cf->Rp = 100.0*k*cf->re/(cf->re + 100.0*k);
+            cf->Lp = 0.5;
+            cf->Ri = 68.0*k;
+            cf->Rs = 1.5*k;
+        break;  
+        
+        case VOCAL: //Vox with a little more vocal voicing that also cuts through distortion
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 510.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 250.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 15.0*n;
+            cf->Ci = 8.0*n;
+            cf->Rp = 47.0*k*cf->re/(cf->re + 47.0*k);
+            cf->Lp = 0.5;
+            cf->Ri = 68.0*k;
+            cf->Rs = 800.0;
+        break;
+        
+        case EXTREME: //Vox with a little more vocal voicing that also cuts through distortion
+            cf->Rc = 22.0*k ; //BJT gain stage collector resistor
+            cf->Rpot = 100.0*k ; //Pot resistance value
+            cf->Rbias = 470.0*k ; //Typically 470k bias resistor shows up in parallel with output
+            cf->Re = 150.0 ; //BJT gain stage emitter resistor
+            
+            //Equivalent output resistance seen from BJT collector
+            ro = cf->Rc * cf->Rpot / (cf->Rc + cf->Rpot) ;
+            ro = ro * cf->Rbias / (ro + cf->Rbias) ;
+            
+            ic = 3.7/cf->Rc ;  //Typical bias current
+            re = 0.025/ic ; //BJT gain stage equivalent internal emitter resistance
+                                 // gm = Ic/Vt, re = 1/gm
+            Req = cf->Re + re ;
+            
+            cf->gf = -ro/Req;  //forward gain of transistor stage
+            
+            beta = 1200.0;  //BJT forward gain
+            cf->re = beta*Req; //Resistance looking into BJT emitter
+        
+            cf->Cf = 10.0*n;
+            cf->Ci = 47.0*n;
+            cf->Rp = 150.0*k;
+            cf->Lp = 0.5;
+            cf->Ri = 220.0*k;
+            cf->Rs = 100;
+        break;  
+        
+        default:
+        
+        break;
+    }
+    
+        //Compute DSP filter coefficients 
+    commit_circuit_config(cf, fs);
 }
 
 //Initialize filter state variables
@@ -266,7 +266,7 @@ void zero_state_variables(iwah_coeffs* cf)
 
     //First order high-pass filter state variables
     cf->yh1 = 0.0;
-    cf->xh1 = 0.0;	
+    cf->xh1 = 0.0;  
 }
 
 iwah_coeffs*
@@ -275,14 +275,14 @@ make_iwah(iwah_coeffs* cf, float fs)
     //First malloc the struct
     cf = (iwah_coeffs*) malloc(sizeof(iwah_coeffs));
 
-	//Default to GCB-95 circuit
-	iwah_circuit_preset(GCB, cf, fs);
-	
-	//Initialize everything to 0.0
-	zero_state_variables(cf);
-	
-	//setup as bypassed by default 
-	cf->bypass = true; 
+    //Default to GCB-95 circuit
+    iwah_circuit_preset(GCB, cf, fs);
+    
+    //Initialize everything to 0.0
+    zero_state_variables(cf);
+    
+    //setup as bypassed by default 
+    cf->bypass = true; 
 
     return cf;
 }
@@ -358,19 +358,19 @@ iwah_tick(float x, float gp, iwah_coeffs* cf)
 void
 iwah_tick_n(iwah_coeffs* cf, float *x, float *gp, int n )
 {
-	if(cf->bypass) {
-		zero_state_variables(cf);
-		return;
-	}
-	for(int i=0; i<n; i++)
-	{
-		x[i] = iwah_tick(x[i], gp[i], cf);
-	}
+    if(cf->bypass) {
+        zero_state_variables(cf);
+        return;
+    }
+    for(int i=0; i<n; i++)
+    {
+        x[i] = iwah_tick(x[i], gp[i], cf);
+    }
 }
 
 void iwah_bypass(iwah_coeffs* cf, bool state)
 {
-	cf->bypass = state;
+    cf->bypass = state;
 }
 
 

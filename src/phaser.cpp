@@ -7,32 +7,32 @@ void commit_circuit_config(phaser_coeffs* cf)
 {
     int i = 0;
     //There is always something to calculate for position zero
-	cf->a1p_min[i] = -expf(-(cf->w_min[i])/cf->fs);
-	cf->a1p_max[i] = -expf(-(cf->w_max[i])/cf->fs);
-	cf->a1p_dif[i] = cf->a1p_max[i] - cf->a1p_min[i];
-	cf->a1p[i] = cf->a1p_min[i];
-	cf->ghpf[i] = (1.0 - cf->a1p[i])*0.5;
-	
+    cf->a1p_min[i] = -expf(-(cf->w_min[i])/cf->fs);
+    cf->a1p_max[i] = -expf(-(cf->w_max[i])/cf->fs);
+    cf->a1p_dif[i] = cf->a1p_max[i] - cf->a1p_min[i];
+    cf->a1p[i] = cf->a1p_min[i];
+    cf->ghpf[i] = (1.0 - cf->a1p[i])*0.5;
+    
     for(i = 1; i < cf->n_stages; i++)
     {
-    	if(cf->stagger[i]) {
-	        cf->a1p_min[i] = -expf(-(cf->w_min[i])/cf->fs);
-	        cf->a1p_max[i] = -expf(-(cf->w_max[i])/cf->fs);
-	        cf->a1p_dif[i] = cf->a1p_max[i] - cf->a1p_min[i];
-	        cf->a1p[i] = cf->a1p_min[i];
-	        cf->ghpf[i] = (1.0 - cf->a1p[i])*0.5;
-    	} else
-    	{
-    		//Should never use these but it's a safe default
-    		//in the event some unforeseen conditions exists in which 
-    		//stagger is set true for what would be an unitialized set of 
-    		//coefficients
-	        cf->a1p_min[i] = cf->a1p_min[0];
-	        cf->a1p_max[i] = cf->a1p_max[0];
-	        cf->a1p_dif[i] = cf->a1p_dif[0];
-	        cf->a1p[i] = cf->a1p[0];
-	        cf->ghpf[i] = cf->ghpf[0];    		
-    	}
+        if(cf->stagger[i]) {
+            cf->a1p_min[i] = -expf(-(cf->w_min[i])/cf->fs);
+            cf->a1p_max[i] = -expf(-(cf->w_max[i])/cf->fs);
+            cf->a1p_dif[i] = cf->a1p_max[i] - cf->a1p_min[i];
+            cf->a1p[i] = cf->a1p_min[i];
+            cf->ghpf[i] = (1.0 - cf->a1p[i])*0.5;
+        } else
+        {
+            //Should never use these but it's a safe default
+            //in the event some unforeseen conditions exists in which 
+            //stagger is set true for what would be an unitialized set of 
+            //coefficients
+            cf->a1p_min[i] = cf->a1p_min[0];
+            cf->a1p_max[i] = cf->a1p_max[0];
+            cf->a1p_dif[i] = cf->a1p_dif[0];
+            cf->a1p[i] = cf->a1p[0];
+            cf->ghpf[i] = cf->ghpf[0];          
+        }
     }
 
 }
@@ -40,9 +40,9 @@ void commit_circuit_config(phaser_coeffs* cf)
 void phaser_circuit_preset(int ckt, phaser_coeffs* cf)
 {
     int i = 0;
-	switch(ckt)
-	{
-		case PHASE_90:
+    switch(ckt)
+    {
+        case PHASE_90:
             cf->n_stages = 4;
             for(i = 0; i < PHASER_MAX_STAGES; i++)
             {
@@ -60,8 +60,8 @@ void phaser_circuit_preset(int ckt, phaser_coeffs* cf)
             cf->wet = 1.0;
             cf->dry = 1.0;
             cf->mod->lfo_type = RELAX;
-			break;
-		case PHASER_DEFAULT:
+            break;
+        case PHASER_DEFAULT:
         default:
             cf->n_stages = 6;
             for(i = 0; i < PHASER_MAX_STAGES; i++)
@@ -78,12 +78,12 @@ void phaser_circuit_preset(int ckt, phaser_coeffs* cf)
             cf->wet = 1.0;
             cf->dry = 1.0;
             cf->mod->lfo_type = EXP;
-		break;
+        break;
 
-	}
+    }
 
-		//Compute DSP filter coefficients
-	commit_circuit_config(cf);
+        //Compute DSP filter coefficients
+    commit_circuit_config(cf);
 }
 
 //Initialize filter state variables
@@ -109,16 +109,16 @@ make_phaser(phaser_coeffs* cf, float fs)
     //First malloc the struct
     cf = (phaser_coeffs*) malloc(sizeof(phaser_coeffs));
     cf->fs = fs;
-	//setup LFO
-	cf->mod = init_lfo(cf->mod,1.0, cf->fs, 0.0);
-	
-	//Default to something that makes decent sound
-	phaser_circuit_preset(PHASER_DEFAULT, cf);
+    //setup LFO
+    cf->mod = init_lfo(cf->mod,1.0, cf->fs, 0.0);
+    
+    //Default to something that makes decent sound
+    phaser_circuit_preset(PHASER_DEFAULT, cf);
 
-	//Initialize everything to 0.0
-	zero_state_variables(cf);
-	
-	//Start out bypassed
+    //Initialize everything to 0.0
+    zero_state_variables(cf);
+    
+    //Start out bypassed
     cf->bypass = true;
 
     return cf;
@@ -166,11 +166,11 @@ phaser_modulate(phaser_coeffs* cf)
     
     for(st = 1; st < cf->n_stages; st++)
     {
-    	if(cf->stagger[st]) 
-    	{
-	        cf->a1p[st] = cf->a1p_min[st] + cf->a1p_dif[st]*lfo;
-	        cf->ghpf[st] = (1.0 - cf->a1p[st])*0.5;
-    	}
+        if(cf->stagger[st]) 
+        {
+            cf->a1p[st] = cf->a1p_min[st] + cf->a1p_dif[st]*lfo;
+            cf->ghpf[st] = (1.0 - cf->a1p[st])*0.5;
+        }
     }
 }
 
@@ -215,108 +215,108 @@ phaser_tick(float x_, phaser_coeffs* cf)
 void
 phaser_tick_n(phaser_coeffs* cf, int n, float* x)
 {
-	if(cf->bypass)
-	{
-		if(cf->reset)
-		{
-			zero_state_variables(cf);
-		}
-		return;
-	} else
-	{
-		cf->reset = true;
-	}
-	int i = 0;
-	for(i=0; i<n; i++)
-	{
-		x[i] = phaser_tick(x[i], cf);
-	}
-	
+    if(cf->bypass)
+    {
+        if(cf->reset)
+        {
+            zero_state_variables(cf);
+        }
+        return;
+    } else
+    {
+        cf->reset = true;
+    }
+    int i = 0;
+    for(i=0; i<n; i++)
+    {
+        x[i] = phaser_tick(x[i], cf);
+    }
+    
 }
 
 void
 phaser_set_nstages(phaser_coeffs* cf, int nstages)
 {
-	//TODO: Check feedback not coming from invalid stage
-	cf->n_stages = nstages;
-	commit_circuit_config(cf);
+    //TODO: Check feedback not coming from invalid stage
+    cf->n_stages = nstages;
+    commit_circuit_config(cf);
 }
 
 void
 phaser_set_mix(phaser_coeffs* cf, float wet)
 {
-	float wet_ = wet;
+    float wet_ = wet;
     float gain = 1.0 + 2.0*fabs(wet_);
     if(gain > 2.0) gain = 4.0 - gain;
-	
-	if(wet < 0.0)
-	{
-		cf->wet = wet*gain;
-		cf->dry = (1.0 + wet)*gain;
-	}
-	else 
-	{
-		cf->wet = wet*gain;
-		cf->dry = (1.0 - wet)*gain;
-	}
+    
+    if(wet < 0.0)
+    {
+        cf->wet = wet*gain;
+        cf->dry = (1.0 + wet)*gain;
+    }
+    else 
+    {
+        cf->wet = wet*gain;
+        cf->dry = (1.0 - wet)*gain;
+    }
 }
 
 void 
 phaser_set_lfo_type(phaser_coeffs* cf, int n)
 {
-	cf->mod->lfo_type = n;
+    cf->mod->lfo_type = n;
 }
 
 void 
 phaser_set_lfo_rate(phaser_coeffs* cf, float rate)
 {
-	update_lfo(cf->mod, rate, cf->fs);
+    update_lfo(cf->mod, rate, cf->fs);
 }
 
 void
 phaser_set_lfo_depth(phaser_coeffs* cf, float depth, int stage)
 {
-	cf->w_min[stage] = 2.0*M_PI*depth;
-	cf->w_max[stage] = cf->w_min[stage] + cf-> w_diff[stage];
-	commit_circuit_config(cf);
+    cf->w_min[stage] = 2.0*M_PI*depth;
+    cf->w_max[stage] = cf->w_min[stage] + cf-> w_diff[stage];
+    commit_circuit_config(cf);
 }
 
 void
 phaser_set_lfo_width(phaser_coeffs* cf, float width, int stage)
 {
-	cf->w_diff[stage] = 2.0*M_PI*width;
-	cf->w_max[stage] = cf->w_min[stage] + cf-> w_diff[stage];
-	commit_circuit_config(cf);
+    cf->w_diff[stage] = 2.0*M_PI*width;
+    cf->w_max[stage] = cf->w_min[stage] + cf-> w_diff[stage];
+    commit_circuit_config(cf);
 }
 
 void
 phaser_set_feedback(phaser_coeffs* cf, float fb, int stage)
 {
-	cf->gfb[stage] = fb;
-	
-	if(fb == 0.0)
-		cf->apply_feedback[stage] = false;
-	else
-		cf->apply_feedback[stage] = true;
+    cf->gfb[stage] = fb;
+    
+    if(fb == 0.0)
+        cf->apply_feedback[stage] = false;
+    else
+        cf->apply_feedback[stage] = true;
 }
 
 void
 phaser_set_distortion(phaser_coeffs* cf, float d)
 {
-	if(d < 0.001) 
-		cf->distort = 0.001;
-	else if (d >1000.0)
-		cf->distort = 1000.0;
-	else
-		cf->distort = d;
-		
-	cf->idistort = 1.0/d;
+    if(d < 0.001) 
+        cf->distort = 0.001;
+    else if (d >1000.0)
+        cf->distort = 1000.0;
+    else
+        cf->distort = d;
+        
+    cf->idistort = 1.0/d;
 }
 
 bool phaser_toggle_bypass(phaser_coeffs* cf)
 {
-	if(cf->bypass) cf->bypass = false;
-	else cf->bypass = true;
-	
-	return cf->bypass;
+    if(cf->bypass) cf->bypass = false;
+    else cf->bypass = true;
+    
+    return cf->bypass;
 }

@@ -3,15 +3,15 @@
 #ifndef LFO_H
 #define LFO_H
 
-const int INT_TRI    	= 0;
-const int TRI        	= 1;
-const int SINE       	= 2;
-const int SQUARE     	= 3;
-const int EXP        	= 4;
-const int RELAX      	= 5;
-const int HYPER			= 6;
-const int HYPER_SINE	= 7;
-const int MAX_LFOS   	= 7;
+const int INT_TRI       = 0;
+const int TRI           = 1;
+const int SINE          = 2;
+const int SQUARE        = 3;
+const int EXP           = 4;
+const int RELAX         = 5;
+const int HYPER         = 6;
+const int HYPER_SINE    = 7;
+const int MAX_LFOS      = 7;
 
 
 typedef struct lfoparams_t {

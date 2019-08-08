@@ -7,15 +7,15 @@
 
 const inst PHASER_MAX_STAGES = 24;
 
-const int PHASER_DEFAULT	= 0;
-const int PHASE_90			= 1;
+const int PHASER_DEFAULT    = 0;
+const int PHASE_90          = 1;
 
 typedef struct phaser_t {
-	bool bypass;
-	bool reset; //used to tell whether state variables have been reset
-	float fs; //sampling frequency
-	
-	//Number of phaser stages
+    bool bypass;
+    bool reset; //used to tell whether state variables have been reset
+    float fs; //sampling frequency
+    
+    //Number of phaser stages
     size_t n_stages;
 
     //Wet/Dry mix

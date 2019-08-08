@@ -102,7 +102,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate)
     
     //Bypass processing
     tflanger_setFinalGain(cthis, 1.0);  // Set to 0.0 for bypass, set to >0.99 for norm
-    cthis->trails = 1;					//bypass with trails default
+    cthis->trails = 1;                  //bypass with trails default
 
     //Envelope Detector Settings
     tflanger_setEnvelopeRateSkew(cthis, 0.0);
@@ -142,10 +142,10 @@ tflanger_destroy(tflanger *cthis)
 void 
 get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) 
 {
-	float wet = 1.0;
-	float dry = 1.0;
-	float sign = 1.0;
-	
+    float wet = 1.0;
+    float dry = 1.0;
+    float sign = 1.0;
+    
     if(fracWet >= 1.0) wet = 1.0;
     else if (fracWet<(-1.0)) wet = -1.0; //allow add or subtract
     else wet = fracWet;
@@ -154,14 +154,14 @@ get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out)
     float x = wet*wet;
     
     // make dry mix function
-	float k= x*x;
-	k *= k;
-	dry = 1.0 - k;
-	
-	// make wet mix function
-	k = 1 - x;
-	k *= k;
-	k *= k;
+    float k= x*x;
+    k *= k;
+    dry = 1.0 - k;
+    
+    // make wet mix function
+    k = 1 - x;
+    k *= k;
+    k *= k;
     wet = (1.0 - k)*sign;
 
     //keep dry at 0 phase
@@ -197,7 +197,7 @@ void
 tflanger_tick(tflanger *cthis, int nframes, float *samples, float* envelope)
 {
 
-	if( (cthis->dry0 > 0.999) && (cthis->trails == 0) && (cthis->outGain < 0.1) ) return;
+    if( (cthis->dry0 > 0.999) && (cthis->trails == 0) && (cthis->outGain < 0.1) ) return;
     int i,j;
     float dly = 0.0;
     float dlyFloor = 0.0;
@@ -212,24 +212,24 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float* envelope)
 
     for(i=0; i < nframes; i++)
     {
-    	//Envelope detector
-    	envdet = envelope[i];
-    	if(envdet > 1.0) envdet = 1.0;
-    	else if(envdet < 0.0) envdet = 0.0;
-    	
+        //Envelope detector
+        envdet = envelope[i];
+        if(envdet > 1.0) envdet = 1.0;
+        else if(envdet < 0.0) envdet = 0.0;
+        
         envdet = tflanger_atkrls(cthis->attrel, envdet);
 
          // Bypass logic:  LPF set to slow time constant to fade input on and off 
          // fades dry mix to unity in small steps at the same time.
-    	in = samples[i];
+        in = samples[i];
         tflanger_lpfilter( cthis->fader, cthis->outGain, 0);
         in *= cthis->fader->y1;
         if(cthis->outGain < 0.99){
-        	if(cthis->dry0 < 1.0) 
-        		cthis->dry0 += 0.0001;  //-80dB steps to unity, about 1/4 second at 44.1 kHz
+            if(cthis->dry0 < 1.0) 
+                cthis->dry0 += 0.0001;  //-80dB steps to unity, about 1/4 second at 44.1 kHz
         }
 
-		// Insert feedback
+        // Insert feedback
         in += cthis->regen;
 
         //anti-alias filter 
@@ -255,11 +255,11 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float* envelope)
         //Apply to mix
         
         if(cthis->mixskew!=0.0) {
-        	if(cthis->wet > 0.0) cthis->wet0 = cthis->mixskew*envdet + cthis->wet;
-        	else cthis->wet0 = cthis->wet - cthis->mixskew*envdet;
-        	
-        	if(cthis->outGain >= 0.99)
-            	cthis->dry0 = cthis->dry - cthis->mixskew*envdet;
+            if(cthis->wet > 0.0) cthis->wet0 = cthis->mixskew*envdet + cthis->wet;
+            else cthis->wet0 = cthis->wet - cthis->mixskew*envdet;
+            
+            if(cthis->outGain >= 0.99)
+                cthis->dry0 = cthis->dry - cthis->mixskew*envdet;
             
             if(cthis->wet0 > 1.0) cthis->wet0 = 1.0;
             if(cthis->wet0 < -1.0) cthis->wet0 = -1.0;
@@ -268,7 +268,7 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float* envelope)
         } else {
             cthis->wet0 = cthis->wet;
             if(cthis->outGain >= 0.99)
-            	cthis->dry0 = cthis->dry;    
+                cthis->dry0 = cthis->dry;    
          }
 
         //Apply to depth
@@ -318,9 +318,9 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float* envelope)
          cthis->regen = fd*cthis->dlyLine[d1] + ifd*cthis->dlyLine[d];
          
          if(cthis->trails == 0)
-         	samples[i] = cthis->dry0*samples[i] + cthis->wet0*cthis->fader->y1*cthis->regen;
-     	else
-     		samples[i] = cthis->dry0*samples[i] + cthis->wet0*cthis->regen;
+            samples[i] = cthis->dry0*samples[i] + cthis->wet0*cthis->fader->y1*cthis->regen;
+        else
+            samples[i] = cthis->dry0*samples[i] + cthis->wet0*cthis->regen;
 
          cthis->regen *= cthis->fb;
 
@@ -413,10 +413,10 @@ tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_)
 void 
 tflanger_setWetDry(tflanger *cthis, float fracWet) 
 {
-	float wet = 1.0;
-	float dry = 1.0;
+    float wet = 1.0;
+    float dry = 1.0;
 
-	get_wet_dry_mix(fracWet, &wet, &dry);
+    get_wet_dry_mix(fracWet, &wet, &dry);
 
     //keep dry at 0 phase
     cthis->dry = dry;
@@ -438,20 +438,20 @@ tflanger_setFeedBack(tflanger *cthis, float feedBack_)
 void
 tflanger_setDamping(tflanger *cthis, float fdamp_)
 {
-	float fdamp = fdamp_;
-	
-	//Q of the final stage comes out ot about 0.51 
-	//so it is a relatively gentle roll-off
-	float Q = cthis->f[3]->Q;
-	if(fdamp < 40.0) {
-		fdamp = 40.0;
-	}
-	else if (fdamp > 7200.0) {
-		fdamp = 7200.0;
-	}
-	
-	// 
-	biquad_update_coeffs(LPF, cthis-> f[3], cthis->fS, fdamp, Q);
+    float fdamp = fdamp_;
+    
+    //Q of the final stage comes out ot about 0.51 
+    //so it is a relatively gentle roll-off
+    float Q = cthis->f[3]->Q;
+    if(fdamp < 40.0) {
+        fdamp = 40.0;
+    }
+    else if (fdamp > 7200.0) {
+        fdamp = 7200.0;
+    }
+    
+    // 
+    biquad_update_coeffs(LPF, cthis-> f[3], cthis->fS, fdamp, Q);
 }
 
 
@@ -467,18 +467,18 @@ tflanger_setFinalGain(tflanger *cthis, float outGain_)
 void
 tflanger_setTrails(tflanger *cthis, char trails)
 {
-	cthis->trails = trails;
+    cthis->trails = trails;
 }
 
 void
 tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns)
 {
-	if(sns < 0.0) 
-		cthis->envelope_sensitivity = 0.0;
-	else if (sns > 36.0) 
-		sns = 36.0;
-	else
-		cthis->envelope_sensitivity = sns;
+    if(sns < 0.0) 
+        cthis->envelope_sensitivity = 0.0;
+    else if (sns > 36.0) 
+        sns = 36.0;
+    else
+        cthis->envelope_sensitivity = sns;
 }
 
 void
@@ -538,53 +538,53 @@ tflanger_setEnvelopeMixSkew(tflanger *cthis, float skew)
 
 void tflanger_set_lfo_type(tflanger* cthis, unsigned int type) 
 {
-	set_lfo_type(cthis->lfopar, type);
+    set_lfo_type(cthis->lfopar, type);
 }
 
 void 
 tflanger_setPreset(tflanger *cthis, unsigned int preset)
 {
-	float ms = 0.001;
-	switch(preset)
-	{
-		case 0: //basic chorus
-		    //Set some sane initial values
-		    
-		    tflanger_setLfoDepth(cthis, (9.5*ms)); //lfo offset, input in seconds
-		    tflanger_setLfoWidth(cthis, (1.2*ms)); //lfo deviation, input in seconds will
-		                                          //express peak-to-trough deviation
-		    tflanger_setLfoRate(cthis, 2.6);    //Input in cycles per second
-		    									//LFO Rate synchronized to default delay preset time
-		    tflanger_setLfoPhase(cthis, 0.0);    //Phase offset, 0 to 2*pi, useful if 
-		                                        //using 2 of these objects in stereo
-		    tflanger_setWetDry(cthis, 0.5);     //give ratio wet, 0...1.0. 
-		                                        //Dry = 1.0 - fracWet
-		    tflanger_setFeedBack(cthis, 0.0);   //Regen
-		    tflanger_setTrails(cthis, 0);
-			break;
-		
-		case 1: //basic delay
-			tflanger_setLfoDepth(cthis, 385.0*ms);   //delay time
-			tflanger_setLfoWidth(cthis, 0.25*ms); //mild modulation
-			tflanger_setFeedBack(cthis, 0.36);
-			tflanger_setWetDry(cthis, 0.45);
-			tflanger_setLfoRate(cthis, 1.3);
-			tflanger_setDamping(cthis, 2800.0);  //Similar range to typical BBD delay pedal
-			tflanger_setTrails(cthis, 1);
-			break;
-		
-		case 2: //basic flanger 
-			tflanger_setLfoDepth(cthis, 0.8*ms);   //sweeps pretty high
-			tflanger_setLfoWidth(cthis, 4.0*ms); //mild modulation
-			tflanger_setFeedBack(cthis, -0.3);
-			tflanger_setWetDry(cthis, -0.5);
-			tflanger_setLfoRate(cthis, 0.325); //LFO Rate synchronized to default delay preset time		
-			tflanger_setTrails(cthis, 0);
-			break;
-		
-		default:
-			break;
-	}
+    float ms = 0.001;
+    switch(preset)
+    {
+        case 0: //basic chorus
+            //Set some sane initial values
+            
+            tflanger_setLfoDepth(cthis, (9.5*ms)); //lfo offset, input in seconds
+            tflanger_setLfoWidth(cthis, (1.2*ms)); //lfo deviation, input in seconds will
+                                                  //express peak-to-trough deviation
+            tflanger_setLfoRate(cthis, 2.6);    //Input in cycles per second
+                                                //LFO Rate synchronized to default delay preset time
+            tflanger_setLfoPhase(cthis, 0.0);    //Phase offset, 0 to 2*pi, useful if 
+                                                //using 2 of these objects in stereo
+            tflanger_setWetDry(cthis, 0.5);     //give ratio wet, 0...1.0. 
+                                                //Dry = 1.0 - fracWet
+            tflanger_setFeedBack(cthis, 0.0);   //Regen
+            tflanger_setTrails(cthis, 0);
+            break;
+        
+        case 1: //basic delay
+            tflanger_setLfoDepth(cthis, 385.0*ms);   //delay time
+            tflanger_setLfoWidth(cthis, 0.25*ms); //mild modulation
+            tflanger_setFeedBack(cthis, 0.36);
+            tflanger_setWetDry(cthis, 0.45);
+            tflanger_setLfoRate(cthis, 1.3);
+            tflanger_setDamping(cthis, 2800.0);  //Similar range to typical BBD delay pedal
+            tflanger_setTrails(cthis, 1);
+            break;
+        
+        case 2: //basic flanger 
+            tflanger_setLfoDepth(cthis, 0.8*ms);   //sweeps pretty high
+            tflanger_setLfoWidth(cthis, 4.0*ms); //mild modulation
+            tflanger_setFeedBack(cthis, -0.3);
+            tflanger_setWetDry(cthis, -0.5);
+            tflanger_setLfoRate(cthis, 0.325); //LFO Rate synchronized to default delay preset time     
+            tflanger_setTrails(cthis, 0);
+            break;
+        
+        default:
+            break;
+    }
 }
 
 

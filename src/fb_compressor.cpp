@@ -41,7 +41,7 @@ make_feedback_compressor(feedback_compressor* fbc, float fs, int N)
     fbc->ifs = 1.0/fs;
     fbc->N = N;
 
-	fbc->linmode = false; //continuously increasing ratio (true) or log-linear (false)?
+    fbc->linmode = false; //continuously increasing ratio (true) or log-linear (false)?
     fbc->threshold_db = -36.0;
     fbc->ratio = 8.0;
     fbc->db_dynrange = 60.0;
@@ -68,7 +68,7 @@ make_feedback_compressor(feedback_compressor* fbc, float fs, int N)
     fbc->rr_cyc = 0;
     for(int n = 0; n < 4; n++)
     {
-   		fbc->rr[n] = 0.0;
+        fbc->rr[n] = 0.0;
     }
 
     fbc->bypass = true;
@@ -81,7 +81,7 @@ make_feedback_compressor(feedback_compressor* fbc, float fs, int N)
 void
 feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
 {
-	// if(fbc->bypass)
+    // if(fbc->bypass)
  //   {
  //       if(!fbc->reset)
  //       {
@@ -94,7 +94,7 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
  //       }
  //       return;
  //   }
- 	bool use_limit = true;
+    bool use_limit = true;
 
     float yn;
     for(int i = 0; i < fbc->N; i++)
@@ -125,10 +125,10 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
         //  If response ends up being too fast, but ballistics filtering
         //  is expected to make up the difference on that front
         yn = fabs(x[i]);
-    	if(yn > fbc->rr[fbc->rr_cyc])
-    	{
-    		fbc->rr[fbc->rr_cyc] = yn;
-    	}
+        if(yn > fbc->rr[fbc->rr_cyc])
+        {
+            fbc->rr[fbc->rr_cyc] = yn;
+        }
 
         //Cycle Timer
         if (fbc->pk_timer < fbc->pk_hold_time)
@@ -138,17 +138,17 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
         else
         {
             if(++fbc->rr_cyc >= 4)
-        		fbc->rr_cyc = 0;
-        	fbc->pk_timer = 0;
-        	fbc->rr[fbc->rr_cyc] = 0.0;
+                fbc->rr_cyc = 0;
+            fbc->pk_timer = 0;
+            fbc->rr[fbc->rr_cyc] = 0.0;
         }
 
         //Final peak value selection circuit
         float tmpk = 0.0;
         for(int n = 0; n < 4; n++)
         {
-        	if(fbc->rr[n] > tmpk)
-        		tmpk = fbc->rr[n];
+            if(fbc->rr[n] > tmpk)
+                tmpk = fbc->rr[n];
         }
         //Smooth the stair-steps
         fbc->pk = tmpk + (fbc->pk - tmpk)*fbc->pkrls;
@@ -162,34 +162,34 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
         yn = fbc->gain*fbc->pk;
         if(fbc->linmode)
         {
-	        if(yn < fbc->t)
-	        {
-	        	yn = fbc->t;
-	        }
-	        //Apply limit to error signal.
-	        // Otherwise the excessive overdrive pushes attack time to almost nil
-	        else if (yn > fbc->tpik)
-	        {
-	            yn = fbc->tpik;
-	        }
+            if(yn < fbc->t)
+            {
+                yn = fbc->t;
+            }
+            //Apply limit to error signal.
+            // Otherwise the excessive overdrive pushes attack time to almost nil
+            else if (yn > fbc->tpik)
+            {
+                yn = fbc->tpik;
+            }
         }
         else
         {
-	        if(yn < fbc->t)
-	        {
-	        	yn = fbc->t;
-	        }
-	        //Apply limit to error signal.
-	        // Otherwise the excessive overdrive pushes attack time to almost nil
-	        else if (yn > 1.0)
-	        {
-	            yn = 1.0;
-	        }
+            if(yn < fbc->t)
+            {
+                yn = fbc->t;
+            }
+            //Apply limit to error signal.
+            // Otherwise the excessive overdrive pushes attack time to almost nil
+            else if (yn > 1.0)
+            {
+                yn = 1.0;
+            }
         }
 
-		//
-		//Ballistics
-		//
+        //
+        //Ballistics
+        //
         //Attack/Release on sidechain envelope
         if(yn > fbc->y1) //Attack
             fbc->y1 = yn + (fbc->y1 - yn)*fbc->atk0;
@@ -205,22 +205,22 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
         float gk = 0.0;
         if(fbc->soft_knee)
         {
-        	if(sk < fbc->hknt)
-        	{
-        		gk = 1.0 - (fbc->knt - sk) * fbc->iknt;
-        	}
-        	else
-        	{
-        		gk = 1.0;
-        		yk = -0.25*fbc->knt;
-        	}
-        	yk += sk*gk;
-        	yk += fbc->t;
+            if(sk < fbc->hknt)
+            {
+                gk = 1.0 - (fbc->knt - sk) * fbc->iknt;
+            }
+            else
+            {
+                gk = 1.0;
+                yk = -0.25*fbc->knt;
+            }
+            yk += sk*gk;
+            yk += fbc->t;
 
         }
         else
         {
-        	yk = fbc->y1;
+            yk = fbc->y1;
         }
         //End soft knee
 
@@ -233,14 +233,14 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
 
         if(fbc->linmode)
         {
-        	//fbc->gain = 1.0 + fbc->y1*fbc->mk + fbc->tk; < further refactored
-        	fbc->gain = yk*fbc->mk + fbc->tkp1;
+            //fbc->gain = 1.0 + fbc->y1*fbc->mk + fbc->tk; < further refactored
+            fbc->gain = yk*fbc->mk + fbc->tkp1;
         }
-    	else //linear in log domain
-    	{
-    		fbc->gain = expf_neon( fbc->ak*(fbc->tk + yk*fbc->mk) );
+        else //linear in log domain
+        {
+            fbc->gain = expf_neon( fbc->ak*(fbc->tk + yk*fbc->mk) );
             //fbc->gain = expf( fbc->ak*(fbc->tk + yk*fbc->mk) );
-    	}
+        }
 
         if(fbc->gain < fbc->dynrange)
             fbc->gain = fbc->dynrange;
@@ -261,10 +261,10 @@ feedback_compressor_tick_n(feedback_compressor* fbc, float *x, float *envelope)
         // implementation of a feedback compressor.
         if(!fbc->bypass)
         {
-        	x[i] = fbc->wet*fbc->g*fbc->gain*x[i] + fbc->dry*x[i];
-        	use_limit = true;
+            x[i] = fbc->wet*fbc->g*fbc->gain*x[i] + fbc->dry*x[i];
+            use_limit = true;
         } else 
-        	use_limit = false;
+            use_limit = false;
         //x[i] *= fbc->gain;
 
         //
@@ -312,18 +312,18 @@ void
 feedback_compressor_update_parameters(feedback_compressor* fbc)
 {
 
-	if(fbc->soft_knee)
-	{
-		fbc->t =  powf(10.0, (fbc->threshold_db - 3.0)/20.0);
-	    //knee
-	    fbc->knt = fbc->t;
-	    fbc->hknt = 0.5*fbc->knt;
-	    fbc->iknt = 1.0/fbc->knt;
-	}
-	else
-	{
-		fbc->t =  powf(10.0, fbc->threshold_db/20.0);
-	}
+    if(fbc->soft_knee)
+    {
+        fbc->t =  powf(10.0, (fbc->threshold_db - 3.0)/20.0);
+        //knee
+        fbc->knt = fbc->t;
+        fbc->hknt = 0.5*fbc->knt;
+        fbc->iknt = 1.0/fbc->knt;
+    }
+    else
+    {
+        fbc->t =  powf(10.0, fbc->threshold_db/20.0);
+    }
     //Target makeup gain needed for given threshold and ratio setting
     float m = powf(10.0, (fbc->threshold_db/fbc->ratio - fbc->threshold_db)/20.0);
     fbc->makeup_gain = m;
@@ -411,27 +411,27 @@ feedback_compressor_set_out_gain(feedback_compressor* fbc, float g_db)
 void
 feedback_compressor_set_mix(feedback_compressor* fbc, float wet)
 {
-	float w = wet;
-	if(w > 1.0) w = 1.0;
-	else if (w < 0.0) w = 0.0;
+    float w = wet;
+    if(w > 1.0) w = 1.0;
+    else if (w < 0.0) w = 0.0;
 
-	fbc->wet = w;
-	fbc->dry = 1.0 - w;
+    fbc->wet = w;
+    fbc->dry = 1.0 - w;
 }
 
 //Either soft (true) or hard (false)
 void
 feedback_compressor_set_knee(feedback_compressor* fbc, bool sk)
 {
-	fbc->soft_knee = sk;
-	feedback_compressor_update_parameters(fbc);
+    fbc->soft_knee = sk;
+    feedback_compressor_update_parameters(fbc);
 }
 
 void
 feedback_compressor_set_transfer_function(feedback_compressor* fbc, bool tf)
 {
-	fbc->linmode = tf;
-	feedback_compressor_update_parameters(fbc);
+    fbc->linmode = tf;
+    feedback_compressor_update_parameters(fbc);
 }
 
 //if bp = true, it is forced to bypass mode.
@@ -439,29 +439,29 @@ feedback_compressor_set_transfer_function(feedback_compressor* fbc, bool tf)
 bool
 feedback_compressor_set_bypass(feedback_compressor* fbc, bool bp)
 {
-	if(!bp)
-	{
-		if(fbc->bypass)
-			fbc->bypass = false;
-		else
+    if(!bp)
+    {
+        if(fbc->bypass)
+            fbc->bypass = false;
+        else
         {
             fbc->bypass = true;
             fbc->reset = false;
         }
         feedback_compressor_update_parameters(fbc);
 
-	}
-	else
-	{
-		fbc->bypass = true;
+    }
+    else
+    {
+        fbc->bypass = true;
         fbc->reset = false;
-	}
+    }
 
-	return fbc->bypass;
+    return fbc->bypass;
 }
 
 void
 feedback_compressor_destructor(feedback_compressor* fbc)
 {
-	free(fbc);
+    free(fbc);
 }

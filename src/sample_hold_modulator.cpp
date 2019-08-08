@@ -9,9 +9,9 @@
 // -----------------------------------------------------------------------------
 //
 
-#include	<stdlib.h>
+#include    <stdlib.h>
 
-#include	"sample_hold_modulator.h"
+#include    "sample_hold_modulator.h"
 
 inline float
 sqr(float x)
@@ -46,7 +46,7 @@ make_sample_hold(sh_mod* sh, float fs, int N)
 
     for(int i = 0; i < N; i++)
     {
-    	sh->adsr_env[i] = 0.0;
+        sh->adsr_env[i] = 0.0;
         sh->lfo[i] = 0.0;
         sh->hfo[i] = 0.0;
         sh->swave[i] = 0.0;
@@ -99,7 +99,7 @@ run_modulator(sh_mod* sh)
         sh->ramp_lfo += sh->dt_lfo;
         if(sh->mode == SH_RAND)
         {
-           	sh->ramp_hfo = ((float) rand())/((float) RAND_MAX);
+            sh->ramp_hfo = ((float) rand())/((float) RAND_MAX);
 
         }
         else if (sh->mode == SH_RAMP)
@@ -146,13 +146,13 @@ run_sample_hold(sh_mod* sh, float* output)
             sh->dl = (sh->hfo[i] - sh->last_hfo_sample);
             sh->last_wave = sh->last_hfo_sample;
             sh->last_hfo_sample = sh->hfo[i];
-        	adsr_set_trigger_state(sh->ad, true);
-        	adsr_set_amplitude(sh->ad, sh->last_hfo_sample);
+            adsr_set_trigger_state(sh->ad, true);
+            adsr_set_amplitude(sh->ad, sh->last_hfo_sample);
         }
         sh->swave[i] = sh->dl*sh->lfo[i] + sh->last_wave;
         if(sh->en_adsr)
-        	output[i] = sh->adsr_env[i];
-        	//output[i] = sh->swave[i]*sh->adsr_env[i];
+            output[i] = sh->adsr_env[i];
+            //output[i] = sh->swave[i]*sh->adsr_env[i];
             //output[i] = sh->last_hfo_sample*sh->adsr_env[i];
             //output[i] = sh->last_hfo_sample;
         else
@@ -163,19 +163,19 @@ run_sample_hold(sh_mod* sh, float* output)
 bool
 sample_hold_set_active(sh_mod* sh, bool act)
 {
-	//toggle state if act is true
-	if(act)
-	{
-		if(sh->en_adsr)
-			sh->en_adsr = false;
-		else
-			sh->en_adsr = true;
-	} else //always deactivate if false
-	{
-		sh->en_adsr = false;
-	}
-	//return the state evaluated
-	return sh->en_adsr;
+    //toggle state if act is true
+    if(act)
+    {
+        if(sh->en_adsr)
+            sh->en_adsr = false;
+        else
+            sh->en_adsr = true;
+    } else //always deactivate if false
+    {
+        sh->en_adsr = false;
+    }
+    //return the state evaluated
+    return sh->en_adsr;
 }
 
 void
@@ -200,10 +200,10 @@ sample_hold_set_rate(sh_mod* sh, float rate)
 void
 sample_hold_set_type(sh_mod* sh, int type)
 {
-	int t = type;
-	if(t >= SH_MAX_TYPES)
-		t = SH_MAX_TYPES - 1;
-	else if(t < 0)
-		t = 0;
-	sh->mode = type;
+    int t = type;
+    if(t >= SH_MAX_TYPES)
+        t = SH_MAX_TYPES - 1;
+    else if(t < 0)
+        t = 0;
+    sh->mode = type;
 }

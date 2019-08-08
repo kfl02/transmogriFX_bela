@@ -127,7 +127,7 @@ eq_update_gain(eq_coeffs* cf, float G)
                 break;
         }
 
-		float ia0 = 1.0/a0;
+        float ia0 = 1.0/a0;
         b0 *=  ia0;
         b1 *=  ia0;
         b2 *=  ia0;

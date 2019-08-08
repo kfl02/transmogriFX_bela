@@ -18,10 +18,10 @@
 
 const int MAX_SEQ_STEPS = 12;
 
-const int SH_RAND		= 0;  //Sample random sequence
-const int SH_RAMP		= 1;  //Sample a ramp oscillator
-const int SH_SEQ		= 2;  //Run as sequencer
-const int SH_MAX_TYPES	= 3;
+const int SH_RAND       = 0;  //Sample random sequence
+const int SH_RAMP       = 1;  //Sample a ramp oscillator
+const int SH_SEQ        = 2;  //Run as sequencer
+const int SH_MAX_TYPES  = 3;
 
 typedef struct sh_mod_t
 {

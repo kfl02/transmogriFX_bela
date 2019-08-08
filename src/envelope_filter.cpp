@@ -30,9 +30,9 @@ envf_make_filter(env_filter* envf, float fs, int N)
     
     for(int i=0; i<N; i++) 
     {
-    	envf->frq[i] = 0.5;
-    	envf->y[i] = 0.0;
-    	envf->sh_buff[i] = 0.0;
+        envf->frq[i] = 0.5;
+        envf->y[i] = 0.0;
+        envf->sh_buff[i] = 0.0;
     }
 
     envf->N = N;
@@ -42,9 +42,9 @@ envf_make_filter(env_filter* envf, float fs, int N)
 
     envf_set_atk(envf, 0.01);
     envf_set_rls(envf, 0.15);
-	envf_set_gate(envf, -42.0);
-	envf->knee_db = 6.0;
-	envf_set_gate_knee(envf, envf->knee_db);
+    envf_set_gate(envf, -42.0);
+    envf->knee_db = 6.0;
+    envf_set_gate_knee(envf, envf->knee_db);
     envf->yn = 0.0;
 
     float fl = 50.0;
@@ -126,7 +126,7 @@ envf_tick_n(env_filter* envf, float* x, float* e)
     float a = 0.0;
     
     if(envf->bypass)
-    	return;
+        return;
     
     //TODO: move to env_filter struct
     run_sample_hold(envf->sh, envf->sh_buff);
@@ -134,9 +134,9 @@ envf_tick_n(env_filter* envf, float* x, float* e)
     //First run envelope attack/release
     for(int i=0; i<envf->N; i++)
     {
-    	ei = e[i];
-    	
-    	//Apply gate to envelope detector
+        ei = e[i];
+        
+        //Apply gate to envelope detector
         a = fabs(ei) - envf->thrs;
         if(a > 0.0)
         {
@@ -150,8 +150,8 @@ envf_tick_n(env_filter* envf, float* x, float* e)
             ei = envf->yn*envf->rls_b + ei*envf->rls_a;
         envf->yn = ei;
         
-		//limit to range 0 to 1 and apply to filter frequency setting
-		ei = clamp(ei*envf->sns*envf->ishmix + envf->sh_buff[i]*envf->shmix);
+        //limit to range 0 to 1 and apply to filter frequency setting
+        ei = clamp(ei*envf->sns*envf->ishmix + envf->sh_buff[i]*envf->shmix);
         envf->frq[i] = envf->depth + envf->width*ei;
         
         //DEBUG:  overwrite envelope with detector output so 
@@ -168,7 +168,7 @@ envf_tick_n(env_filter* envf, float* x, float* e)
     //Post processing
     for(int i=0; i<envf->N; i++)
     {
-		x[i] = envf->mix_dry * x[i] + envf->mix_wet*envf->y[i];
+        x[i] = envf->mix_dry * x[i] + envf->mix_wet*envf->y[i];
     }
 
 }
@@ -177,19 +177,19 @@ envf_tick_n(env_filter* envf, float* x, float* e)
 bool
 envf_toggle_bypass(env_filter* envf)
 {
-	if(envf->bypass)
-		envf->bypass = false;
-	else
-		envf->bypass = true;
-	
-	return envf->bypass;
-		
+    if(envf->bypass)
+        envf->bypass = false;
+    else
+        envf->bypass = true;
+    
+    return envf->bypass;
+        
 }
 
 void 
 envf_set_bypass(env_filter* envf, bool bp)
 {
-	envf->bypass = bp;
+    envf->bypass = bp;
 }
 
 void
@@ -207,15 +207,15 @@ envf_set_drive(env_filter* envf, float drive_)
 void 
 envf_set_mix(env_filter* envf, float mix_)
 {
-	float mix = mix_;
-	if(mix > 1.0) mix = 1.0;
-	else if (mix < -1.0) mix = -1.0;
-	
-	envf->mix_wet = mix;
-	if(mix > 0.0)
-		envf->mix_dry = 1.0 - mix;
-	else
-		envf->mix_dry = 1.0 + mix;
+    float mix = mix_;
+    if(mix > 1.0) mix = 1.0;
+    else if (mix < -1.0) mix = -1.0;
+    
+    envf->mix_wet = mix;
+    if(mix > 0.0)
+        envf->mix_dry = 1.0 - mix;
+    else
+        envf->mix_dry = 1.0 + mix;
 }
 
 void
@@ -284,7 +284,7 @@ envf_set_sensitivity(env_filter* envf, float sns_)
 void
 envf_set_lfo_rate(env_filter* envf, float r_)
 {
-	sample_hold_set_rate(envf->sh, r_);
+    sample_hold_set_rate(envf->sh, r_);
 }
 
 void
@@ -309,7 +309,7 @@ envf_set_depth(env_filter* envf, float d_)
 void
 envf_set_lfo_width(env_filter* envf, float w_)
 {
-	
+    
 }
 
 void
@@ -352,10 +352,10 @@ float compute_knee(float t, float db)
 void
 envf_set_gate(env_filter* envf, float thrs_)
 {
-	float thrs = thrs_;
-	if(thrs > 0.0) thrs = 0.0;
-	envf->thrs = powf(10.0, thrs/20.0);
-	envf->knee = compute_knee(envf->thrs, envf->knee_db);
+    float thrs = thrs_;
+    if(thrs > 0.0) thrs = 0.0;
+    envf->thrs = powf(10.0, thrs/20.0);
+    envf->knee = compute_knee(envf->thrs, envf->knee_db);
 }
 
 // Sets how sudden the gate engages.  
@@ -365,86 +365,86 @@ envf_set_gate(env_filter* envf, float thrs_)
 void
 envf_set_gate_knee(env_filter* envf, float knee_)
 {
-	float knee = knee_;
-	if(knee < 0.1) knee = 0.1;
-	else if(knee > 12.0) knee = 12.0;
-	envf->knee_db = knee;
-	
-	//transition over range of threshold to threshold + knee
-	envf->knee = compute_knee(envf->thrs, knee);
+    float knee = knee_;
+    if(knee < 0.1) knee = 0.1;
+    else if(knee > 12.0) knee = 12.0;
+    envf->knee_db = knee;
+    
+    //transition over range of threshold to threshold + knee
+    envf->knee = compute_knee(envf->thrs, knee);
 }
 
 //SAMPLE/HOLD AND ADSR
 void
 envf_set_mix_sh_modulator(env_filter* envf, float mix_)
 {
-	float mix = mix_;
-	if(mix > 1.0) 
-		mix = 1.0;
-	else if (mix < 0.0)
-		mix = 0.0;
-	
-	envf->shmix = mix;
-	envf->ishmix = 1.0 - envf->shmix;
+    float mix = mix_;
+    if(mix > 1.0) 
+        mix = 1.0;
+    else if (mix < 0.0)
+        mix = 0.0;
+    
+    envf->shmix = mix;
+    envf->ishmix = 1.0 - envf->shmix;
 
 }
 
 void
 envf_set_sample_hold_type(env_filter* envf, int type)
 {
-	sample_hold_set_type(envf->sh, type);
+    sample_hold_set_type(envf->sh, type);
 }
 
 bool
 envf_set_adsr_active(env_filter* envf, bool act)
 {
 
-	return sample_hold_set_active(envf->sh, act);
+    return sample_hold_set_active(envf->sh, act);
 
 }
 
 void
 envf_set_adsr_atk(env_filter* envf, float atk_)
 {
-	float x = atk_;
-	if(x > 1000.0) 
-		x = 1000.0;
-	else if (x < 0.0)
-		x = 0.0;
-	adsr_set_attack(envf->sh->ad, x);
+    float x = atk_;
+    if(x > 1000.0) 
+        x = 1000.0;
+    else if (x < 0.0)
+        x = 0.0;
+    adsr_set_attack(envf->sh->ad, x);
 }
 
 void
 envf_set_adsr_dcy(env_filter* envf, float dcy_)
 {
-	float x = dcy_;
-	if(x > 1000.0) 
-		x = 1000.0;
-	else if (x < 0.0)
-		x = 0.0;
-	adsr_set_decay(envf->sh->ad, x);	
+    float x = dcy_;
+    if(x > 1000.0) 
+        x = 1000.0;
+    else if (x < 0.0)
+        x = 0.0;
+    adsr_set_decay(envf->sh->ad, x);    
 }
 
 void
 envf_set_adsr_stn(env_filter* envf, float stn_)
 {
-	float x = stn_;
-	if(x > 1.0) 
-		x = 1.0;
-	else if (x < 0.0)
-		x = 0.0;
-	adsr_set_sustain(envf->sh->ad, x);
+    float x = stn_;
+    if(x > 1.0) 
+        x = 1.0;
+    else if (x < 0.0)
+        x = 0.0;
+    adsr_set_sustain(envf->sh->ad, x);
 }
 
 void
 envf_set_adsr_rls(env_filter* envf, float rls_)
 {
-	float x = rls_;
-	if(x > 1000.0) 
-		x = 1000.0;
-	else if (x < 0.0)
-		x = 0.0;
-	adsr_set_release(envf->sh->ad, x);
+    float x = rls_;
+    if(x > 1000.0) 
+        x = 1000.0;
+    else if (x < 0.0)
+        x = 0.0;
+    adsr_set_release(envf->sh->ad, x);
 }
 
 

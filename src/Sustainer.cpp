@@ -104,21 +104,21 @@ Sustainer::tick_n (float *x)
         
         if(!bypass)
         {
-	        compenv = cbeta * oldcompenv + calpha * compeak;       //Next average into envelope follower
-	        oldcompenv = compenv;
-	
-	        if(compenv > cpthresh) {                              //if envelope of signal exceeds thresh, then compress
-	            compg = cpthresh + cpthresh*(compenv - cpthresh)/compenv;
-	            cpthresh = cthresh + cratio*(compg - cpthresh);   //cpthresh changes dynamically
-	            tmpgain = compg/compenv;
-	        } else {
-	            tmpgain = 1.0f;
-	        }
-	
-	        if(compenv < cpthresh) cpthresh = compenv;
-	        if(cpthresh < cthresh) cpthresh = cthresh;
-	
-	        x[i] = smpl*tmpgain * level;
+            compenv = cbeta * oldcompenv + calpha * compeak;       //Next average into envelope follower
+            oldcompenv = compenv;
+    
+            if(compenv > cpthresh) {                              //if envelope of signal exceeds thresh, then compress
+                compg = cpthresh + cpthresh*(compenv - cpthresh)/compenv;
+                cpthresh = cthresh + cratio*(compg - cpthresh);   //cpthresh changes dynamically
+                tmpgain = compg/compenv;
+            } else {
+                tmpgain = 1.0f;
+            }
+    
+            if(compenv < cpthresh) cpthresh = compenv;
+            if(cpthresh < cthresh) cpthresh = cthresh;
+    
+            x[i] = smpl*tmpgain * level;
         }
         
     };
@@ -155,16 +155,16 @@ Sustainer::setpreset (int npreset)
 void 
 Sustainer::setGain(float g)
 {
-	level = dB2rap(-30.0f * (1.0f - g));
+    level = dB2rap(-30.0f * (1.0f - g));
 }
 
 void 
 Sustainer::setSustain(float s)
 {
-	float fsustain = s;
+    float fsustain = s;
     cratio = 1.25f - fsustain;
     input = dB2rap (42.0f * fsustain - 6.0f);
-    cthresh = 0.25 + fsustain;	
+    cthresh = 0.25 + fsustain;  
 }
 
 void
@@ -178,7 +178,7 @@ Sustainer::changepar (int npar, int value)
     case 1:
         Psustain = value;
         fsustain =  (float) Psustain/127.0f;
-		setSustain(fsustain);
+        setSustain(fsustain);
         break;
 
     };
@@ -195,22 +195,22 @@ Sustainer::getpar (int npar)
         return (Psustain);
         break;
     };
-    return (0);			//in case of bogus parameter number
+    return (0);         //in case of bogus parameter number
 };
 
 bool 
 Sustainer::setBypass()
 {
-	if(bypass == true) bypass = false;
-	else bypass = true;
-	return bypass;
+    if(bypass == true) bypass = false;
+    else bypass = true;
+    return bypass;
 }
 
 void 
 Sustainer::get_envelope(float* env)
 {
-	for(int i = 0; i<PERIOD; i++){
-		env[i] = envelope[i];
-	}
+    for(int i = 0; i<PERIOD; i++){
+        env[i] = envelope[i];
+    }
 }
 

@@ -5,8 +5,8 @@
 
 #include "lfo.h"
 
-const int MODERATE		= 0;
-const int TREM_SQUARE	= 1;
+const int MODERATE      = 0;
+const int TREM_SQUARE   = 1;
 
 typedef struct trem_t {
     float fs;

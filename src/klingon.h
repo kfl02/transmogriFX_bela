@@ -41,13 +41,13 @@ typedef struct klingon_t
     iir_1p pre_emph159;
     iir_1p post_emph;
 
-	// Tonestack
-	kot_stack stack;
-	
-	// Clipping look-up function
-	vi_trace clip;
-	vi_trace hard_clip;
-	vi_trace output_limit;
+    // Tonestack
+    kot_stack stack;
+    
+    // Clipping look-up function
+    vi_trace clip;
+    vi_trace hard_clip;
+    vi_trace output_limit;
 
     // Gain stages
     float g482;  // first stage pre-emphasis 1 gain

@@ -1,8 +1,8 @@
 /*
 *   ADSR
 */
-#include	<stdio.h>
-#include	<stdlib.h>
+#include    <stdio.h>
+#include    <stdlib.h>
 #include    <math.h>
 
 #include    "adsr.h"
@@ -37,16 +37,16 @@ make_adsr(adsr* ad, float fs, int N)
 void
 adsr_set_amplitude(adsr* ad, float a)
 {
-	ad->amplitude = a;
-	ad->pk = ad->velocity*a;
-	ad->sus = ad->amplitude*ad->sustain;
+    ad->amplitude = a;
+    ad->pk = ad->velocity*a;
+    ad->sus = ad->amplitude*ad->sustain;
 }
 
 void
 adsr_set_velocity(adsr* ad, float v)
 {
-	ad->velocity = v;
-	ad->pk = ad->amplitude*v;
+    ad->velocity = v;
+    ad->pk = ad->amplitude*v;
 }
 
 void
@@ -149,7 +149,7 @@ adsr_tick_n(adsr* ad, float* output)
                     ad->state = ADSR_STATE_DECAY;
                 }
                 else
-                	ad->sv = ad->sv + ad->atk * (ad->pk - ad->sv);
+                    ad->sv = ad->sv + ad->atk * (ad->pk - ad->sv);
             break;
             
             case ADSR_STATE_DECAY:
