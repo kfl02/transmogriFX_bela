@@ -1,14 +1,16 @@
+#pragma once
+
 //
 // klingon-tone overdrive effect
 //  Approximate voicing of King of Tone overdrive pedal
 //
 
+#ifndef KLINGON_H
+#define KLINGON_H
+
 #include "read_vi_trace.h"
 #include "iir_1pole.h"
 #include "kot_tonestack.h"
-
-#ifndef KLINGON_H
-#define KLINGON_H
 
 typedef struct klingon_t
 {

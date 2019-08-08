@@ -1,3 +1,5 @@
+#pragma once
+
 // ----------------------------------------------------------------------
 //
 //  Copyright (C) 2010 Fons Adriaensen <fons@linuxaudio.org>

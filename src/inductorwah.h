@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef IWAH_H
 #define IWAH_H

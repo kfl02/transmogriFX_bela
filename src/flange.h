@@ -1,3 +1,5 @@
+#pragma once
+
 //Linear interpolated delay line
 
 #ifndef TFX_FLANGE_H

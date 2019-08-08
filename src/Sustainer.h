@@ -1,3 +1,5 @@
+#pragma once
+
 /*
   Rakarrack Guitar FX
 

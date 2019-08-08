@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef TREM_H
 #define TREM_H

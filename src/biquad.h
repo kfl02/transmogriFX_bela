@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef BIQUAD_H
 #define BIQUAD_H

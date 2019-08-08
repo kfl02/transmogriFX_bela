@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef READ_VI_TRACE_H
 #define READ_VI_TRACE_H
 

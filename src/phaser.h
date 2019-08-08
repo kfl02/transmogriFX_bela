@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef PHASER_H
 #define PHASER_H

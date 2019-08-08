@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef LFO_H
 #define LFO_H

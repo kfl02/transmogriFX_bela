@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef FB_COMPRESSOR_H
 #define FB_COMPRESSOR_H
 

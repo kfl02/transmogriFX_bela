@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // 1-pole IIR filters
 //

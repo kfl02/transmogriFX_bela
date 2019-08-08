@@ -1,3 +1,5 @@
+#pragma once
+
 //
 //   Sample/hold modulator
 //

@@ -1,9 +1,9 @@
-
-#include "iir_1pole.h"
+#pragma once
 
 #ifndef OVERDRIVE_H
 #define OVERDRIVE_H
 
+#include "iir_1pole.h"
 
 typedef struct overdrive_t
 {

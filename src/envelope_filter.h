@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // Envelope filter based on state variable filter
 // -----------------------------------------------------------------------------

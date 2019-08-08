@@ -1,3 +1,5 @@
+#pragma once
+
 //
 // Double-samplerate state variable filter using
 // linear interpolated over-sampling.
