@@ -19,8 +19,8 @@
 // -----------------------------------------------------------------------
 
 
-#ifndef __REVERB_H
-#define __REVERB_H
+#ifndef REVERB_H
+#define REVERB_H
 
 #include "pareq.h"
 

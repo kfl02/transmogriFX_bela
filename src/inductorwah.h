@@ -2,13 +2,13 @@
 #ifndef IWAH_H
 #define IWAH_H
 
-#define GCB 	0	//Common Dunlop GCB-95
-#define VOX 	1 	//Vox V847 voicing
-#define DUNLOP	2	//"The Original" Crybaby
-#define MCCOY	3 	//Clyde McCoy voicing
-#define VOCAL	4   //Vox with a little extra Q and some low-end brought up a bit
-#define EXTREME 5 	//crazy synth-like
-#define MAX_WAHS 6  //Update as wahs are added
+const int GCB 		= 0;	//Common Dunlop GCB-95
+const int VOX 		= 1; 	//Vox V847 voicing
+const int DUNLOP	= 2;	//"The Original" Crybaby
+const int MCCOY		= 3; 	//Clyde McCoy voicing
+const int VOCAL		= 4;   //Vox with a little extra Q and some low-end brought up a bit
+const int EXTREME 	= 5; 	//crazy synth-like
+const int MAX_WAHS 	= 6;  //Update as wahs are added
 
 typedef struct iwah_t {
     //Circuit parameters

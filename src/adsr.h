@@ -6,10 +6,10 @@
 #define ADSR_H
 
 //ADSR States
-#define ADSR_STATE_ATTACK   0
-#define ADSR_STATE_DECAY    1
-#define ADSR_STATE_SUSTAIN  2
-#define ADSR_STATE_RELEASE  3
+const int ADSR_STATE_ATTACK		= 0;
+const int ADSR_STATE_DECAY		= 1;
+const int ADSR_STATE_SUSTAIN	= 2;
+const int ADSR_STATE_RELEASE	= 3;
 
 typedef struct adsr_t
 {

@@ -4,10 +4,10 @@
 
 #include <lfo.h>
 
-#define PHASER_MAX_STAGES      24
+const inst PHASER_MAX_STAGES = 24;
 
-#define PHASER_DEFAULT  0
-#define PHASE_90		1
+const int PHASER_DEFAULT	= 0;
+const int PHASE_90			= 1;
 
 typedef struct phaser_t {
 	bool bypass;

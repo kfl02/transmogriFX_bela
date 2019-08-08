@@ -22,7 +22,8 @@
 
 #ifndef SUSTAINER_H
 #define SUSTAINER_H
-#define LOG_10 2.302585f
+
+const float LOG_10 = 2.302585f;
 #define dB2rap(dB) (float)((expf((dB)*LOG_10/20.0f)))
 
 class Sustainer

@@ -2,9 +2,9 @@
 #ifndef BIQUAD_H
 #define BIQUAD_H
 
-#define LPF 0
-#define HPF 1
-#define BPF 2
+const int LPF = 0;
+const int HPF = 1;
+const int BPF = 2;
 
 typedef struct biquad_t {
     float b0;

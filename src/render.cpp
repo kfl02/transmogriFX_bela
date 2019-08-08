@@ -1,4 +1,4 @@
-#include <Bela.h>
+#include "Bela.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -6,8 +6,8 @@
 //DEBUG
 //
 
-#include <Scope.h>
-Scope scope;
+//#include <Scope.h>
+//Scope scope;
 
 //
 // End DEBUG
@@ -2238,7 +2238,7 @@ bool setup(BelaContext *context, void *userData)
 	// DEBUG (scope)
 	//
 	
-	scope.setup(2, context->audioSampleRate);
+	//scope.setup(2, context->audioSampleRate);
 	
 	return true;
 }

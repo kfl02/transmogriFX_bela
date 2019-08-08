@@ -19,8 +19,8 @@
 // ----------------------------------------------------------------------
 
 
-#ifndef __PAREQ_H
-#define __PAREQ_H
+#ifndef PAREQ_H
+#define PAREQ_H
 
 
 #include <stdint.h>
