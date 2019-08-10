@@ -18,8 +18,8 @@
 sv_filter *
 svf_make_filter(sv_filter *s, float fs) {
     s = (sv_filter *) malloc(sizeof(sv_filter));
-
     s->fs = 2.0f * fs;
+
     float fc = 700.0f;
 
     svf_set_drive(s, 0.25f);
@@ -53,10 +53,17 @@ svf_make_filter(sv_filter *s, float fs) {
 inline float
 soft_clip(sv_filter *s, float xn_) {
     float xn = s->drive * xn_;
-    if (xn > 1.0f) xn = 1.0f;
-    else if (xn < -1.0f) xn = -1.0f;
-    else if (xn < 0.0f) xn = (xn + 1.0f) * (xn + 1.0f) - 1.0f;
-    else xn = 1.0f - (1.0f - xn) * (1.0f - xn);
+
+    if (xn > 1.0f) {
+        xn = 1.0f;
+    } else if (xn < -1.0f) {
+        xn = -1.0f;
+    } else if (xn < 0.0f) {
+        xn = (xn + 1.0f) * (xn + 1.0f) - 1.0f;
+    } else {
+        xn = 1.0f - (1.0f - xn) * (1.0f - xn);
+    }
+
     return s->idrive * xn;
 }
 
@@ -67,14 +74,17 @@ sqr(float x) {
 
 inline float
 clip1(float x) {
-
     float thrs = 0.8f;
     float nthrs = -0.72f;
     float f = 1.25f;
 
     //Hard limiting
-    if (x >= 1.2f) x = 1.2f;
-    if (x <= -1.12f) x = -1.12f;
+    if (x >= 1.2f) {
+        x = 1.2f;
+    }
+    if (x <= -1.12f) {
+        x = -1.12f;
+    }
 
     //Soft clipping
     if (x > thrs) {
@@ -105,7 +115,10 @@ svf_tick_n(sv_filter *s, float *x, int N) {
 
         s->x1 = x[i];
         x[i] = s->lmix * s->lpf + s->hmix * s->hpf + s->bmix * s->bpf;
-        if (!s->normalize) x[i] *= s->gout;
+
+        if (!s->normalize) {
+            x[i] *= s->gout;
+        }
     }
 }
 
@@ -128,7 +141,10 @@ svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N) {
         s->x1 = x[i];
         s->f1 = f[i];
         x[i] = s->lmix * s->lpf + s->hmix * s->hpf + s->bmix * s->bpf;
-        if (!s->normalize) x[i] *= s->gout;
+
+        if (!s->normalize) {
+            x[i] *= s->gout;
+        }
     }
 }
 
@@ -149,11 +165,12 @@ svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
         s->x1 = x[i];
         s->f1 = f[i];
         x[i] = s->lmix * s->lpf + s->hmix * s->hpf + s->bmix * s->bpf;
-        if (!s->normalize)
+        if (!s->normalize) {
             x[i] *= s->gout;
-        if (s->outclip)
+        }
+        if (s->outclip) {
             x[i] = clip1(x[i]);
-
+        }
     }
 }
 
@@ -161,22 +178,31 @@ svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
 void
 svf_set_q(sv_filter *s, float Q) {
     float qq = Q;
-    if (Q < 0.5f)
+
+    if (Q < 0.5f) {
         qq = 0.5f;
+    }
+
     s->q = 1.0f / qq;
 }
 
 float
 svf_compute_f(sv_filter *s, float fc) {
     s->fc = fc;
+
     return s->fcnst * s->fc;
 }
 
 void
 svf_set_drive(sv_filter *s, float drive_) {
     float drive = drive_ * drive_;
-    if (drive > 2.0f) drive = 2.0f;
+
+    if (drive > 2.0f) {
+        drive = 2.0f;
+    }
+
     float idrive = 1.0f / (drive + 0.001f);
+
     s->drive = 0.5f * (drive + 0.001f);
     s->idrive = idrive;
 }
@@ -184,8 +210,12 @@ svf_set_drive(sv_filter *s, float drive_) {
 void
 svf_set_mix_lpf(sv_filter *s, float mix_) {
     float mix = mix_;
-    if (mix > 1.0f) mix = 1.0f;
-    else if (mix < -1.0f) mix = -1.0f;
+
+    if (mix > 1.0f) {
+        mix = 1.0f;
+    } else if (mix < -1.0f) {
+        mix = -1.0f;
+    }
 
     s->lmix = mix;
 }
@@ -193,8 +223,12 @@ svf_set_mix_lpf(sv_filter *s, float mix_) {
 void
 svf_set_mix_bpf(sv_filter *s, float mix_) {
     float mix = mix_;
-    if (mix > 1.0f) mix = 1.0f;
-    else if (mix < -1.0f) mix = -1.0f;
+
+    if (mix > 1.0f) {
+        mix = 1.0f;
+    } else if (mix < -1.0f) {
+        mix = -1.0f;
+    }
 
     s->bmix = mix;
 }
@@ -202,8 +236,12 @@ svf_set_mix_bpf(sv_filter *s, float mix_) {
 void
 svf_set_mix_hpf(sv_filter *s, float mix_) {
     float mix = mix_;
-    if (mix > 1.0f) mix = 1.0f;
-    else if (mix < -1.0f) mix = -1.0f;
+
+    if (mix > 1.0f) {
+        mix = 1.0f;
+    } else if (mix < -1.0f) {
+        mix = -1.0f;
+    }
 
     s->hmix = mix;
 }

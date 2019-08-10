@@ -140,23 +140,25 @@ void kotstack_init(kot_stack *ks, float fs_) {
 
 // User functions
 void kotstack_set_tone(kot_stack *ks, float tone) {
-    if (tone > 1.0f)
+    if (tone > 1.0f) {
         ks->tone_pot_pos = 0.0f;
-    else if (tone < 0.0f)
+    } else if (tone < 0.0f) {
         ks->tone_pot_pos = 1.0f;
-    else
+    } else {
         ks->tone_pot_pos = 1.0 - tone;
+    }
 
     kotstack_compute_filter_coeffs(ks);
 }
 
 void kotstack_set_boost(kot_stack *ks, float boost) {
-    if (boost > 1.0f)
+    if (boost > 1.0f) {
         ks->boost_pot_pos = 1.0f;
-    else if (boost < 0.0f)
+    } else if (boost < 0.0f) {
         ks->boost_pot_pos = 0.0f;
-    else
+    } else {
         ks->boost_pot_pos = boost;
+    }
 
     kotstack_compute_filter_coeffs(ks);
 }

@@ -26,7 +26,9 @@ inline float vi_trace_interp(vi_trace *vi, float x_) {
     float x = (x_ - vi->minamp) * vi->di;
     float nx = x;
     float fl = floorf(nx);
+
     x = x - fl;
+
     int n = lrintf(fl);
 
     // Expecting a function that is flatline at each
@@ -36,6 +38,7 @@ inline float vi_trace_interp(vi_trace *vi, float x_) {
     } else if (n < 2) {
         return vi->volt[1];
     }
+
     float p0 = vi->volt[n - 1];
     float p1 = vi->volt[n];
     float p2 = vi->volt[n + 1];
@@ -52,6 +55,7 @@ inline float vi_trace_interp(vi_trace *vi, float x_) {
     float d = p1;
 
     x = ((a * x + b) * x + c) * x + d;
+
     return x;
 }
 

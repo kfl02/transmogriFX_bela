@@ -10,6 +10,7 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
     float a1;
     float b0, b1;
     float g = 1.0f;  // This could be brought out into a user-configurable param
+
     cf->gain = g;
     cf->fs = fs;
 
@@ -27,6 +28,7 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
             b0 = g;
             b1 = 0.12f * g; //0.12 zero improves RC filter emulation at higher freqs.
             break;
+
         case HPF1P:
             //1-pole high pass filter coefficients
             // H(z) = g * (1 - z^-1)/(1 - a1*z^-1)
@@ -39,7 +41,6 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
             b0 = g;
             b1 = -g;
             break;
-
     }
 
 
@@ -79,7 +80,8 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
         den[IM] = cf->a1 * sinf(2.0f * M_PI * fi / fs) + cf->a2 * sinf(4.0f * M_PI * fi / fs);
 
         mag[i] = 20.0f * log10(cf->gain *
-                              sqrtf((num[RE] * num[RE] + num[IM] * num[IM]) / (den[RE] * den[RE] + den[IM] * den[IM])));
+                               sqrtf((num[RE] * num[RE] + num[IM] * num[IM]) /
+                                     (den[RE] * den[RE] + den[IM] * den[IM])));
         phase[i] = 0.0f; // TODO: Implement phase calculation
 
         frq[i] = fi;
@@ -117,8 +119,9 @@ void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *
     float kz = kz_;
     float fs = fs_;
 
-    if (kz == 0.0f)
+    if (kz == 0.0f) {
         kz = 2.0f * fs;
+    }
 
     float kz2 = kz * kz;
 
@@ -136,6 +139,4 @@ void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *
     den[2] = -(A0 * kz2 - A1 * kz + A2) / (A0 * kz2 + A1 * kz + A2);      // negated
     den[1] = -(2.0f * A2 - 2.0f * A0 * kz2) / (A0 * kz2 + A1 * kz + A2);    // negated
     den[0] = 0.0;  // should not be used
-
 }
-

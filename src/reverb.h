@@ -35,13 +35,13 @@ private:
 
     friend class Reverb;
 
-    Diff1(void);
+    Diff1();
 
-    ~Diff1(void);
+    ~Diff1();
 
     void init(int size, float c);
 
-    void fini(void);
+    void fini();
 
     float process(float x) {
         float z = _line[_i];
@@ -66,9 +66,9 @@ private:
 
     friend class Reverb;
 
-    Filt1(void) : _slo(0), _shi(0) {}
+    Filt1() : _slo(0), _shi(0) {}
 
-    ~Filt1(void) {}
+    ~Filt1() {}
 
     void set_params(float del, float tmf, float tlo, float wlo, float thi, float chi);
 
@@ -96,15 +96,15 @@ private:
 
     friend class Reverb;
 
-    Delay(void);
+    Delay();
 
-    ~Delay(void);
+    ~Delay();
 
     void init(int size);
 
-    void fini(void);
+    void fini();
 
-    float read(void) {
+    float read() {
         return _line[_i];
     }
 
@@ -127,17 +127,17 @@ private:
 
     friend class Reverb;
 
-    Vdelay(void);
+    Vdelay();
 
-    ~Vdelay(void);
+    ~Vdelay();
 
     void init(int size);
 
-    void fini(void);
+    void fini();
 
     void set_delay(int del);
 
-    float read(void) {
+    float read() {
         float x = _line[_ir++];
         if (_ir == _size) _ir = 0;
         return x;
@@ -161,13 +161,13 @@ private:
 class Reverb {
 public:
 
-    Reverb(void);
+    Reverb();
 
-    ~Reverb(void);
+    ~Reverb();
 
     void init(float fsamp, bool ambis, size_t frame_size);
 
-    void fini(void);
+    void fini();
 
     void prepare(int n);
 
@@ -262,8 +262,6 @@ private:
 
 };
 
-
 // -----------------------------------------------------------------------
-
 
 #endif

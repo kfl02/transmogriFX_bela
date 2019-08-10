@@ -142,5 +142,3 @@ void
 envf_set_adsr_rls(env_filter *envf, float rls_);
 
 #endif //ENVELOPE_F_H
-
-

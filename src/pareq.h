@@ -24,17 +24,14 @@
 #ifndef PAREQ_H
 #define PAREQ_H
 
-
 #include <stdint.h>
 #include <math.h>
 
-
 class Pareq {
 public:
+    Pareq();
 
-    Pareq(void);
-
-    ~Pareq(void);
+    ~Pareq();
 
     void setfsamp(float fsamp);
 
@@ -44,7 +41,7 @@ public:
         _touch0++;
     }
 
-    void reset(void);
+    void reset();
 
     void prepare(int nsamp);
 
@@ -77,6 +74,5 @@ private:
     float _z1[MAXCH];
     float _z2[MAXCH];
 };
-
 
 #endif

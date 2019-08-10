@@ -11,6 +11,7 @@ overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int b
     for (int i = 0; i < bsz; i++) {
         od->procbuf[i] = 0.0f;
     }
+
     od->xn1 = 0.0f;
     od->xc1 = 0.0f;
 
@@ -81,8 +82,8 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
             delta += dx;
             deltac += dc;
             //Hard limiting
-            if (xn >= 1.2f) xn = 1.2f;
-            if (xn <= -1.12f) xn = -1.12f;
+            if (xn >= 1.2f) { xn = 1.2f; }
+            if (xn <= -1.12f) { xn = -1.12f; }
 
             //Soft clipping
             if (xn > thrs) {
@@ -129,12 +130,13 @@ void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
             // Cubic clipping
             xn = xn * od->gain * 0.33f +
                  asym;  // Gain reduced because d/dx(x^3) = 3x ==> Small-signal gain of 3 built into the function
-            if (xn <= -1.0f)
+            if (xn <= -1.0f) {
                 xn = -2.0f / 3.0f;
-            else if (xn >= 1.0f)
+            } else if (xn >= 1.0f) {
                 xn = 2.0f / 3.0f;
-            else
+            } else {
                 xn = xn - (1.0f / 3.0f) * xn * xn * xn;
+            }
 
             // Pre-filter for down-sampling
             // Run de-emphasis and anti-aliasing filters
@@ -175,10 +177,11 @@ void od_set_drive(overdrive *od, float drive_db)   // 0 dB to 45 dB
 {
     float drv = drive_db;
 
-    if (drv < 0.0f)
+    if (drv < 0.0f) {
         drv = 0.0f;
-    else if (drv > 45.0f)
+    } else if (drv > 45.0f) {
         drv = 45.0f;
+    }
 
     od->gain = powf(10.0f, drv / 20.0f);
 }
@@ -187,10 +190,11 @@ void od_set_tone(overdrive *od, float hf_level_db) // high pass boost/cut, +/- 1
 {
     float tone = hf_level_db;
 
-    if (tone < -12.0f)
+    if (tone < -12.0f) {
         tone = -12.0f;
-    else if (tone > 12.0f)
+    } else if (tone > 12.0f) {
         tone = 12.0f;
+    }
 
     od->tone = powf(10.0f, tone / 20.0f);
 }
@@ -199,21 +203,24 @@ void od_set_level(overdrive *od, float outlevel_db) // -40 dB to +0 dB
 {
     float vol = outlevel_db;
 
-    if (vol < -40.0f)
+    if (vol < -40.0f) {
         vol = 40.0f;
-    if (vol > 0.0f)
+    }
+    if (vol > 0.0f) {
         vol = 0.0f;
+    }
 
     od->level = powf(10.0f, vol / 20.0f);
 }
 
 void od_set_dry(overdrive *od, float dry) {
-    if (dry < 0.0f)
+    if (dry < 0.0f) {
         od->dry = 0.0f;
-    else if (dry > 1.0f)
+    } else if (dry > 1.0f) {
         od->dry = 1.0f;
-    else
+    } else {
         od->dry = dry;
+    }
 }
 
 bool od_set_bypass(overdrive *od, bool bypass) {
@@ -230,8 +237,10 @@ bool od_set_bypass(overdrive *od, bool bypass) {
 void overdrive_tick(overdrive *od, float *x) {
     unsigned int n = od->blksz;
 
-    if (od->bypass)
+    if (od->bypass) {
         return;
+    }
+
     // Run pre-emphasis filter
     for (unsigned int i = 0; i < n; i++) {
         od->procbuf[i] = tick_filter_1p(&(od->pre_emph), x[i]);

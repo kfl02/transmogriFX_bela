@@ -31,7 +31,6 @@ void commit_circuit_config(phaser_coeffs *cf) {
             cf->ghpf[i] = cf->ghpf[0];
         }
     }
-
 }
 
 void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
@@ -46,6 +45,7 @@ void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
                 cf->stagger[i] = false;
                 cf->apply_feedback[i] = false;
             }
+
             cf->gfb[3] = 0.455f; //tap feedback from stage 4
             cf->apply_feedback[3] = true;
             cf->distort = 0.5f;
@@ -53,7 +53,9 @@ void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
             cf->wet = 1.0f;
             cf->dry = 1.0f;
             cf->mod->lfo_type = RELAX;
+
             break;
+
         case PHASER_DEFAULT:
         default:
             cf->n_stages = 6;
@@ -65,11 +67,13 @@ void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
                 cf->stagger[i] = false;
                 cf->apply_feedback[i] = false;
             }
+
             cf->distort = 0.5f;
             cf->idistort = 1.0f / cf->distort;
             cf->wet = 1.0f;
             cf->dry = 1.0f;
             cf->mod->lfo_type = EXP;
+
             break;
 
     }
@@ -122,8 +126,12 @@ inline float clip_hard(float x) {
     float f = 1.25f;
 
     //Hard limiting
-    if (x >= 1.2f) x = 1.2f;
-    if (x <= -1.12f) x = -1.12f;
+    if (x >= 1.2f) {
+        x = 1.2f;
+    }
+    if (x <= -1.12f) {
+        x = -1.12f;
+    }
 
     //Soft clipping
     if (x > thrs) {
@@ -132,7 +140,6 @@ inline float clip_hard(float x) {
     if (x < nthrs) {
         x += f * sqr(x - nthrs);
     }
-
 
     return x;
 }
@@ -147,7 +154,10 @@ phaser_modulate(phaser_coeffs *cf) {
     // TODO: st is always 0 here. Intended?
     cf->a1p[st] = cf->a1p_min[st] + cf->a1p_dif[st] * lfo;
     cf->ghpf[st] = (1.0f - cf->a1p[st]) * 0.5f;
-    if (!cf->stagger[0]) return;
+
+    if (!cf->stagger[0]) {
+        return;
+    }
 
     for (st = 1; st < cf->n_stages; st++) {
         if (cf->stagger[st]) {
@@ -172,11 +182,15 @@ phaser_tick(float x_, phaser_coeffs *cf) {
         } else {
             stag = 0;
         }
-        if (st > 0) stn = st - 1;
+        if (st > 0) {
+            stn = st - 1;
+        }
+
         cf->yh1[st] = cf->ghpf[stag] * (cf->ph1[stn] - cf->xh1[st]) - cf->a1p[stag] * cf->yh1[st];
         cf->xh1[st] = cf->ph1[stn];
         cf->ph1[st] = 2.0f * cf->idistort * clip_hard(cf->distort * cf->yh1[st]) - cf->ph1[stn];
         //cf->ph1[st] = 2.0*cf->yh1[st] - cf->ph1[stn];
+
         if (cf->apply_feedback[st]) {
             cf->fb += cf->ph1[st] * cf->gfb[st];
         }
@@ -184,9 +198,7 @@ phaser_tick(float x_, phaser_coeffs *cf) {
 
     float out = cf->wet * cf->ph1[cf->n_stages - 1] + cf->dry * x_;
 
-    //And ship it!
     return out;
-
 }
 
 void
@@ -203,13 +215,13 @@ phaser_tick_n(phaser_coeffs *cf, int n, float *x) {
     for (int i = 0; i < n; i++) {
         x[i] = phaser_tick(x[i], cf);
     }
-
 }
 
 void
 phaser_set_nstages(phaser_coeffs *cf, int nstages) {
     //TODO: Check feedback not coming from invalid stage
     cf->n_stages = nstages;
+
     commit_circuit_config(cf);
 }
 
@@ -217,7 +229,10 @@ void
 phaser_set_mix(phaser_coeffs *cf, float wet) {
     float wet_ = wet;
     float gain = 1.0f + 2.0f * fabs(wet_);
-    if (gain > 2.0f) gain = 4.0f - gain;
+
+    if (gain > 2.0f) {
+        gain = 4.0f - gain;
+    }
 
     if (wet < 0.0f) {
         cf->wet = wet * gain;
@@ -242,6 +257,7 @@ void
 phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage) {
     cf->w_min[stage] = 2.0f * M_PI * depth;
     cf->w_max[stage] = cf->w_min[stage] + cf->w_diff[stage];
+
     commit_circuit_config(cf);
 }
 
@@ -256,20 +272,22 @@ void
 phaser_set_feedback(phaser_coeffs *cf, float fb, int stage) {
     cf->gfb[stage] = fb;
 
-    if (fb == 0.0f)
+    if (fb == 0.0f) {
         cf->apply_feedback[stage] = false;
-    else
+    } else {
         cf->apply_feedback[stage] = true;
+    }
 }
 
 void
 phaser_set_distortion(phaser_coeffs *cf, float d) {
-    if (d < 0.001f)
+    if (d < 0.001f) {
         cf->distort = 0.001f;
-    else if (d > 1000.0f)
+    } else if (d > 1000.0f) {
         cf->distort = 1000.0f;
-    else
+    } else {
         cf->distort = d;
+    }
 
     cf->idistort = 1.0f / d;
 }

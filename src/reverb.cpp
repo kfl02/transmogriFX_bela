@@ -42,7 +42,9 @@ Diff1::~Diff1() {
 void Diff1::init(int size, float c) {
     _size = size;
     _line = new float[size];
+
     memset(_line, 0, size * sizeof(float));
+
     _i = 0;
     _c = c;
 }
@@ -50,6 +52,7 @@ void Diff1::init(int size, float c) {
 
 void Diff1::fini() {
     delete[] _line;
+
     _size = 0;
     _line = 0;
 }
@@ -72,13 +75,16 @@ Delay::~Delay() {
 void Delay::init(int size) {
     _size = size;
     _line = new float[size];
+
     memset(_line, 0, size * sizeof(float));
+
     _i = 0;
 }
 
 
 void Delay::fini() {
     delete[] _line;
+
     _size = 0;
     _line = 0;
 }
@@ -101,7 +107,9 @@ Vdelay::~Vdelay() {
 void Vdelay::init(int size) {
     _size = size;
     _line = new float[size];
+
     memset(_line, 0, size * sizeof(float));
+
     _ir = 0;
     _iw = 0;
 }
@@ -109,6 +117,7 @@ void Vdelay::init(int size) {
 
 void Vdelay::fini() {
     delete[] _line;
+
     _size = 0;
     _line = 0;
 }
@@ -116,7 +125,10 @@ void Vdelay::fini() {
 
 void Vdelay::set_delay(int del) {
     _ir = _iw - del;
-    if (_ir < 0) _ir += _size;
+
+    if (_ir < 0) {
+        _ir += _size;
+    }
 }
 
 
@@ -175,9 +187,11 @@ Reverb::~Reverb() {
 
 void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
     int i, k1, k2;
+
     inp[0] = new float[frame_size];
     inp[1] = new float[frame_size];
     out_mono = new float[frame_size];
+
     for (i = 0; i < 4; i++) {
         out[i] = new float[frame_size];
     }
@@ -189,6 +203,7 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
             out[k1][i] = 0.0;
         }
     }
+
     _fragm = 1024;
     _nsamp = 0;
 
@@ -214,6 +229,7 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
 
     _vdelay0.init((int) (0.1f * _fsamp));
     _vdelay1.init((int) (0.1f * _fsamp));
+
     for (i = 0; i < 8; i++) {
         k1 = (int) (floorf(_tdiff1[i] * _fsamp + 0.5f));
         k2 = (int) (floorf(_tdelay[i] * _fsamp + 0.5f));
@@ -227,7 +243,9 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
 
 
 void Reverb::fini() {
-    for (int i = 0; i < 8; i++) _delay[i].fini();
+    for (int i = 0; i < 8; i++) {
+        _delay[i].fini();
+    }
 }
 
 
@@ -241,46 +259,90 @@ void Reverb::prepare(int nfram) {
     _d0 = _d1 = 0;
 
     if (a != _cntA2) {
-        if (_ipdel < 0.02f) _ipdel = 0.02f;
-        if (_ipdel > 0.10f) _ipdel = 0.10f;
+        if (_ipdel < 0.02f) {
+            _ipdel = 0.02f;
+        }
+        if (_ipdel > 0.10f) {
+            _ipdel = 0.10f;
+        }
+
         k = (int) (floorf((_ipdel - 0.02f) * _fsamp + 0.5f));
+
         _vdelay0.set_delay(k);
         _vdelay1.set_delay(k);
         _cntA2 = a;
     }
 
     if (b != _cntB2) {
-        if (_xover < 50.0f) _xover = 50.0f;
-        if (_xover > 1.0e3f) _xover = 1.0e3f;
-        if (_rtlow < 1.0f) _rtlow = 1.0f;
-        if (_rtlow > 8.0f) _rtlow = 8.0f;
-        if (_rtmid < 1.0f) _rtmid = 1.0f;
-        if (_rtmid > 8.0f) _rtmid = 8.0f;
-        if (_fdamp < 1.5e3f) _fdamp = 1.5e3f;
-        if (_fdamp > 24.0e3f) _fdamp = 24.0e3f;
+        if (_xover < 50.0f) {
+            _xover = 50.0f;
+        }
+        if (_xover > 1.0e3f) {
+            _xover = 1.0e3f;
+        }
+        if (_rtlow < 1.0f) {
+            _rtlow = 1.0f;
+        }
+        if (_rtlow > 8.0f) {
+            _rtlow = 8.0f;
+        }
+        if (_rtmid < 1.0f) {
+            _rtmid = 1.0f;
+        }
+        if (_rtmid > 8.0f) {
+            _rtmid = 8.0f;
+        }
+        if (_fdamp < 1.5e3f) {
+            _fdamp = 1.5e3f;
+        }
+        if (_fdamp > 24.0e3f) {
+            _fdamp = 24.0e3f;
+        }
+
         wlo = 6.2832f * _xover / _fsamp;
-        if (_fdamp > 0.49f * _fsamp) chi = 2;
-        else chi = 1 - cosf(6.2832f * _fdamp / _fsamp);
+
+        if (_fdamp > 0.49f * _fsamp) {
+            chi = 2;
+        } else {
+            chi = 1 - cosf(6.2832f * _fdamp / _fsamp);
+        }
+
         for (i = 0; i < 8; i++) {
             _filt1[i].set_params(_tdelay[i], _rtmid, _rtlow, wlo, 0.5f * _rtmid, chi);
         }
+
         _cntB2 = b;
     }
 
     if (c != _cntC2) {
-        if (_rtmid < 1.0f) _rtmid = 1.0f;
-        if (_rtmid > 8.0f) _rtmid = 8.0f;
+        if (_rtmid < 1.0f) {
+            _rtmid = 1.0f;
+        }
+        if (_rtmid > 8.0f) {
+            _rtmid = 8.0f;
+        }
         if (_ambis) {
-            if (_rgxyz < -9.0f) _rgxyz = -9.0f;
-            if (_rgxyz > 9.0f) _rgxyz = 9.0f;
+            if (_rgxyz < -9.0f) {
+                _rgxyz = -9.0f;
+            }
+            if (_rgxyz > 9.0f) {
+                _rgxyz = 9.0f;
+            }
+
             t0 = 1.0f / sqrtf(_rtmid);
             t1 = t0 * powf(10.0f, 0.05f * _rgxyz);
         } else {
-            if (_opmix < 0.0f) _opmix = 0.0f;
-            if (_opmix > 1.0f) _opmix = 1.0f;
+            if (_opmix < 0.0f) {
+                _opmix = 0.0f;
+            }
+            if (_opmix > 1.0f) {
+                _opmix = 1.0f;
+            }
+
             t0 = (1 - _opmix) * (1 + _opmix);
             t1 = 0.7f * _opmix * (2 - _opmix) / sqrtf(_rtmid);
         }
+
         _d0 = (t0 - _g0) / (float) nfram;
         _d1 = (t1 - _g1) / (float) nfram;
         _cntC2 = c;
@@ -288,7 +350,6 @@ void Reverb::prepare(int nfram) {
 
     _pareq1.prepare(nfram);
     _pareq2.prepare(nfram);
-
 }
 
 
@@ -403,12 +464,14 @@ void Reverb::tick_mono(int frames, float *audio) {
     int i, k;
     int fr = frames;
     float *inp_[2];
+
     inp_[0] = (float *) inp[0];
     inp_[1] = (float *) inp[1];
+
     float *out_[4];
+
     out_[0] = out[0];
     out_[1] = out[1];
-
 
     for (i = 0; i < frames; i++) {
         inp_[0][i] = audio[i];
@@ -422,11 +485,17 @@ void Reverb::tick_mono(int frames, float *audio) {
             prepare(_fragm);
             _nsamp = _fragm;
         }
+
         k = (_nsamp < frames) ? _nsamp : frames;
+
         process(k, inp_, out_);
 
-        for (i = 0; i < 2; i++) inp_[i] += k;
-        for (i = 0; i < 2; i++) out_[i] += k;
+        for (i = 0; i < 2; i++) {
+            inp_[i] += k;
+        }
+        for (i = 0; i < 2; i++) {
+            out_[i] += k;
+        }
 
         frames -= k;
         _nsamp -= k;

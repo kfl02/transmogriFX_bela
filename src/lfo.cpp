@@ -9,12 +9,17 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     float ts = 1.0f / fs;
     float frq = 2.0f * fosc;
     float t = 4.0f * frq * frq * ts * ts;
-
     float p = phase / 180.0f;  //Phase can be as large as desired to delay LFO startup
-    if (p < 0.0f) p *= -1.0f;  //don't let it be negative
+
+    if (p < 0.0f) {
+        p *= -1.0f;
+    }  //don't let it be negative
+
     p /= frq;
     p *= fs;
+
     int phdly = (int) p;
+
     lp->startup_delay = phdly;
 
     //Integrated triangle wave LFO (quasi-sinusoidal, linear pitch shift)
@@ -30,6 +35,7 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     lp->ktri = frq / fs;
     lp->trisign = 1.0f;
     p = frq * phase / (360.0f * fosc);
+
     if (p >= 1.0f) {
         p -= 1.0f;
         lp->trisign = -1.0f;
@@ -38,6 +44,7 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
         p = 0.0f;
         lp->trisign = 1.0f;
     }
+
     lp->trilfo = p;
 
     //Sine wave LFO variables
@@ -76,7 +83,6 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
 }
 
 void update_lfo(lfoparams *lp, float fosc, float fs) {
-
     float ts = 1.0f / fs;
     float frq = 2.0f * fosc;
     float t = 4.0f * frq * frq * ts * ts;
@@ -99,6 +105,7 @@ void update_lfo(lfoparams *lp, float fosc, float fs) {
 
     //Relaxation oscillator parameters
     float k = expf(-2.0f * fosc / fs);
+
     lp->rlx_k = k;
     lp->rlx_ik = 1.0f - k;
 
@@ -107,15 +114,21 @@ void update_lfo(lfoparams *lp, float fosc, float fs) {
     lp->exp_ik = k;
     lp->exp_k = 1.0f / k;
 
-    if (lp->exp_x >= 1.0f)
+    if (lp->exp_x >= 1.0f) {
         lp->exp_x = lp->exp_k;
-    else
+    } else {
         lp->exp_x = lp->exp_ik;
+    }
 
     lp->exp_min = 1.0f / M_E;
     lp->exp_max = 1.0f + 1.0f / M_E;
-    if (lp->exp_sv < lp->exp_min) lp->exp_sv = lp->exp_min;
-    if (lp->exp_sv > lp->exp_max) lp->exp_sv = lp->exp_max;
+
+    if (lp->exp_sv < lp->exp_min) {
+        lp->exp_sv = lp->exp_min;
+    }
+    if (lp->exp_sv > lp->exp_max) {
+        lp->exp_sv = lp->exp_max;
+    }
 
 }
 
@@ -132,10 +145,12 @@ float run_integrated_triangle_lfo(lfoparams *lp) {
     if (lp->startup_delay > 0) {
         lp->startup_delay -= 1;
         lp->lfo = 0.0f;
+
         return 0.0f;
     }
 
     lp->x += lp->sign;
+
     if (lp->x >= lp->k) {
         lp->sign = lp->nsign_;
 
@@ -153,8 +168,8 @@ float run_integrated_triangle_lfo(lfoparams *lp) {
         lp->nk = lp->nk_;
     }
 
-
     lp->lfo += lp->x;
+
     if (lp->lfo > 1.0f) {
         //fprintf(stderr,"%f\n",sum);
         lp->lfo = 1.0f;
@@ -163,19 +178,21 @@ float run_integrated_triangle_lfo(lfoparams *lp) {
         //fprintf(stderr,"%f\n",sum);
         lp->lfo = 0.0f;
     }
+
     return lp->lfo;
 }
 
 // Triangle wave oscillator
 float run_triangle_lfo(lfoparams *lp) {
-
     lp->trilfo += lp->ktri * lp->trisign;
+
     if (lp->trilfo >= 1.0f) {
         lp->trisign = -1.0f;
     }
     if (lp->trilfo <= 0.0f) {
         lp->trisign = 1.0f;
     }
+
     return lp->trilfo;
 }
 
@@ -183,6 +200,7 @@ float run_triangle_lfo(lfoparams *lp) {
 float run_sine_lfo(lfoparams *lp) {
     lp->sin_part += lp->cos_part * lp->ksin;
     lp->cos_part -= lp->sin_part * lp->ksin;
+
     return 0.5f * (1.0f + lp->cos_part);
 }
 
@@ -220,6 +238,7 @@ float run_rlx_lfo(lfoparams *lp) {
 float run_exp_lfo(lfoparams *lp) {
     //Exponential oscillator parameters
     lp->exp_sv *= lp->exp_x;
+
     if (lp->exp_sv >= lp->exp_max) {
         lp->exp_x = lp->exp_ik;
     } else if (lp->exp_sv <= lp->exp_min) {
@@ -231,6 +250,7 @@ float run_exp_lfo(lfoparams *lp) {
 
 float run_lfo(lfoparams *lp) {
     float lfo_out = 0.0f;
+
     switch (lp->lfo_type) {
         case INT_TRI: //integrated triangle
             lfo_out = run_integrated_triangle_lfo(lp);
@@ -253,6 +273,7 @@ float run_lfo(lfoparams *lp) {
             } else {
                 lfo_out *= 1.0f / (1.0f - 30.0f * lfo_out);
             }
+
             lfo_out *= 16.0f;
             lfo_out += 0.5f;
 
@@ -286,8 +307,9 @@ float run_lfo(lfoparams *lp) {
 
 void get_lfo_name(unsigned int type, char *outstring) {
     // TODO: WTF? Return a string constant
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 30; i++) {
         outstring[i] = '\0';
+    }
 
     switch (type) {
         case INT_TRI: //integrated triangle
@@ -333,5 +355,4 @@ void get_lfo_name(unsigned int type, char *outstring) {
 void set_lfo_type(lfoparams *lp, unsigned int type) {
     lp->lfo_type = type;
 }
-
 

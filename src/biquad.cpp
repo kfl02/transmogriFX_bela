@@ -16,15 +16,19 @@ make_butterworth_coeffs(int order, float *coeffs) {
     if (n % 2 == 0) {
         for (k = 1; k <= n / 2; k++) {
             float fk = (float) k;
+
             coeffs[k - 1] =
-                    1.0f/ (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
+                    1.0f /
+                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     } else { //odd
         for (k = 1; k <= (n - 1) / 2; k++) {
             float fk = (float) k;
+
             coeffs[k - 1] =
-                    1.0 / (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
+                    1.0 /
+                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     }
@@ -94,31 +98,26 @@ biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
 
 biquad_coeffs *
 make_biquad(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
-
     cf = (biquad_coeffs *) malloc(sizeof(biquad_coeffs));
+
     biquad_update_coeffs(type, cf, fs, f0, Q);
+
     cf->y1 = 0.0f;
     cf->y2 = 0.0f;
     cf->x1 = 0.0f;
     cf->x2 = 0.0f;
-    return cf;
 
+    return cf;
 }
 
 float
 run_filter(float x, biquad_coeffs *cf) {
-
     float y0 = cf->b0 * x + cf->b1 * cf->x1 + cf->b2 * cf->x2
                - cf->a1 * cf->y1 - cf->a2 * cf->y2;
     cf->x2 = cf->x1;
     cf->x1 = x;
     cf->y2 = cf->y1;
     cf->y1 = y0;
+
     return y0;
-
 }
-
-
-
-
-

@@ -22,7 +22,6 @@ typedef struct biquad_t {
     //operational parameters
     float Q;
     float f0;
-
 } biquad_coeffs;
 
 
@@ -42,4 +41,3 @@ float
 run_filter(float, biquad_coeffs *);
 //run_filter(float x, biquad_coeffs* cf);
 #endif
-

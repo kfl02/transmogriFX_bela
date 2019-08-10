@@ -25,18 +25,19 @@ display_20x4_lcd *make_20x4_lcd(display_20x4_lcd *d, char *port, bool new_lcd, f
     d->tio.c_cc[VTIME] = 2;
 
     int psz = strlen(port);
+
     for (int i = 0; i < psz; i++) {
         d->tty_port[i] = port[i];
     }
 
     d->tty_fd = open(d->tty_port, O_RDWR | O_NONBLOCK);
+
     cfsetospeed(&(d->tio), B115200);            // 115200 baud
     cfsetispeed(&(d->tio), B115200);            // 115200 baud
 
     tcsetattr(d->tty_fd, TCSANOW, &(d->tio));
 
     //Clear display lines
-    int i = 0;
     for (int i = 0; i < LCD_COLS; i++) {
         d->line1[i] = ' ';
         d->line2[i] = ' ';
@@ -51,12 +52,16 @@ display_20x4_lcd *make_20x4_lcd(display_20x4_lcd *d, char *port, bool new_lcd, f
 
     //Commands to LCD
     unsigned char cmd[4];
-    for (i = 0; i < 4; i++)
+
+    for (int i = 0; i < 4; i++) {
         cmd[i] = ' ';
+    }
+
     cmd[0] = 0xFE;
 
     //Default don't use autoscroll function
     cmd[1] = 0x52; //0x52 off, 0x51 on
+
     write(d->tty_fd, cmd, 2);
     usleep(10 * ms);
 
@@ -64,6 +69,7 @@ display_20x4_lcd *make_20x4_lcd(display_20x4_lcd *d, char *port, bool new_lcd, f
     cmd[1] = 0xD1;
     cmd[2] = 20; // 20 columns
     cmd[3] = 4; // 4 row
+
     if (new_lcd) {
         write(d->tty_fd, cmd, 4);
         usleep(10 * ms);
@@ -101,39 +107,48 @@ display_20x4_lcd *make_20x4_lcd(display_20x4_lcd *d, char *port, bool new_lcd, f
     }
 
     cmd[1] = 0x58;
+
     write(d->tty_fd, cmd, 2);
     usleep(10 * ms);
 
     //Contrast
     cmd[1] = 0x50;
     cmd[2] = 200;
+
     write(d->tty_fd, cmd, 3);
     usleep(10 * ms);
 
     tcdrain(d->tty_fd);
     usleep(10 * ms);
+
     //Peak detector
-    for (int i = 0; i < LCD_N_PK_DET; i++)
+    for (int i = 0; i < LCD_N_PK_DET; i++) {
         d->pk_detector[i] = 0.0;
+    }
 
     return d;
 }
 
 int lcd_write_line(display_20x4_lcd *d, char *string, unsigned char line, unsigned char pos) {
     char cmd[4];
-
     int sz = strlen(string);
     unsigned char p = pos;
     unsigned char l = line;
+
     if (p > LCD_COLS) {
         p = LCD_COLS;
         l += 1;
-        if (l > 4)
+        if (l > 4) {
             l = 0;
+        }
     }
+
     int e = p + sz;
-    if (e > LCD_COLS)
+
+    if (e > LCD_COLS) {
         e = LCD_COLS;
+    }
+
     //Move cursor position
     cmd[0] = 0xFE;
     cmd[1] = 0x47;
@@ -152,9 +167,11 @@ int lcd_write_line(display_20x4_lcd *d, char *string, unsigned char line, unsign
 
 void lcd_clear_display(display_20x4_lcd *d) {
     char cmd[2];
+
     //Clear screen
     cmd[0] = 0xFE;
     cmd[1] = 0x58;
+
     write(d->tty_fd, cmd, 2);
     tcdrain(d->tty_fd);
     usleep(10 * ms);
@@ -164,15 +181,19 @@ void lcd_read_from_device(display_20x4_lcd *d) {
     unsigned char c = 0;
     int i = 0;
     unsigned char x = 0;
+
     while (read(d->tty_fd, &c, 1) > 0) {
         printf("%c", c);
+
         if (++i > 4) {
             x = (c - '0') & 0x0F;
             printf("\nState: %d\n", x);
             for (int j = 0; j < 4; j++) {
                 printf("%d", ((x >> j) & 0x01));
             }
+
             printf("\n");
+
             i = 0;
         }
     }
@@ -185,6 +206,7 @@ void lcd_color(display_20x4_lcd *d, unsigned char r, unsigned char g, unsigned c
     cmd[2] = r;
     cmd[3] = g;
     cmd[4] = b;
+
     write(d->tty_fd, cmd, 5);
     tcdrain(d->tty_fd);
     usleep(10 * ms);
@@ -193,11 +215,11 @@ void lcd_color(display_20x4_lcd *d, unsigned char r, unsigned char g, unsigned c
 // Give it a signal bounded (-1.0 to 1.0) and tell whether it is input (true) or output (false)
 void
 lcd_level_meter(display_20x4_lcd *d, float *signal, int N, unsigned char chan) {
-    int i;
     float x = 0.0;
 
-    for (i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++) {
         x = fabs(signal[i]);
+
         if (x > d->pk_detector[chan]) {
             d->pk_detector[chan] = x;
         }
@@ -216,10 +238,12 @@ lcd_level_meter_write(display_20x4_lcd *d, unsigned char chan) {
     // l0 /= 2;
     int l0 = (int) (20.0 * d->pk_detector[chan]);
 
-    if (l0 > 0x1F)
+    if (l0 > 0x1F) {
         l0 = 0x1F;
-    if (l0 < 0)
+    }
+    if (l0 < 0) {
         l0 = 0;
+    }
 
 
     if (d->pk_detector[chan] > 0.95) {
@@ -227,6 +251,7 @@ lcd_level_meter_write(display_20x4_lcd *d, unsigned char chan) {
     }
 
     cmd[3] = (unsigned char) (l0 & 0xFF); //Level
+
     write(d->tty_fd, cmd, 4);
     tcdrain(d->tty_fd);
 

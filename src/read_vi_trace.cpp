@@ -12,16 +12,19 @@ int load_vi_data(vi_trace *vi, char *filename) {
     FILE *handle;
     handle = fopen(filename, "r");
 
-    if (handle == NULL)
+    if (handle == NULL) {
         return -1;
+    }
 
     fgets(outstr, 100, handle);
 
     int cnt = 0;
+
     while (fgets(outstr, 100, handle) != NULL) {
         sscanf(outstr, "%e%e", &a, &v);
         cnt++;
     }
+
     rewind(handle);
     fgets(outstr, 100, handle); //pitch first row
 
@@ -40,15 +43,18 @@ int load_vi_data(vi_trace *vi, char *filename) {
             vi->minamp = a;
         }
 
-        if (a > vi->maxamp)
+        if (a > vi->maxamp) {
             vi->maxamp = a;
-        if (a < vi->minamp)
+        }
+        if (a < vi->minamp) {
             vi->minamp = a;
+        }
     }
 
     vi->di = ((float) (cnt - 1)) / (vi->maxamp - vi->minamp);
 
     fclose(handle);
+
     return 0;
 }
 

@@ -49,6 +49,7 @@ Sustainer::cleanup() {
 void
 Sustainer::init(float SAMPLE_RATE, int PER) {
     float cSAMPLE_RATE = 1.0f / SAMPLE_RATE;
+
     Pvolume = 64;
     Psustain = 64;
     fsustain = 0.5f;
@@ -56,6 +57,7 @@ Sustainer::init(float SAMPLE_RATE, int PER) {
     bypass = true;
 
     float tmp = 0.01f;  //10 ms decay time on peak detectors
+
     prls = 1.0f - (cSAMPLE_RATE / (cSAMPLE_RATE + tmp));
 
     tmp = 0.05f; //50 ms att/rel on compressor
@@ -70,7 +72,7 @@ Sustainer::init(float SAMPLE_RATE, int PER) {
     PERIOD = PER;
 
     envelope = new float[PERIOD];
-    for (int i = 0; i < PERIOD; i++) envelope[i] = 0.0;
+    for (int i = 0; i < PERIOD; i++) { envelope[i] = 0.0; }
 
     setpreset(0);
 }
@@ -85,6 +87,7 @@ Sustainer::tick_n(float *x) {
 
     for (i = 0; i < PERIOD; i++) {  //apply compression to auxresampled
         smpl = input * x[i];
+
         if (fabs(smpl) > compeak) {
             compeak = fabs(smpl);   //First do peak detection on the signal
             timer = 0;
@@ -93,6 +96,7 @@ Sustainer::tick_n(float *x) {
             compeak *= prls;
             timer--;
         }
+
         envelope[i] = compeak;
         timer++;
 
@@ -108,8 +112,12 @@ Sustainer::tick_n(float *x) {
                 tmpgain = 1.0f;
             }
 
-            if (compenv < cpthresh) cpthresh = compenv;
-            if (cpthresh < cthresh) cpthresh = cthresh;
+            if (compenv < cpthresh) {
+                cpthresh = compenv;
+            }
+            if (cpthresh < cthresh) {
+                cpthresh = cthresh;
+            }
 
             x[i] = smpl * tmpgain * level;
         }
@@ -119,7 +127,7 @@ Sustainer::tick_n(float *x) {
 };
 
 static inline float dB2rap(float dB) {
-    return expf((dB)*LOG_10/20.0f);
+    return expf((dB) * LOG_10 / 20.0f);
 }
 
 /*
@@ -131,6 +139,7 @@ void
 Sustainer::setpreset(int npreset) {
     const int PRESET_SIZE = 2;
     const int NUM_PRESETS = 3;
+
     int presets[NUM_PRESETS][PRESET_SIZE] = {
             //Moderate
             {79,  54},
@@ -141,8 +150,9 @@ Sustainer::setpreset(int npreset) {
 
     };
 
-    for (int n = 0; n < PRESET_SIZE; n++)
+    for (int n = 0; n < PRESET_SIZE; n++) {
         changepar(n, presets[npreset][n]);
+    }
 
     Ppreset = npreset;
 };
@@ -155,8 +165,9 @@ Sustainer::setGain(float g) {
 void
 Sustainer::setSustain(float s) {
     float fsustain = s;
+
     cratio = 1.25f - fsustain;
-    input = dB2rap (42.0f * fsustain - 6.0f);
+    input = dB2rap(42.0f * fsustain - 6.0f);
     cthresh = 0.25f + fsustain;
 }
 
@@ -168,12 +179,12 @@ Sustainer::changepar(int npar, int value) {
             Pvolume = value;
             setGain(((float) Pvolume / 127.0f));
             break;
+
         case 1:
             Psustain = value;
             fsustain = (float) Psustain / 127.0f;
             setSustain(fsustain);
             break;
-
     };
 };
 
@@ -184,10 +195,12 @@ Sustainer::getpar(int npar) {
         case 0:
             return (Pvolume);
             break;
+
         case 1:
             return (Psustain);
             break;
     };
+
     return (0);         //in case of bogus parameter number
 };
 
@@ -204,4 +217,3 @@ Sustainer::get_envelope(float *env) {
         env[i] = envelope[i];
     }
 }
-

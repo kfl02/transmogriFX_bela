@@ -83,4 +83,3 @@ void iwah_circuit_preset(int, iwah_coeffs *, float);
 void iwah_bypass(iwah_coeffs *, bool);
 
 #endif //IWAH_H
-

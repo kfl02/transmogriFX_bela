@@ -10,13 +10,16 @@ void trem_circuit_preset(trem_coeffs *cf, int ckt) {
             cf->depth = 0.6f;  //approximately +/-3dB
             cf->gain = 1.29f;
             cf->lfo_type = RELAX;
+
             set_lfo_type(cf->lfo, cf->lfo_type);
             update_lfo(cf->lfo, 5, cf->fs);
             break;
+
         case TREM_SQUARE:
             cf->depth = 1.0f;  //deep
             cf->gain = 1.25f;
             cf->lfo_type = SQUARE;
+
             set_lfo_type(cf->lfo, cf->lfo_type);
             update_lfo(cf->lfo, 2.0f, cf->fs);
             break;
@@ -24,6 +27,7 @@ void trem_circuit_preset(trem_coeffs *cf, int ckt) {
             cf->depth = 2.0f;  //all the way down
             cf->gain = 2.0f; //No mistake it's working
             cf->lfo_type = TRI;
+
             set_lfo_type(cf->lfo, cf->lfo_type);
             update_lfo(cf->lfo, 3.0f, cf->fs);
             break;
@@ -55,8 +59,13 @@ trem_tick(trem_coeffs *cf, float x_) {
 
 void
 trem_tick_n(trem_coeffs *cf, float *x, int n) {
-    if (cf->bypass) return;
-    for (int i = 0; i < n; i++) x[i] = trem_tick(cf, x[i]);
+    if (cf->bypass) {
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        x[i] = trem_tick(cf, x[i]);
+    }
 }
 
 void
@@ -78,6 +87,7 @@ void
 trem_set_lfo_type(trem_coeffs *cf, unsigned int type) {
     // TODO: check unsigned
     cf->lfo_type = type;
+
     set_lfo_type(cf->lfo, type);
 }
 

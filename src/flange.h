@@ -51,7 +51,7 @@ typedef struct tflanger_t {
 
     //Delay line pointer
     size_t dlyWrite;
-    size_t  maxDly;
+    size_t maxDly;
 
     //LFO
     float lfoConst;
@@ -110,10 +110,6 @@ void tflanger_setPreset(tflanger *, unsigned int);
 float tflanger_atkrls(arparams *, float);         //attack/release
 float tflanger_lpfilter(fparams *, float, char);  //simple first-order low pass
 
-
 void tflanger_updateParams(tflanger *);
 
-
 #endif //TFX_FLANGE_H
-
-

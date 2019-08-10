@@ -13,6 +13,7 @@ eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G)
     float alpha = s / (2.0f * Q);
     float a0, a1, a2;
     float b0, b1, b2;
+
     a0 = a1 = a2 = 0.0f;
     b0 = b1 = b2 = 0.0f;
 
@@ -29,7 +30,6 @@ eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G)
     cf->alpha = alpha;
 
     switch (type) {
-
         case PK_EQ:
             b0 = 1.0f + alpha * A;
             b1 = -2.0f * c;
@@ -84,15 +84,14 @@ eq_update_gain(eq_coeffs *cf, float G) {
     float sqrtA2 = 2.0 * sqrtf(A);
     float a0, a1, a2;
     float b0, b1, b2;
+
     a0 = a1 = a2 = 0.0f;
     b0 = b1 = b2 = 0.0f;
-
 
     float c = cf->c;
     float alpha = cf->alpha;
 
     switch (cf->type) {
-
         case PK_EQ:
             b0 = 1.0f + alpha * A;
             b1 = -2.0f * c;
@@ -125,6 +124,7 @@ eq_update_gain(eq_coeffs *cf, float G) {
     }
 
     float ia0 = 1.0f / a0;
+
     b0 *= ia0;
     b1 *= ia0;
     b2 *= ia0;
@@ -137,20 +137,20 @@ eq_update_gain(eq_coeffs *cf, float G) {
     //negate 'a' coefficients so addition can be used in filter
     cf->a1 = -a1;
     cf->a2 = -a2;
-
 }
 
 eq_coeffs *
 make_eq_band(int type, eq_coeffs *cf, float fs, float f0, float Q, float G) {
-
     cf = (eq_coeffs *) malloc(sizeof(eq_coeffs));
+
     eq_compute_coeffs(cf, type, fs, f0, Q, G);
+
     cf->y1 = 0.0;
     cf->y2 = 0.0;
     cf->x1 = 0.0;
     cf->x2 = 0.0;
-    return cf;
 
+    return cf;
 }
 
 eq_filters *
@@ -158,16 +158,20 @@ make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float
     float G = 0.0f;
     float f1 = fstop_;
     float f0 = fstart_;
-    if (f1 > sample_rate / 2.0f) f1 = sample_rate / 2.0f;
+
+    if (f1 > sample_rate / 2.0f) {
+        f1 = sample_rate / 2.0f;
+    }
+
     float nb = (float) nbands;
     float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1)));
     float Q = 0.25f * (m + 1.0f) / (m - 1.0f);
 
-    int i = 0;
     eq = (eq_filters *) malloc(sizeof(eq_filters));
     eq->band = (eq_coeffs **) malloc((nbands + 2) * sizeof(eq_coeffs *));
     eq->nbands = nbands;
-    for (i = 0; i < nbands; i++) {
+
+    for (int i = 0; i < nbands; i++) {
         //printf("f0 = %f\tQ = %f\tfl=%f\tfh=%f\n", f0, Q, f0-0.5*f0/Q, f0+0.5*f0/Q);
         eq->band[i] = make_eq_band(PK_EQ, eq->band[i], sample_rate, f0, Q, G);
         eq->band[i]->f0 = f0;
@@ -193,29 +197,31 @@ make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float
     eq->band[nbands + 1]->G = G;
     eq->band[nbands + 1]->fs = sample_rate;
     eq->band[nbands + 1]->type = HIGH_SHELF;
+
     return eq;
 }
 
 inline float
 tick_eq_band(eq_coeffs *cf, float x) {
-
     float y0 = cf->b0 * x + cf->b1 * cf->x1 + cf->b2 * cf->x2
                + cf->a1 * cf->y1 + cf->a2 * cf->y2;
     cf->x2 = cf->x1;
     cf->x1 = x;
     cf->y2 = cf->y1;
     cf->y1 = y0;
-    return y0;
 
+    return y0;
 }
 
 
 float geq_tick(eq_filters *eq, float x_) {
     int i;
     float x = x_;
+
     for (i = 0; i < (eq->nbands + 2); i++) {
         x = tick_eq_band(eq->band[i], x);
     }
+
     return x;
 }
 
@@ -225,9 +231,11 @@ void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
 
     for (size_t k = 0; k < N; k++) {
         x = xn[k];
+
         for (size_t i = 0; i < cnt; i++) {
             x = tick_eq_band(eq->band[i], x);
         }
+
         xn[k] = x;
     }
 }
@@ -242,11 +250,14 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
     // z^-2 = cos(2*w) - j*sin(2w)
 
     float num[2], den[2];
+
     num[0] = num[1] = 0.0f;
     den[0] = den[1] = 0.0f;
 
     float dw = dp * (f2 - f1) / (float) pts;
+
     dw /= fs;
+
     float w = dp * f1 / fs;
     float magn = 0.0f;
     float magd = 0.0f;
@@ -255,8 +266,7 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
 
     int n = abs(pts) + 1;
 
-    int i;
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         num[0] = cf->b0 + cf->b1 * cos(-w) + cf->b2 * cos(-2.0f * w); //numerator real part
         num[1] = cf->b1 * sin(-w) + cf->b2 * sin(-2.0f * w);
         den[0] = 1.0f + cf->a1 * cos(-w) + cf->a2 * cos(-2.0f * w); //numerator real part
@@ -274,6 +284,4 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
 
         w += dw;
     }
-
-
 }

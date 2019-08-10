@@ -4,7 +4,6 @@
 #include "inductorwah.h"
 
 void commit_circuit_config(iwah_coeffs *cf, float fs) {
-
     //Useful constants
     float RpRi = cf->Rp * cf->Ri / (cf->Rp + cf->Ri);
     float f0 = 1.0f / (2.0f * M_PI * sqrtf(cf->Lp * cf->Cf));
@@ -71,6 +70,7 @@ void iwah_circuit_preset(int ckt, iwah_coeffs *cf, float fs) {
     float Req = 0.0f;
     float ic = 0.0f;
     float beta = 0.0f;
+
     switch (ckt) {
         case GCB: //Dunlop GCB-95 variant 
             //Default values from Crybaby GCB-95 circuit
@@ -243,7 +243,6 @@ void iwah_circuit_preset(int ckt, iwah_coeffs *cf, float fs) {
             break;
 
         default:
-
             break;
     }
 
@@ -253,7 +252,6 @@ void iwah_circuit_preset(int ckt, iwah_coeffs *cf, float fs) {
 
 //Initialize filter state variables
 void zero_state_variables(iwah_coeffs *cf) {
-
     //biquad state variables
     cf->y1 = 0.0f;
     cf->y2 = 0.0f;
@@ -287,14 +285,17 @@ inline float sqr(float x) {
 }
 
 inline float clip1(float x) {
-
     float thrs = 0.8f;
     float nthrs = -0.72f;
     float f = 1.25f;
 
     //Hard limiting
-    if (x >= 1.2f) x = 1.2f;
-    if (x <= -1.12f) x = -1.12f;
+    if (x >= 1.2f) {
+        x = 1.2f;
+    }
+    if (x <= -1.12f) {
+        x = -1.12f;
+    }
 
     //Soft clipping
     if (x > thrs) {
@@ -304,18 +305,18 @@ inline float clip1(float x) {
         x += f * sqr(x - nthrs);
     }
 
-
     return x;
 }
 
 float inline
 iwah_tick(float x, float gp, iwah_coeffs *cf) {
-
     //variable gp is the pot gain, nominal range 0.0 to 1.0
     //although this can be abused for extended range.
     //A value less than zero would make the filter go unstable
     //and put a lot of NaNs in your audio output
-    if (gp < 0.0f) gp = 0.0f;
+    if (gp < 0.0f) {
+        gp = 0.0f;
+    }
 
     //The magic numbers below approximate frequency warping characteristic
     float gw = 4.6f - 18.4f / (4.0f + gp);
@@ -328,14 +329,18 @@ iwah_tick(float x, float gp, iwah_coeffs *cf) {
 
     //run it through the 1-pole HPF and gain first
     float hpf = cf->ghpf * (x - cf->xh1) - cf->a1p * cf->yh1;
+
     cf->xh1 = x;
     cf->yh1 = hpf;
 
     //Apply modulated biquad
     float y0 = cf->b0 * hpf + cf->b1 * cf->x1 + cf->b2 * cf->x2
                + (cf->a1 * cf->y1 + cf->a2 * cf->y2);
+
     y0 *= cf->ax;
+
     float out = clip1(y0);
+
     y0 = 0.95f * y0 + 0.05f * out; //Let a little harmonic distortion feed back into the filter loop
     cf->x2 = cf->x1;
     cf->x1 = hpf;
@@ -353,6 +358,7 @@ iwah_tick_n(iwah_coeffs *cf, float *x, float *gp, int n) {
         zero_state_variables(cf);
         return;
     }
+
     for (int i = 0; i < n; i++) {
         x[i] = iwah_tick(x[i], gp[i], cf);
     }
@@ -361,5 +367,3 @@ iwah_tick_n(iwah_coeffs *cf, float *x, float *gp, int n) {
 void iwah_bypass(iwah_coeffs *cf, bool state) {
     cf->bypass = state;
 }
-
-

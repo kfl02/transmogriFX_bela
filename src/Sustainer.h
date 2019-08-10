@@ -73,6 +73,4 @@ private:
     float cthresh, cratio, cpthresh;
 
 };
-
-
 #endif

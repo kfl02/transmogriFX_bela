@@ -20,12 +20,18 @@ sqr(float x) {
 
 inline float
 soft_clip(float xn_) {
-
     float xn = 2.0f * xn_ - 1.0f;
-    if (xn > 1.0f) xn = 1.0f;
-    else if (xn < -1.0f) xn = -1.0f;
-    else if (xn < 0.0f) xn = sqr(xn + 1.0f) - 1.0f;
-    else xn = 1.0f - sqr(1.0f - xn);
+
+    if (xn > 1.0f) {
+        xn = 1.0f;
+    } else if (xn < -1.0f) {
+        xn = -1.0f;
+    } else if (xn < 0.0f) {
+        xn = sqr(xn + 1.0f) - 1.0f;
+    } else {
+        xn = 1.0f - sqr(1.0f - xn);
+    }
+
     return 0.5f * (xn + 1.0f);
 }
 
@@ -71,10 +77,12 @@ make_sample_hold(sh_mod *sh, float fs, int N) {
     sh->steepness = 3.0f;  //how abruptly it transitions from one step to the next
     sh->mode = SH_RAND;
     sh->n_seq_steps = 6;
+
     for (int i = 0; i < sh->n_seq_steps; i++) {
         sh->sequence[i] = ((float) rand()) / ((float) RAND_MAX);
         //sh->sequence[i] = ((float) i)/((float) (sh->n_seq_steps -1) );
     }
+
     //Initialize state variables
     sh->seq_step = 0;
     sh->ramp_lfo = 0.0f;
@@ -90,19 +98,22 @@ void
 run_modulator(sh_mod *sh) {
     for (int i = 0; i < sh->NS; i++) {
         sh->ramp_lfo += sh->dt_lfo;
+
         if (sh->mode == SH_RAND) {
             sh->ramp_hfo = ((float) rand()) / ((float) RAND_MAX);
-
-        } else if (sh->mode == SH_RAMP)
+        } else if (sh->mode == SH_RAMP) {
             sh->ramp_hfo += sh->dt_hfo;
-        else if (sh->mode == SH_SEQ)
+        } else if (sh->mode == SH_SEQ) {
             sh->ramp_hfo = sh->sequence[sh->seq_step];
+        }
 
         if (sh->ramp_lfo >= 1.0f) {
             sh->ramp_lfo = 0.0f;
             sh->sclk[i] = true;
             sh->seq_step += 1;  //go to next value sequence
-            if (sh->seq_step >= sh->n_seq_steps) sh->seq_step = 0; //reset sequencer
+            if (sh->seq_step >= sh->n_seq_steps) {
+                sh->seq_step = 0;  //reset sequencer
+            }
         } else {
             sh->sclk[i] = false;
         }
@@ -122,23 +133,27 @@ void
 run_sample_hold(sh_mod *sh, float *output) {
     run_modulator(sh);
     adsr_tick_n(sh->ad, sh->adsr_env);
-    for (int i = 0; i < sh->NS; i++) {
 
+    for (int i = 0; i < sh->NS; i++) {
         if (sh->sclk[i]) {
             sh->dl = (sh->hfo[i] - sh->last_hfo_sample);
             sh->last_wave = sh->last_hfo_sample;
             sh->last_hfo_sample = sh->hfo[i];
+
             adsr_set_trigger_state(sh->ad, true);
             adsr_set_amplitude(sh->ad, sh->last_hfo_sample);
         }
+
         sh->swave[i] = sh->dl * sh->lfo[i] + sh->last_wave;
-        if (sh->en_adsr)
+
+        if (sh->en_adsr) {
             output[i] = sh->adsr_env[i];
             //output[i] = sh->swave[i]*sh->adsr_env[i];
             //output[i] = sh->last_hfo_sample*sh->adsr_env[i];
             //output[i] = sh->last_hfo_sample;
-        else
+        } else {
             output[i] = sh->swave[i];
+        }
     }
 }
 
@@ -147,10 +162,11 @@ sample_hold_set_active(sh_mod *sh, bool act) {
     //toggle state if act is true
     if (act) {
         sh->en_adsr = !sh->en_adsr;
-    } else //always deactivate if false
-    {
+    } else {
+        //always deactivate if false
         sh->en_adsr = false;
     }
+
     //return the state evaluated
     return sh->en_adsr;
 }
@@ -176,9 +192,12 @@ sample_hold_set_rate(sh_mod *sh, float rate) {
 void
 sample_hold_set_type(sh_mod *sh, int type) {
     int t = type;
-    if (t >= SH_MAX_TYPES)
+
+    if (t >= SH_MAX_TYPES) {
         t = SH_MAX_TYPES - 1;
-    else if (t < 0)
+    } else if (t < 0) {
         t = 0;
+    }
+
     sh->mode = type;
 }

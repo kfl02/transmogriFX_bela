@@ -12,6 +12,7 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
     const char *soft_file = "soft_clip.txt";
     const char *hard_file = "hard_clip.txt";
     const char *limit_file = "output_limit.txt";
+
     load_vi_data(&(kot->clip), (char *) soft_file);
     load_vi_data(&(kot->hard_clip), (char *) hard_file);
     load_vi_data(&(kot->output_limit), (char *) limit_file);
@@ -19,6 +20,7 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
     for (int i = 0; i < bsz; i++) {
         kot->procbuf[i] = 0.0f;
     }
+
     kot->xn1 = 0.0f;
 
     kot->blksz = bsz;
@@ -60,6 +62,7 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
 
     compute_s_biquad(r1, r2, c1, c2, num, den);      // s-domain coefficients
     s_biquad_to_z_biquad(1.0f, fs, 0.0f, num, den);    // compute bilinear transform
+
     kot->pre_emph_biquad.a1 = den[1];
     kot->pre_emph_biquad.a2 = den[2];
     kot->pre_emph_biquad.b0 = num[0];
@@ -147,7 +150,6 @@ void compute_s_biquad(float r1, float r2, float c1, float c2, float *num, float 
 
 void clipper_tick(klingon *kot, int N, float *x, float *clean)  // Add in gain processing and dry mix
 {
-
     float xn = 0.0f;
     float dx = 0.0f;
     float delta = 0.0f;
@@ -162,10 +164,12 @@ void clipper_tick(klingon *kot, int N, float *x, float *clean)  // Add in gain p
             xn = tick_filter_1p(&(kot->post_emph), kot->xn1 + delta); // Linear interpolation up-sampling
             delta += dx;
 
-            if (xn > 300.0e-6f)
+            if (xn > 300.0e-6f) {
                 xn = 300.0e-6f;
-            if (xn < -300.0e-6f)
+            }
+            if (xn < -300.0e-6f) {
                 xn = -300.0e-6f;
+            }
 
             tmp = xn;
 
@@ -194,10 +198,11 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
 {
     float drv = drive_db;
 
-    if (drv < 0.0f)
+    if (drv < 0.0f) {
         drv = 0.0f;
-    else if (drv > 45.0f)
+    } else if (drv > 45.0f) {
         drv = 45.0f;
+    }
 
     // Convert gain given in dB to absolute value
     drv = powf(10.0f, (drv + 0.341f) / 20.0f);
@@ -216,17 +221,14 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
 
     // Extract pot resistance from gain (dB) setting
     float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
-    float pot_ff = 100.0 f- pot_fb + 10.0f; // Portion in series with following gain stage input
-
+    float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
     float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
-
     float fc_ff = 1.0f / (2.0f * M_PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
 
     compute_filter_coeffs_1p(&(kot->pre_emph159), HPF1P, kot->fs, fc_ff);
 
     //Second stage gains
     kot->g159 = 1.0e-3f / pot_ff;  // 220k/(10k + (1-x)*100k), ratio of 100k gain pot
-
 }
 
 //
@@ -238,10 +240,12 @@ void kot_set_tone(klingon *kot, float hf_level_db) {
     // to linear function of pot resistance ratios used for
     // computing tonestack IIR coefficients
     float tone = hf_level_db;
-    if (tone < -60.0f)
+
+    if (tone < -60.0f) {
         tone = -60.0f;
-    else if (tone > 0.0f)
+    } else if (tone > 0.0f) {
         tone = 0.0f;
+    }
 
     kot->tone = powf(10.0f, tone / 20.0f);  // not used elsewhere, might delete
 
@@ -258,12 +262,15 @@ void kot_set_boost(klingon *kot, float boost) // second high pass cut
 void kot_set_mix(klingon *kot, float hard)  // Dry/Wet control, 0.0 to 1.0
 {
     float mix = hard;
-    if (hard > 1.0f)
+
+    if (hard > 1.0f) {
         mix = 1.0f;
-    else if (hard < 0.0f)
+    } else if (hard < 0.0f) {
         mix = 0.0f;
-    else
+    } else {
         mix = hard;
+    }
+
     kot->hard = mix;
 }
 
@@ -271,10 +278,13 @@ void kot_set_level(klingon *kot, float outlevel_db) // -40 dB to +0 dB
 {
     float vol = outlevel_db;
 
-    if (vol < -40.0f)
+    if (vol < -40.0f) {
         vol = -40.0f;
-    if (vol > 0.0f)
+    }
+    if (vol > 0.0f) {
         vol = 0.0f;
+    }
+
     kot->level = powf(10.0f, vol / 20.0f);
 }
 
@@ -293,8 +303,9 @@ void klingon_tick(klingon *kot, float *x) {
     // TODO: resolve unsigned int vs. int
     unsigned int n = kot->blksz;
 
-    if (kot->bypass)
+    if (kot->bypass) {
         return;
+    }
 
     // Run pre-emphasis filters
     for (unsigned int i = 0; i < n; i++) {
@@ -322,6 +333,5 @@ void klingon_tick(klingon *kot, float *x) {
         x[i] = kot->level * kotstack_tick(&(kot->stack), kot->procbuf[i]);
         x[i] = vi_trace_interp(&(kot->output_limit),
                                x[i]); //limit to -1.0 to 1.0, but more gracefully than digital clip/limit
-
     }
 }
