@@ -1,6 +1,3 @@
-#include <math.h>
-#include <stdlib.h>
-
 #include "klingon.h"
 
 // Allocate the klingon struct and set default values
@@ -27,7 +24,7 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
     kot->oversample = oversample;
     kot->fs = fs;
     kot->clipper_fs = ((float) oversample) * fs;
-    kot->inverse_oversample_float = 1.0 / ((float) oversample);
+    kot->inverse_oversample_float = 1.0f / ((float) oversample);
 
     // Set defaults
     kot->gain = 50.0f;
@@ -38,7 +35,7 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
 
     // Setup EQ stages
     compute_filter_coeffs_1p(&(kot->anti_alias), LPF1P, kot->clipper_fs,
-                             kot->fs / 4.0);  // down-play any aliasing artefacts
+                             kot->fs / 4.0f);  // down-play any aliasing artefacts
     compute_filter_coeffs_1p(&(kot->pre_emph482), HPF1P, kot->fs, 482.29f);
     compute_filter_coeffs_1p(&(kot->pre_emph589), HPF1P, kot->fs, 589.46f);
 
@@ -160,7 +157,7 @@ void clipper_tick(klingon *kot, int N, float *x, float *clean)  // Add in gain p
         dx = (x[i] - kot->xn1) * kot->inverse_oversample_float;
 
         // Run clipping function at higher sample rate
-        for (int n = 0; n < kot->oversample; n++) {
+        for (unsigned int n = 0; n < kot->oversample; n++) {
             xn = tick_filter_1p(&(kot->post_emph), kot->xn1 + delta); // Linear interpolation up-sampling
             delta += dx;
 

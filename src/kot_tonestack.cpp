@@ -1,7 +1,6 @@
 //
 // KOT style tonestack
 //
-//#include <stdio.h>
 #include "kot_tonestack.h"
 
 void kotstack_compute_filter_coeffs(kot_stack *ks) {
@@ -145,7 +144,7 @@ void kotstack_set_tone(kot_stack *ks, float tone) {
     } else if (tone < 0.0f) {
         ks->tone_pot_pos = 1.0f;
     } else {
-        ks->tone_pot_pos = 1.0 - tone;
+        ks->tone_pot_pos = 1.0f - tone;
     }
 
     kotstack_compute_filter_coeffs(ks);

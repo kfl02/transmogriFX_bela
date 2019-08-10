@@ -2,10 +2,9 @@
 //emulating combination of anti-aliasing & reconstruction filters from an 
 //analog BBD typical circuit.
 
-#include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+
+#include <cmath>
 
 #include "flange.h"
 
@@ -15,7 +14,8 @@ void tflanger_resize_delay(tflanger *cthis, float maxTime) {
     float *temp = (float *) malloc(nSize * sizeof(float));
 
     if (temp == NULL) {
-        fprintf(stderr, "Cannot allocate any more memory.  Requested increase of delay time declined");
+        // TODO: error handling
+        // fprintf(stderr, "Cannot allocate any more memory.  Requested increase of delay time declined");
         return;
     }
 
@@ -446,7 +446,7 @@ tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
     //printf("d_ = %lf\tdepth = %lf\n\n", lfoDepth_, lfoDepth);
 
     if ((2.0f * cthis->lfoDepth) >= cthis->maxT) {
-        tflanger_resize_delay(cthis, 2.0 * cthis->lfoDepth);
+        tflanger_resize_delay(cthis, 2.0f * cthis->lfoDepth);
     }
 
     tflanger_updateParams(cthis);
@@ -551,7 +551,7 @@ tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns) {
         cthis->envelope_sensitivity = 0.0f;
     } else if (sns > 36.0f) {
         sns = 36.0f;
-    } else {
+    } else { // TODO: sns never used. remove else?
         cthis->envelope_sensitivity = sns;
     }
 }

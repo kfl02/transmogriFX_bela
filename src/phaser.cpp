@@ -1,17 +1,15 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
 
 #include "phaser.h"
 
 void commit_circuit_config(phaser_coeffs *cf) {
 
     //There is always something to calculate for position zero
-    cf->a1p_min[i] = -expf(-(cf->w_min[i]) / cf->fs);
-    cf->a1p_max[i] = -expf(-(cf->w_max[i]) / cf->fs);
-    cf->a1p_dif[i] = cf->a1p_max[i] - cf->a1p_min[i];
-    cf->a1p[i] = cf->a1p_min[i];
-    cf->ghpf[i] = (1.0f - cf->a1p[i]) * 0.5f;
+    cf->a1p_min[0] = -expf(-(cf->w_min[0]) / cf->fs);
+    cf->a1p_max[0] = -expf(-(cf->w_max[0]) / cf->fs);
+    cf->a1p_dif[0] = cf->a1p_max[0] - cf->a1p_min[0];
+    cf->a1p[0] = cf->a1p_min[0];
+    cf->ghpf[0] = (1.0f - cf->a1p[0]) * 0.5f;
 
     for (size_t i = 1; i < cf->n_stages; i++) {
         if (cf->stagger[i]) {

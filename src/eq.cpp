@@ -1,6 +1,6 @@
-#include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
+
+#include <cmath>
 
 #include "eq.h"
 
@@ -227,7 +227,7 @@ float geq_tick(eq_filters *eq, float x_) {
 
 void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
     size_t cnt = eq->nbands + 2;
-    float x = 0.0;
+    float x = 0.0f;
 
     for (size_t k = 0; k < N; k++) {
         x = xn[k];

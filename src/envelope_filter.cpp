@@ -9,7 +9,8 @@
 //
 
 #include <stdlib.h>
-#include <math.h>
+
+#include <cmath>
 
 #include "svf.h"
 #include "envelope_filter.h"
@@ -23,8 +24,8 @@ envf_make_filter(env_filter *envf, float fs, int N) {
     envf->y = (float *) malloc(sizeof(float) * N);
     envf->sh_buff = (float *) malloc(sizeof(float) * N);
     envf->sh = make_sample_hold(envf->sh, fs, N);
-    envf->shmix = 0.0;
-    envf->ishmix = 1.0 - envf->shmix;
+    envf->shmix = 0.0f;
+    envf->ishmix = 1.0f - envf->shmix;
     envf->bypass = true;
 
     for (int i = 0; i < N; i++) {

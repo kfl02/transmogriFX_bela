@@ -20,20 +20,17 @@
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 #include "Sustainer.h"
 
 Sustainer::Sustainer(float SAMPLE_RATE) {
     init(SAMPLE_RATE, 0);
     cleanup();
-};
+}
 
 Sustainer::~Sustainer() {
-
-};
+}
 
 /*
  * Cleanup the effect
@@ -44,7 +41,7 @@ Sustainer::cleanup() {
     compenv = 0.0f;
     oldcompenv = 0.0f;
     cpthresh = cthresh; //dynamic threshold
-};
+}
 
 void
 Sustainer::init(float SAMPLE_RATE, int PER) {
@@ -121,10 +118,9 @@ Sustainer::tick_n(float *x) {
 
             x[i] = smpl * tmpgain * level;
         }
-
-    };
+    }
     //End compression
-};
+}
 
 static inline float dB2rap(float dB) {
     return expf((dB) * LOG_10 / 20.0f);
@@ -155,7 +151,7 @@ Sustainer::setpreset(int npreset) {
     }
 
     Ppreset = npreset;
-};
+}
 
 void
 Sustainer::setGain(float g) {
@@ -185,8 +181,8 @@ Sustainer::changepar(int npar, int value) {
             fsustain = (float) Psustain / 127.0f;
             setSustain(fsustain);
             break;
-    };
-};
+    }
+}
 
 int
 Sustainer::getpar(int npar) {
@@ -194,15 +190,13 @@ Sustainer::getpar(int npar) {
     switch (npar) {
         case 0:
             return (Pvolume);
-            break;
 
         case 1:
             return (Psustain);
-            break;
-    };
+    }
 
     return (0);         //in case of bogus parameter number
-};
+}
 
 bool
 Sustainer::setBypass() {

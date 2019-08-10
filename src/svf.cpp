@@ -9,9 +9,7 @@
 // terms re-iterated in UNLICENSE.txt
 // -----------------------------------------------------------------------------
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "svf.h"
 

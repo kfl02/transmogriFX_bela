@@ -1,8 +1,6 @@
-#include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "trem.h"
 
+#include "trem.h"
 
 void trem_circuit_preset(trem_coeffs *cf, int ckt) {
     switch (ckt) {

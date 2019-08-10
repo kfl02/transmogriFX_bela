@@ -1,5 +1,6 @@
-#include <math.h>
 #include <stdlib.h>
+
+#include <cmath>
 
 #include "overdrive.h"
 
@@ -19,7 +20,7 @@ overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int b
     od->oversample = oversample;
     od->fs = fs;
     od->clipper_fs = ((float) oversample) * fs;
-    od->inverse_oversample_float = 1.0 / ((float) oversample);
+    od->inverse_oversample_float = 1.0f / ((float) oversample);
 
     // Set defaults
     od->gain = 30.0f;
@@ -95,7 +96,7 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
 
             // Pre-filter for down-sampling
             // Run de-emphasis and anti-aliasing filters
-            xn = tick_filter_1p(&(od->post_emph), (od->dry * clean[i] + 0.7 * xn));
+            xn = tick_filter_1p(&(od->post_emph), (od->dry * clean[i] + 0.7f * xn));
             xn = tick_filter_1p(&(od->anti_alias), xn);
         }
 

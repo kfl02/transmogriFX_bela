@@ -36,7 +36,6 @@ add_executable(transmogriFX_bela
         src/phaser.h
         src/read_vi_trace.cpp
         src/read_vi_trace.h
-        src/render.cpp
         src/reverb.cpp
         src/reverb.h
         src/sample_hold_modulator.cpp
@@ -47,5 +46,4 @@ add_executable(transmogriFX_bela
         src/svf.h
         src/trem.cpp
         src/trem.h
-        src/usb_backpack.cpp
-        src/usb_backpack.h src/constants.h)
+        src/constants.h)

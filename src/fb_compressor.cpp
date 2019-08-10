@@ -1,13 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-#include "fb_compressor.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <math_neon.h>
+#include <cmath>
 
 #include "fb_compressor.h"
 
@@ -420,7 +413,7 @@ feedback_compressor_set_mix(feedback_compressor *fbc, float wet) {
     }
 
     fbc->wet = w;
-    fbc->dry = 1.0 - w;
+    fbc->dry = 1.0f - w;
 }
 
 //Either soft (true) or hard (false)

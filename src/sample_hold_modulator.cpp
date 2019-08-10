@@ -199,5 +199,6 @@ sample_hold_set_type(sh_mod *sh, int type) {
         t = 0;
     }
 
+    // TODO: t is never used. t instead of type in the line below?
     sh->mode = type;
 }

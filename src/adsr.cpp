@@ -2,7 +2,8 @@
 *   ADSR
 */
 #include    <stdlib.h>
-#include    <math.h>
+
+#include <cmath>
 
 #include    "adsr.h"
 
@@ -47,7 +48,7 @@ adsr_set_velocity(adsr *ad, float v) {
 
 void
 adsr_set_attack(adsr *ad, float a) {
-    float ms = a * 0.001;
+    float ms = a * 0.001f;
 
     //Limit 0.1ms to 1 second
     if (ms < 0.0001f) {

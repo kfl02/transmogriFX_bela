@@ -19,13 +19,12 @@
 // ----------------------------------------------------------------------
 
 
-#include <math.h>
 #include <string.h>
 
 #include "pareq.h"
 
 
-Pareq::Pareq(void) :
+Pareq::Pareq() :
         _touch0(0),
         _touch1(0),
         _state(BYPASS),
@@ -37,7 +36,7 @@ Pareq::Pareq(void) :
 }
 
 
-Pareq::~Pareq(void) {
+Pareq::~Pareq() {
 }
 
 
@@ -47,7 +46,7 @@ void Pareq::setfsamp(float fsamp) {
 }
 
 
-void Pareq::reset(void) {
+void Pareq::reset() {
     memset(_z1, 0, sizeof(float) * MAXCH);
     memset(_z2, 0, sizeof(float) * MAXCH);
 }
@@ -112,9 +111,9 @@ void Pareq::calcpar1(int nsamp, float g, float f) {
     c2 = (1 - b) / (1 + b);
 
     if (nsamp) {
-        _dc1 = (c1 - _c1) / nsamp + 1e-30f;
-        _dc2 = (c2 - _c2) / nsamp + 1e-30f;
-        _dgg = (gg - _gg) / nsamp + 1e-30f;
+        _dc1 = (c1 - _c1) / (float) nsamp + 1e-30f;
+        _dc2 = (c2 - _c2) / (float) nsamp + 1e-30f;
+        _dgg = (gg - _gg) / (float) nsamp + 1e-30f;
     } else {
         _c1 = c1;
         _c2 = c2;
