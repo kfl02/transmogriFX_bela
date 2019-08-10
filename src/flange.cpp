@@ -11,18 +11,17 @@
 
 void tflanger_resize_delay(tflanger *cthis, float maxTime) {
     //printf("Updating delay line size.\n");
-    size_t nSize = (size_t) lrint(maxTime * cthis->fS + 1.0);
+    size_t nSize = lrint(maxTime * cthis->fS + 1.0f);
     float *temp = (float *) malloc(nSize * sizeof(float));
     if (temp == NULL) {
         fprintf(stderr, "Cannot allocate any more memory.  Requested increase of delay time declined");
         return;
     }
 
-    int i;
-    for (i = 0; i < nSize; i++) {
+    for (size_t i = 0; i < nSize; i++) {
         temp[i] = 0.0;
     }
-    for (i = 0; i < cthis->maxDly; i++) {
+    for (size_t i = 0; i < cthis->maxDly; i++) {
         temp[i] = cthis->dlyLine[i];
     }
 
@@ -40,11 +39,11 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis = (tflanger *) malloc(sizeof(tflanger));
     cthis->maxT = maxTime;
     cthis->fS = fSampleRate;
-    size_t nSize = (size_t) lrint(cthis->maxT * fSampleRate + 1.0);
+    size_t nSize = lrint(cthis->maxT * fSampleRate + 1.0f);
     cthis->dlyLine = (float *) malloc(nSize * sizeof(float));
-    int i;
-    for (i = 0; i < nSize; i++) {
-        cthis->dlyLine[i] = 0.0;
+
+    for (size_t i = 0; i < nSize; i++) {
+        cthis->dlyLine[i] = 0.0f;
     }
 
     cthis->maxDly = nSize - 1;
@@ -54,22 +53,22 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis->dlyWrite = 0;
 
     //LFO
-    cthis->lfopar = init_lfo(cthis->lfopar, 1.0, cthis->fS, 0.0);
-    cthis->maxLfoRate = 100.0;
+    cthis->lfopar = init_lfo(cthis->lfopar, 1.0f, cthis->fS, 0.0f);
+    cthis->maxLfoRate = 100.0f;
 
     //Envelope detector
     cthis->envelope = (fparams *) malloc(sizeof(fparams));
-    float tc10 = 0.015;  //About 10 Hz cutoff
+    float tc10 = 0.015f;  //About 10 Hz cutoff
     cthis->envelope->alpha = 1.0f / (tc10 * cthis->fS + 1.0f);
     cthis->envelope->ialpha = 1.0f - cthis->envelope->alpha;
-    cthis->envelope->x1 = 0.0;
-    cthis->envelope->y1 = 0.0;
+    cthis->envelope->x1 = 0.0f;
+    cthis->envelope->y1 = 0.0f;
 
     //Attack/Release settings
     cthis->attrel = (arparams *) malloc(sizeof(arparams));
-    float atkt = 0.05;
-    float rlst = 0.5;
-    cthis->attrel->y1 = 0.0;
+    float atkt = 0.05f;
+    float rlst = 0.5f;
+    cthis->attrel->y1 = 0.0f;
     cthis->attrel->atk = 1.0f / (atkt * cthis->fS + 1.0f);
     cthis->attrel->iatk = 1.0f - cthis->attrel->atk;
     cthis->attrel->rls = 1.0f / (rlst * cthis->fS + 1.0f);
@@ -77,39 +76,39 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
 
     //Bypass fader
     cthis->fader = (fparams *) malloc(sizeof(fparams));
-    float tcf = 0.25;  //Fader time constant
+    float tcf = 0.25f;  //Fader time constant
     cthis->fader->alpha = 1.0f / (tcf * cthis->fS + 1.0f);
     cthis->fader->ialpha = 1.0f - cthis->fader->alpha;
-    cthis->fader->x1 = 0.0;
-    cthis->fader->y1 = 0.0;
+    cthis->fader->x1 = 0.0f;
+    cthis->fader->y1 = 0.0f;
 
     //Set some sane initial values
     float ms = 0.001;
-    tflanger_setLfoDepth(cthis, (9.0 * ms)); //lfo offset, input in seconds
-    tflanger_setLfoWidth(cthis, (0.8 * ms)); //lfo deviation, input in seconds will
+    tflanger_setLfoDepth(cthis, (9.0f * ms)); //lfo offset, input in seconds
+    tflanger_setLfoWidth(cthis, (0.8f * ms)); //lfo deviation, input in seconds will
     //express peak-to-trough deviation
-    tflanger_setLfoRate(cthis, 3.0);    //Input in cycles per second
-    tflanger_setLfoPhase(cthis, 0.0);    //Phase offset, 0 to 2*pi, useful if 
+    tflanger_setLfoRate(cthis, 3.0f);    //Input in cycles per second
+    tflanger_setLfoPhase(cthis, 0.0f);    //Phase offset, 0 to 2*pi, useful if
     //using 2 of these objects in stereo
-    tflanger_setWetDry(cthis, 0.71);     //give ratio wet, 0...1.0. 
+    tflanger_setWetDry(cthis, 0.71f);     //give ratio wet, 0...1.0.
     //Dry = 1.0 - fracWet
-    tflanger_setFeedBack(cthis, 0.0);   //Regen
+    tflanger_setFeedBack(cthis, 0.0f);   //Regen
 
     //Bypass processing
-    tflanger_setFinalGain(cthis, 1.0);  // Set to 0.0 for bypass, set to >0.99 for norm
+    tflanger_setFinalGain(cthis, 1.0f);  // Set to 0.0 for bypass, set to >0.99 for norm
     cthis->trails = 1;                  //bypass with trails default
 
     //Envelope Detector Settings
-    tflanger_setEnvelopeRateSkew(cthis, 0.0);
-    tflanger_setEnvelopeDepthSkew(cthis, 0.0);
-    tflanger_setEnvelopeWidthSkew(cthis, 0.0);
-    tflanger_setEnvelopeFbSkew(cthis, 0.0);
-    tflanger_setEnvelopeMixSkew(cthis, 0.0);
-    tflanger_setEnvelopeSensitivity(cthis, 1.0);
+    tflanger_setEnvelopeRateSkew(cthis, 0.0f);
+    tflanger_setEnvelopeDepthSkew(cthis, 0.0f);
+    tflanger_setEnvelopeWidthSkew(cthis, 0.0f);
+    tflanger_setEnvelopeFbSkew(cthis, 0.0f);
+    tflanger_setEnvelopeMixSkew(cthis, 0.0f);
+    tflanger_setEnvelopeSensitivity(cthis, 1.0f);
 
     //Anti-aliasing filter
     float fs = fSampleRate;
-    float f0 = 7200.0;
+    float f0 = 7200.0f;
     float *q = NULL;
     q = make_butterworth_coeffs(8, q);
     cthis->f[0] = make_biquad(LPF, cthis->f[0], fs, f0, q[0]);
@@ -118,7 +117,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis->f[3] = make_biquad(LPF, cthis->f[3], fs, f0, q[3]);
 
     //Feedback tap to be run back through anti-alias filter with input
-    cthis->regen = 0.0;
+    cthis->regen = 0.0f;
 
     //Final computation
     tflanger_updateParams(cthis);
@@ -135,27 +134,27 @@ tflanger_destroy(tflanger *cthis) {
 
 void
 get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
-    float wet = 1.0;
-    float dry = 1.0;
-    float sign = 1.0;
+    float wet = 1.0f;
+    float dry = 1.0f;
+    float sign = 1.0f;
 
-    if (fracWet >= 1.0) wet = 1.0;
-    else if (fracWet < (-1.0)) wet = -1.0; //allow add or subtract
+    if (fracWet >= 1.0f) wet = 1.0f;
+    else if (fracWet < (-1.0f)) wet = -1.0f; //allow add or subtract
     else wet = fracWet;
 
-    if (wet < 0.0) sign = -1.0;
+    if (wet < 0.0f) sign = -1.0f;
     float x = wet * wet;
 
     // make dry mix function
     float k = x * x;
     k *= k;
-    dry = 1.0 - k;
+    dry = 1.0f - k;
 
     // make wet mix function
     k = 1 - x;
     k *= k;
     k *= k;
-    wet = (1.0 - k) * sign;
+    wet = (1.0f - k) * sign;
 
     //keep dry at 0 phase
     *dry_out = dry;
@@ -164,19 +163,19 @@ get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
 }
 
 float potfunc1(float xn) {
-    float x = 0.0;
+    float x = 0.0f;
     int sign = 0;
 
-    if (xn < 0.0) {
+    if (xn < 0.0f) {
         xn = -xn;
         sign = 1;
     }
-    if (xn > 1.0) xn = 1.0;
+    if (xn > 1.0f) xn = 1.0f;
 
-    x = 2.0 * xn;
+    x = 2.0f * xn;
 
-    if (x <= 1.0) xn = 0.5 * x * x;
-    else xn = 1.0 - (1.0 - xn) * (2.0 - x);
+    if (x <= 1.0f) xn = 0.5f * x * x;
+    else xn = 1.0f - (1.0f - xn) * (2.0f - x);
 
     if (sign == 1) xn = -xn;
 
@@ -187,15 +186,15 @@ float potfunc1(float xn) {
 void
 tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
 
-    if ((cthis->dry0 > 0.999) && (cthis->trails == 0) && (cthis->outGain < 0.1)) return;
+    if ((cthis->dry0 > 0.999f) && (cthis->trails == 0) && (cthis->outGain < 0.1f)) return;
     int i, j;
-    float dly = 0.0;
-    float dlyFloor = 0.0;
-    float fd = 0.5;
-    float ifd = 0.5;
+    float dly = 0.0f;
+    float dlyFloor = 0.0f;
+    float fd = 0.5f;
+    float ifd = 0.5f;
 
-    float in = 0.0; //current sample
-    float envdet = 0.0;
+    float in = 0.0f; //current sample
+    float envdet = 0.0f;
 
     long d = 0; //integer delay
     long d1 = 0; //integer delay - 1 
@@ -203,8 +202,8 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
     for (i = 0; i < nframes; i++) {
         //Envelope detector
         envdet = envelope[i];
-        if (envdet > 1.0) envdet = 1.0;
-        else if (envdet < 0.0) envdet = 0.0;
+        if (envdet > 1.0f) envdet = 1.0f;
+        else if (envdet < 0.0f) envdet = 0.0f;
 
         envdet = tflanger_atkrls(cthis->attrel, envdet);
 
@@ -213,9 +212,9 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
         in = samples[i];
         tflanger_lpfilter(cthis->fader, cthis->outGain, 0);
         in *= cthis->fader->y1;
-        if (cthis->outGain < 0.99) {
-            if (cthis->dry0 < 1.0)
-                cthis->dry0 += 0.0001;  //-80dB steps to unity, about 1/4 second at 44.1 kHz
+        if (cthis->outGain < 0.99f) {
+            if (cthis->dry0 < 1.0f)
+                cthis->dry0 += 0.0001f;  //-80dB steps to unity, about 1/4 second at 44.1 kHz
         }
 
         // Insert feedback
@@ -232,9 +231,9 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
 
 
         //Apply to rate parameter
-        if (cthis->rateskew != 0.0) {
+        if (cthis->rateskew != 0.0f) {
             float new_lfo_rate = cthis->rateskew * envdet + cthis->lfoRate;
-            if (new_lfo_rate < 0.0) new_lfo_rate = 0.1;
+            if (new_lfo_rate < 0.0f) new_lfo_rate = 0.1f;
             update_lfo(cthis->lfopar, new_lfo_rate, cthis->fS);
         } else if (cthis->lfoRate != cthis->lfopar->current_rate) {
             update_lfo(cthis->lfopar, cthis->lfoRate, cthis->fS);
@@ -242,34 +241,34 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
 
         //Apply to mix
 
-        if (cthis->mixskew != 0.0) {
-            if (cthis->wet > 0.0) cthis->wet0 = cthis->mixskew * envdet + cthis->wet;
+        if (cthis->mixskew != 0.0f) {
+            if (cthis->wet > 0.0f) cthis->wet0 = cthis->mixskew * envdet + cthis->wet;
             else cthis->wet0 = cthis->wet - cthis->mixskew * envdet;
 
-            if (cthis->outGain >= 0.99)
+            if (cthis->outGain >= 0.99f)
                 cthis->dry0 = cthis->dry - cthis->mixskew * envdet;
 
-            if (cthis->wet0 > 1.0) cthis->wet0 = 1.0;
-            if (cthis->wet0 < -1.0) cthis->wet0 = -1.0;
-            if (cthis->dry0 > 1.0) cthis->dry0 = 1.0;
-            if (cthis->dry0 < -1.0) cthis->dry0 = -1.0;
+            if (cthis->wet0 > 1.0f) cthis->wet0 = 1.0f;
+            if (cthis->wet0 < -1.0f) cthis->wet0 = -1.0f;
+            if (cthis->dry0 > 1.0f) cthis->dry0 = 1.0f;
+            if (cthis->dry0 < -1.0f) cthis->dry0 = -1.0f;
         } else {
             cthis->wet0 = cthis->wet;
-            if (cthis->outGain >= 0.99)
+            if (cthis->outGain >= 0.99f)
                 cthis->dry0 = cthis->dry;
         }
 
         //Apply to depth
-        if (cthis->depthskew != 0.0) {
+        if (cthis->depthskew != 0.0f) {
             cthis->lfoDepth0 = cthis->depthskew * envdet + cthis->lfoDepth;
-            if (cthis->lfoDepth0 < 0.0) cthis->lfoDepth0 = 0.0;
+            if (cthis->lfoDepth0 < 0.0f) cthis->lfoDepth0 = 0.0f;
             if (cthis->lfoDepth0 >= cthis->maxT) cthis->lfoDepth0 = cthis->maxT;
         } else cthis->lfoDepth0 = cthis->lfoDepth;
 
         //Apply to width
-        if (cthis->widthskew != 0.0) {
+        if (cthis->widthskew != 0.0f) {
             cthis->lfoWidth0 = cthis->widthskew * envdet + cthis->lfoWidth;
-            if (cthis->lfoWidth0 < 0.0) cthis->lfoWidth0 = 0.0;
+            if (cthis->lfoWidth0 < 0.0f) cthis->lfoWidth0 = 0.0f;
 
             if ((cthis->lfoWidth0 + cthis->lfoDepth0) >= cthis->maxT) {
                 cthis->lfoWidth0 = cthis->maxT - cthis->lfoDepth0;
@@ -277,10 +276,10 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
         } else cthis->lfoWidth0 = cthis->lfoWidth;
 
         //Apply to feedback
-        if (cthis->fbskew != 0.0) {
+        if (cthis->fbskew != 0.0f) {
             cthis->fb = cthis->fbskew * envdet + cthis->feedBack;
-            if (cthis->fb >= 1.0) cthis->fb = 0.99;   //less extreme limits
-            if (cthis->fb <= -1.0) cthis->fb = -0.99;
+            if (cthis->fb >= 1.0f) cthis->fb = 0.99f;   //less extreme limits
+            if (cthis->fb <= -1.0f) cthis->fb = -0.99f;
         } else cthis->fb = cthis->feedBack;
 
         //run LFO
@@ -291,7 +290,7 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
         dly = cthis->fS * (cthis->lfoDepth0 + lfo);
         dlyFloor = floor(dly);
         fd = (dly - dlyFloor);
-        ifd = 1.0 - fd;
+        ifd = 1.0f - fd;
 
         //set up high delay tap
         d = lrint(dlyFloor);
@@ -358,7 +357,7 @@ void
 tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
     cthis->lfoDepth = fabs(lfoDepth_);
     //printf("d_ = %lf\tdepth = %lf\n\n", lfoDepth_, lfoDepth);
-    if ((2.0 * cthis->lfoDepth) >= cthis->maxT) {
+    if ((2.0f * cthis->lfoDepth) >= cthis->maxT) {
         tflanger_resize_delay(cthis, 2.0 * cthis->lfoDepth);
     }
 
@@ -387,14 +386,14 @@ tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
 void
 tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_) {
     cthis->lfoPhase = lfoPhase_;
-    cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0 * M_PI);
+    cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0f * M_PI);
     tflanger_updateParams(cthis);
 }
 
 void
 tflanger_setWetDry(tflanger *cthis, float fracWet) {
-    float wet = 1.0;
-    float dry = 1.0;
+    float wet = 1.0f;
+    float dry = 1.0f;
 
     get_wet_dry_mix(fracWet, &wet, &dry);
 
@@ -409,8 +408,8 @@ tflanger_setFeedBack(tflanger *cthis, float feedBack_) {
 
     cthis->feedBack = feedBack_;//potfunc1(feedBack_);//*(2.0 - fabs(feedBack_));
 
-    if (cthis->feedBack >= 0.99) cthis->feedBack = 0.99;
-    else if (cthis->feedBack <= -0.99) cthis->feedBack = -0.99;
+    if (cthis->feedBack >= 0.99f) cthis->feedBack = 0.99f;
+    else if (cthis->feedBack <= -0.99f) cthis->feedBack = -0.99f;
 
 }
 
@@ -421,10 +420,10 @@ tflanger_setDamping(tflanger *cthis, float fdamp_) {
     //Q of the final stage comes out ot about 0.51 
     //so it is a relatively gentle roll-off
     float Q = cthis->f[3]->Q;
-    if (fdamp < 40.0) {
-        fdamp = 40.0;
-    } else if (fdamp > 7200.0) {
-        fdamp = 7200.0;
+    if (fdamp < 40.0f) {
+        fdamp = 40.0f;
+    } else if (fdamp > 7200.0f) {
+        fdamp = 7200.0f;
     }
 
     // 
@@ -436,8 +435,8 @@ void
 tflanger_setFinalGain(tflanger *cthis, float outGain_) {
     cthis->outGain = outGain_;
     //limit gain here to something sane
-    if (cthis->outGain >= 1.42) cthis->outGain = 1.42; //1.42 is about +3dB
-    if (cthis->outGain < 0.0) cthis->outGain = 0.0;
+    if (cthis->outGain >= 1.42f) cthis->outGain = 1.42f; //1.42 is about +3dB
+    if (cthis->outGain < 0.0f) cthis->outGain = 0.0f;
 }
 
 void
@@ -447,10 +446,10 @@ tflanger_setTrails(tflanger *cthis, char trails) {
 
 void
 tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns) {
-    if (sns < 0.0)
-        cthis->envelope_sensitivity = 0.0;
-    else if (sns > 36.0)
-        sns = 36.0;
+    if (sns < 0.0f)
+        cthis->envelope_sensitivity = 0.0f;
+    else if (sns > 36.0f)
+        sns = 36.0f;
     else
         cthis->envelope_sensitivity = sns;
 }
@@ -470,37 +469,37 @@ tflanger_setEnvelopeRelease(tflanger *cthis, float rls) {
 void
 tflanger_setEnvelopeRateSkew(tflanger *cthis, float skew) {
     cthis->rateskew = skew;
-    if (skew > 100.0) cthis->rateskew = 100.0;
-    if (skew < -100.0) cthis->rateskew = -100.0;
+    if (skew > 100.0f) cthis->rateskew = 100.0f;
+    if (skew < -100.0f) cthis->rateskew = -100.0f;
 }
 
 void
 tflanger_setEnvelopeDepthSkew(tflanger *cthis, float skew) {
     cthis->depthskew = skew;
-    if (skew > 1.0) cthis->depthskew = 1.0;
-    if (skew < -1.0) cthis->depthskew = -1.0;
+    if (skew > 1.0f) cthis->depthskew = 1.0f;
+    if (skew < -1.0f) cthis->depthskew = -1.0f;
 }
 
 void
 tflanger_setEnvelopeWidthSkew(tflanger *cthis, float skew) {
     cthis->widthskew = skew;
-    if (skew > 1.0) cthis->widthskew = 1.0;
-    if (skew < -1.0) cthis->widthskew = -1.0;
+    if (skew > 1.0f) cthis->widthskew = 1.0f;
+    if (skew < -1.0f) cthis->widthskew = -1.0f;
 }
 
 void
 tflanger_setEnvelopeFbSkew(tflanger *cthis, float skew) {
     cthis->fbskew = skew;
-    if (skew > 1.0) cthis->fbskew = 1.0;
-    if (skew < -1.0) cthis->fbskew = -1.0;
+    if (skew > 1.0f) cthis->fbskew = 1.0f;
+    if (skew < -1.0f) cthis->fbskew = -1.0f;
 }
 
 
 void
 tflanger_setEnvelopeMixSkew(tflanger *cthis, float skew) {
     cthis->mixskew = skew;
-    if (skew > 1.0) cthis->mixskew = 1.0;
-    if (skew < -1.0) cthis->mixskew = -1.0;
+    if (skew > 1.0f) cthis->mixskew = 1.0f;
+    if (skew < -1.0f) cthis->mixskew = -1.0f;
 }
 
 void tflanger_set_lfo_type(tflanger *cthis, unsigned int type) {
@@ -509,40 +508,41 @@ void tflanger_set_lfo_type(tflanger *cthis, unsigned int type) {
 
 void
 tflanger_setPreset(tflanger *cthis, unsigned int preset) {
-    float ms = 0.001;
+    float ms = 0.001f;
     switch (preset) {
+        // TODO: use constants/enum instead of hardcoded values
         case 0: //basic chorus
             //Set some sane initial values
 
-            tflanger_setLfoDepth(cthis, (9.5 * ms)); //lfo offset, input in seconds
-            tflanger_setLfoWidth(cthis, (1.2 * ms)); //lfo deviation, input in seconds will
+            tflanger_setLfoDepth(cthis, (9.5f * ms)); //lfo offset, input in seconds
+            tflanger_setLfoWidth(cthis, (1.2f * ms)); //lfo deviation, input in seconds will
             //express peak-to-trough deviation
-            tflanger_setLfoRate(cthis, 2.6);    //Input in cycles per second
+            tflanger_setLfoRate(cthis, 2.6f);    //Input in cycles per second
             //LFO Rate synchronized to default delay preset time
-            tflanger_setLfoPhase(cthis, 0.0);    //Phase offset, 0 to 2*pi, useful if 
+            tflanger_setLfoPhase(cthis, 0.0f);    //Phase offset, 0 to 2*pi, useful if
             //using 2 of these objects in stereo
-            tflanger_setWetDry(cthis, 0.5);     //give ratio wet, 0...1.0. 
+            tflanger_setWetDry(cthis, 0.5f);     //give ratio wet, 0...1.0.
             //Dry = 1.0 - fracWet
-            tflanger_setFeedBack(cthis, 0.0);   //Regen
+            tflanger_setFeedBack(cthis, 0.0f);   //Regen
             tflanger_setTrails(cthis, 0);
             break;
 
         case 1: //basic delay
-            tflanger_setLfoDepth(cthis, 385.0 * ms);   //delay time
-            tflanger_setLfoWidth(cthis, 0.25 * ms); //mild modulation
-            tflanger_setFeedBack(cthis, 0.36);
-            tflanger_setWetDry(cthis, 0.45);
-            tflanger_setLfoRate(cthis, 1.3);
-            tflanger_setDamping(cthis, 2800.0);  //Similar range to typical BBD delay pedal
+            tflanger_setLfoDepth(cthis, 385.0f * ms);   //delay time
+            tflanger_setLfoWidth(cthis, 0.25f * ms); //mild modulation
+            tflanger_setFeedBack(cthis, 0.36f);
+            tflanger_setWetDry(cthis, 0.45f);
+            tflanger_setLfoRate(cthis, 1.3f);
+            tflanger_setDamping(cthis, 2800.0f);  //Similar range to typical BBD delay pedal
             tflanger_setTrails(cthis, 1);
             break;
 
         case 2: //basic flanger 
-            tflanger_setLfoDepth(cthis, 0.8 * ms);   //sweeps pretty high
-            tflanger_setLfoWidth(cthis, 4.0 * ms); //mild modulation
-            tflanger_setFeedBack(cthis, -0.3);
-            tflanger_setWetDry(cthis, -0.5);
-            tflanger_setLfoRate(cthis, 0.325); //LFO Rate synchronized to default delay preset time     
+            tflanger_setLfoDepth(cthis, 0.8f * ms);   //sweeps pretty high
+            tflanger_setLfoWidth(cthis, 4.0f * ms); //mild modulation
+            tflanger_setFeedBack(cthis, -0.3f);
+            tflanger_setWetDry(cthis, -0.5f);
+            tflanger_setLfoRate(cthis, 0.325f); //LFO Rate synchronized to default delay preset time
             tflanger_setTrails(cthis, 0);
             break;
 

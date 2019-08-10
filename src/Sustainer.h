@@ -26,7 +26,6 @@
 #define SUSTAINER_H
 
 const float LOG_10 = 2.302585f;
-#define dB2rap(dB) (float)((expf((dB)*LOG_10/20.0f)))
 
 class Sustainer {
 public:

@@ -28,13 +28,13 @@
 // -----------------------------------------------------------------------
 
 
-Diff1::Diff1(void) :
+Diff1::Diff1() :
         _size(0),
         _line(0) {
 }
 
 
-Diff1::~Diff1(void) {
+Diff1::~Diff1() {
     fini();
 }
 
@@ -48,7 +48,7 @@ void Diff1::init(int size, float c) {
 }
 
 
-void Diff1::fini(void) {
+void Diff1::fini() {
     delete[] _line;
     _size = 0;
     _line = 0;
@@ -58,13 +58,13 @@ void Diff1::fini(void) {
 // -----------------------------------------------------------------------
 
 
-Delay::Delay(void) :
+Delay::Delay() :
         _size(0),
         _line(0) {
 }
 
 
-Delay::~Delay(void) {
+Delay::~Delay() {
     fini();
 }
 
@@ -77,7 +77,7 @@ void Delay::init(int size) {
 }
 
 
-void Delay::fini(void) {
+void Delay::fini() {
     delete[] _line;
     _size = 0;
     _line = 0;
@@ -87,13 +87,13 @@ void Delay::fini(void) {
 // -----------------------------------------------------------------------
 
 
-Vdelay::Vdelay(void) :
+Vdelay::Vdelay() :
         _size(0),
         _line(0) {
 }
 
 
-Vdelay::~Vdelay(void) {
+Vdelay::~Vdelay() {
     fini();
 }
 
@@ -107,7 +107,7 @@ void Vdelay::init(int size) {
 }
 
 
-void Vdelay::fini(void) {
+void Vdelay::fini() {
     delete[] _line;
     _size = 0;
     _line = 0;
@@ -164,11 +164,11 @@ float Reverb::_tdelay[8] =
         };
 
 
-Reverb::Reverb(void) {
+Reverb::Reverb() {
 }
 
 
-Reverb::~Reverb(void) {
+Reverb::~Reverb() {
     fini();
 }
 
@@ -226,7 +226,7 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
 }
 
 
-void Reverb::fini(void) {
+void Reverb::fini() {
     for (int i = 0; i < 8; i++) _delay[i].fini();
 }
 
@@ -281,8 +281,8 @@ void Reverb::prepare(int nfram) {
             t0 = (1 - _opmix) * (1 + _opmix);
             t1 = 0.7f * _opmix * (2 - _opmix) / sqrtf(_rtmid);
         }
-        _d0 = (t0 - _g0) / nfram;
-        _d1 = (t1 - _g1) / nfram;
+        _d0 = (t0 - _g0) / (float) nfram;
+        _d1 = (t1 - _g1) / (float) nfram;
         _cntC2 = c;
     }
 

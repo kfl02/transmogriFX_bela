@@ -50,8 +50,8 @@ typedef struct tflanger_t {
     unsigned char trails;          // Bypass with trails or not?
 
     //Delay line pointer
-    int dlyWrite;
-    int maxDly;
+    size_t dlyWrite;
+    size_t  maxDly;
 
     //LFO
     float lfoConst;

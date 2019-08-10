@@ -8,7 +8,7 @@ void kotstack_compute_filter_coeffs(kot_stack *ks) {
     // Local variables to make following formulas easier
     // Tone pot ratios
     float apos = ks->tone_pot_pos;
-    float bpos = 1.0 - apos;  // Alternate pot leg resistance ratio
+    float bpos = 1.0f - apos;  // Alternate pot leg resistance ratio
     //printf("apos= %f, bpos= %f\n", apos, bpos);
 
     // Boost pot ratio
@@ -16,7 +16,7 @@ void kotstack_compute_filter_coeffs(kot_stack *ks) {
 
     // Sampling rate
     float fs = ks->fs;
-    float kk = 2.0 * fs;
+    float kk = 2.0f * fs;
     //printf("fs= %f, kk=%f\n", fs, kk);
 
     // Circuit params
@@ -71,15 +71,15 @@ void kotstack_compute_filter_coeffs(kot_stack *ks) {
     // vxviblt = gdsp*(A2blt*z2 + A1blt*z1 + 1) / ( B2blt*z2 + B1blt*z1 + 1)
     float gblt = ((A0 + kk * A1 + kk * kk) / (B0 + kk * B1 + kk * kk));
     float gdsp = gvx * gblt;
-    float A1blt = ((2.0 * A0 - 2.0 * kk * kk) / (A0 + kk * A1 + kk * kk));
+    float A1blt = ((2.0f * A0 - 2.0f * kk * kk) / (A0 + kk * A1 + kk * kk));
     float A2blt = ((A0 - kk * A1 + kk * kk) / (A0 + kk * A1 + kk * kk));
-    float B1blt = ((2.0 * B0 - 2.0 * kk * kk) / (B0 + kk * B1 + kk * kk));
+    float B1blt = ((2.0f * B0 - 2.0f * kk * kk) / (B0 + kk * B1 + kk * kk));
     float B2blt = ((B0 - kk * B1 + kk * kk) / (B0 + kk * B1 + kk * kk));
 
     ks->st1.fs = ks->fs;
     ks->st1.a1 = -B1blt;  // negate because of filter implementation
     ks->st1.a2 = -B2blt;  // negate because of filter implementation
-    ks->st1.b0 = 1.0;
+    ks->st1.b0 = 1.0f;
     ks->st1.b1 = A1blt;
     ks->st1.b2 = A2blt;
     ks->st1.gain = gdsp;
@@ -93,10 +93,10 @@ void kotstack_compute_filter_coeffs(kot_stack *ks) {
 
     ks->st2.fs = ks->fs;
     ks->st2.a1 = -Y0blt;  // negate because of filter implementation
-    ks->st2.a2 = 0.0;
-    ks->st2.b0 = 1.0;
+    ks->st2.a2 = 0.0f;
+    ks->st2.b0 = 1.0f;
     ks->st2.b1 = X0blt;
-    ks->st2.b2 = 0.0;
+    ks->st2.b2 = 0.0f;
     ks->st2.gain = gdsp2;
     //printf("b0= %f b1= %f b2= %f a1=%f a2= %f gain= %f\n", ks->st2.b0,ks->st2.b1, ks->st2.b2,ks->st2.a1,ks->st2.a2 ,ks->st2.gain );
     //printf("b0= %f b1= %f b2= %f a1=%f a2= %f gain= %f\n", ks->st1.b0,ks->st1.b1, ks->st1.b2,ks->st1.a1,ks->st1.a2 ,ks->st1.gain );
@@ -108,42 +108,42 @@ void kotstack_init(kot_stack *ks, float fs_) {
     ks->fs = fs_;
 
     // Powers of 10
-    float k = 1000.0;
-    float n = 1.0e-9;
+    float k = 1000.0f;
+    float n = 1.0e-9f;
 
     // Tonestack components
-    ks->ri = 1.0 * k;
-    ks->rc = 6.8 * k;
-    ks->ro = 100.0 * k * 1000.0 * k / (100.0 * k + 1000.0 * k);
-    ks->c1 = 10.0 * n;
-    ks->c2 = 10.0 * n;
-    ks->rtone = 25.0 * k;     // Tone Pot
-    ks->rboost = 50 * k;      // Boost pot
+    ks->ri = 1.0f * k;
+    ks->rc = 6.8f * k;
+    ks->ro = 100.0f * k * 1000.0f * k / (100.0f * k + 1000.0f * k);
+    ks->c1 = 10.0f * n;
+    ks->c2 = 10.0f * n;
+    ks->rtone = 25.0f * k;     // Tone Pot
+    ks->rboost = 50.0f * k;      // Boost pot
 
     // Tone settings
-    ks->tone_pot_pos = 0.2;
-    ks->boost_pot_pos = 0.25;
+    ks->tone_pot_pos = 0.2f;
+    ks->boost_pot_pos = 0.25f;
 
     kotstack_compute_filter_coeffs(ks);
 
-    ks->st1.x1 = 0.0;
-    ks->st1.x2 = 0.0;
-    ks->st1.y1 = 0.0;
-    ks->st1.y2 = 0.0;
+    ks->st1.x1 = 0.0f;
+    ks->st1.x2 = 0.0f;
+    ks->st1.y1 = 0.0f;
+    ks->st1.y2 = 0.0f;
 
-    ks->st2.x1 = 0.0;
-    ks->st2.x2 = 0.0;
-    ks->st2.y1 = 0.0;
-    ks->st2.y2 = 0.0;
+    ks->st2.x1 = 0.0f;
+    ks->st2.x2 = 0.0f;
+    ks->st2.y1 = 0.0f;
+    ks->st2.y2 = 0.0f;
 
 }
 
 // User functions
 void kotstack_set_tone(kot_stack *ks, float tone) {
-    if (tone > 1.0)
-        ks->tone_pot_pos = 0.0;
-    else if (tone < 0.0)
-        ks->tone_pot_pos = 1.0;
+    if (tone > 1.0f)
+        ks->tone_pot_pos = 0.0f;
+    else if (tone < 0.0f)
+        ks->tone_pot_pos = 1.0f;
     else
         ks->tone_pot_pos = 1.0 - tone;
 
@@ -151,10 +151,10 @@ void kotstack_set_tone(kot_stack *ks, float tone) {
 }
 
 void kotstack_set_boost(kot_stack *ks, float boost) {
-    if (boost > 1.0)
-        ks->boost_pot_pos = 1.0;
-    else if (boost < 0.0)
-        ks->boost_pot_pos = 0.0;
+    if (boost > 1.0f)
+        ks->boost_pot_pos = 1.0f;
+    else if (boost < 0.0f)
+        ks->boost_pot_pos = 0.0f;
     else
         ks->boost_pot_pos = boost;
 

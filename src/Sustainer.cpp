@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <Bela.h>
 
 #include "Sustainer.h"
 
@@ -49,7 +48,7 @@ Sustainer::cleanup() {
 
 void
 Sustainer::init(float SAMPLE_RATE, int PER) {
-    float cSAMPLE_RATE = 1.0 / SAMPLE_RATE;
+    float cSAMPLE_RATE = 1.0f / SAMPLE_RATE;
     Pvolume = 64;
     Psustain = 64;
     fsustain = 0.5f;
@@ -119,6 +118,9 @@ Sustainer::tick_n(float *x) {
     //End compression
 };
 
+static inline float dB2rap(float dB) {
+    return expf((dB)*LOG_10/20.0f);
+}
 
 /*
  * Parameter control
@@ -155,11 +157,12 @@ Sustainer::setSustain(float s) {
     float fsustain = s;
     cratio = 1.25f - fsustain;
     input = dB2rap (42.0f * fsustain - 6.0f);
-    cthresh = 0.25 + fsustain;
+    cthresh = 0.25f + fsustain;
 }
 
 void
 Sustainer::changepar(int npar, int value) {
+    // TODO: switch over enum/const
     switch (npar) {
         case 0:
             Pvolume = value;
@@ -176,6 +179,7 @@ Sustainer::changepar(int npar, int value) {
 
 int
 Sustainer::getpar(int npar) {
+    // TODO: switch over enum/const
     switch (npar) {
         case 0:
             return (Pvolume);
@@ -189,8 +193,8 @@ Sustainer::getpar(int npar) {
 
 bool
 Sustainer::setBypass() {
-    if (bypass == true) bypass = false;
-    else bypass = true;
+    bypass = !bypass;
+
     return bypass;
 }
 

@@ -17,14 +17,14 @@ make_butterworth_coeffs(int order, float *coeffs) {
         for (k = 1; k <= n / 2; k++) {
             float fk = (float) k;
             coeffs[k - 1] =
-                    1.0/ (-2.0 * cos((2.0 * fk + fn - 1) / (2.0 * fn) * M_PI)); //1/x returns filter stage Q factor
+                    1.0f/ (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     } else { //odd
         for (k = 1; k <= (n - 1) / 2; k++) {
             float fk = (float) k;
             coeffs[k - 1] =
-                    1.0 / (-2.0 * cos((2.0 * fk + fn - 1) / (2.0 * fn) * M_PI)); //1/x returns filter stage Q factor
+                    1.0 / (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     }
@@ -34,42 +34,42 @@ make_butterworth_coeffs(int order, float *coeffs) {
 
 void
 biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
-    float w0 = 2.0 * M_PI * f0 / fs;
+    float w0 = 2.0f * M_PI * f0 / fs;
     float c = cos(w0);
     float s = sin(w0);
-    float alpha = s / (2. * Q);
+    float alpha = s / (2.0f * Q);
     float a0, a1, a2;
     float b0, b1, b2;
 
-    a0 = a1 = a2 = 0.0;
-    b0 = b1 = b2 = 0.0;
+    a0 = a1 = a2 = 0.0f;
+    b0 = b1 = b2 = 0.0f;
 
     switch (type) {
         case LPF:
-            b0 = (1.0 - c) / 2.0;
-            b1 = 1.0 - c;
-            b2 = (1.0 - c) / 2.0;
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * c;
-            a2 = 1.0 - alpha;
+            b0 = (1.0f - c) / 2.0f;
+            b1 = 1.0f - c;
+            b2 = (1.0f - c) / 2.0f;
+            a0 = 1.0f + alpha;
+            a1 = -2.0f * c;
+            a2 = 1.0f - alpha;
             break;
 
         case HPF:
-            b0 = (1.0 + c) / 2.0;
-            b1 = -(1.0 + c);
-            b2 = (1.0 + c) / 2.0;
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * c;
-            a2 = 1.0 - alpha;
+            b0 = (1.0f + c) / 2.0f;
+            b1 = -(1.0f + c);
+            b2 = (1.0f + c) / 2.0f;
+            a0 = 1.0f + alpha;
+            a1 = -2.0f * c;
+            a2 = 1.0f - alpha;
             break;
 
         case BPF:
             b0 = Q * alpha;
-            b1 = 0.0;
+            b1 = 0.0f;
             b2 = -Q * alpha;
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * c;
-            a2 = 1.0 - alpha;
+            a0 = 1.0f + alpha;
+            a1 = -2.0f * c;
+            a2 = 1.0f - alpha;
             break;
 
         default:
@@ -97,10 +97,10 @@ make_biquad(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
 
     cf = (biquad_coeffs *) malloc(sizeof(biquad_coeffs));
     biquad_update_coeffs(type, cf, fs, f0, Q);
-    cf->y1 = 0.0;
-    cf->y2 = 0.0;
-    cf->x1 = 0.0;
-    cf->x2 = 0.0;
+    cf->y1 = 0.0f;
+    cf->y2 = 0.0f;
+    cf->x1 = 0.0f;
+    cf->x2 = 0.0f;
     return cf;
 
 }

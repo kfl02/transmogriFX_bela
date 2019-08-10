@@ -9,10 +9,10 @@ overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int b
     od->procbuf = (float *) malloc(sizeof(float) * bsz * oversample);
 
     for (int i = 0; i < bsz; i++) {
-        od->procbuf[i] = 0.0;
+        od->procbuf[i] = 0.0f;
     }
-    od->xn1 = 0.0;
-    od->xc1 = 0.0;
+    od->xn1 = 0.0f;
+    od->xc1 = 0.0f;
 
     od->blksz = bsz;
     od->oversample = oversample;
@@ -21,20 +21,20 @@ overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int b
     od->inverse_oversample_float = 1.0 / ((float) oversample);
 
     // Set defaults
-    od->gain = 30.0;
-    od->tone = 0.5;
-    od->level = 0.5;
-    od->dry = 1.0;
+    od->gain = 30.0f;
+    od->tone = 0.5f;
+    od->level = 0.5f;
+    od->dry = 1.0f;
     od->bypass = true;
 
     // Setup EQ stages
     compute_filter_coeffs_1p(&(od->anti_alias), LPF1P, od->clipper_fs,
-                             4410.0);  // 1/10th fs assuming 44.1k rate -- increasing filter order will help
+                             4410.0f);  // 1/10th fs assuming 44.1k rate -- increasing filter order will help
     // down-play any aliasing artefacts, but increases CPU usage
-    compute_filter_coeffs_1p(&(od->pre_emph), HPF1P, od->fs, 720.0);
-    compute_filter_coeffs_1p(&(od->post_emph), LPF1P, od->clipper_fs, 860.0);
-    compute_filter_coeffs_1p(&(od->tone_lp), LPF1P, od->fs, 1200.0);
-    compute_filter_coeffs_1p(&(od->tone_hp), HPF1P, od->fs, 1700.0);
+    compute_filter_coeffs_1p(&(od->pre_emph), HPF1P, od->fs, 720.0f);
+    compute_filter_coeffs_1p(&(od->post_emph), LPF1P, od->clipper_fs, 860.0f);
+    compute_filter_coeffs_1p(&(od->tone_lp), LPF1P, od->fs, 1200.0f);
+    compute_filter_coeffs_1p(&(od->tone_hp), HPF1P, od->fs, 1700.0f);
 
     return od;
 }
@@ -54,17 +54,17 @@ inline float sqr(float x) {
 
 // Quadratic clipping function
 // Linear between nthrs and thrs, uses x - a*x^2 type of function above threshold
-float thrs = 0.8;
-float nthrs = -0.72;
-float f = 1.25;
+float thrs = 0.8f;
+float nthrs = -0.72f;
+float f = 1.25f;
 
 void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain processing and dry mix
 {
-    float xn = 0.0;
-    float dx = 0.0;
-    float dc = 0.0;
-    float delta = 0.0;
-    float deltac = 0.0;
+    float xn = 0.0f;
+    float dx = 0.0f;
+    float dc = 0.0f;
+    float delta = 0.0f;
+    float deltac = 0.0f;
 
     for (int i = 0; i < N; i++) {
         // Compute deltas for linear interpolation (upsampling)
@@ -81,8 +81,8 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
             delta += dx;
             deltac += dc;
             //Hard limiting
-            if (xn >= 1.2) xn = 1.2;
-            if (xn <= -1.12) xn = -1.12;
+            if (xn >= 1.2f) xn = 1.2f;
+            if (xn <= -1.12f) xn = -1.12f;
 
             //Soft clipping
             if (xn > thrs) {
@@ -99,8 +99,8 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
         }
 
         // Reset linear interpolator state variables
-        delta = 0.0;
-        deltac = 0.0;
+        delta = 0.0f;
+        deltac = 0.0f;
 
         // Zero-order hold downsampling assumes de-emphasis filter and anti-aliasing
         // filters sufficiently rejected harmonics > 1/2 base sample rate
@@ -110,11 +110,11 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
 
 // Cubic clipping function
 void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
-    float xn = 0.0;
-    float dx = 0.0;
-    float dc = 0.0;
-    float delta = 0.0;
-    float deltac = 0.0;
+    float xn = 0.0f;
+    float dx = 0.0f;
+    float dc = 0.0f;
+    float delta = 0.0f;
+    float deltac = 0.0f;
 
     for (unsigned int i = 0; i < N; i++) {
         // Compute deltas for linear interpolation (upsampling)
@@ -127,23 +127,23 @@ void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
         // Run clipping function at higher sample rate
         for (int n = 0; n < od->oversample; n++) {
             // Cubic clipping
-            xn = xn * od->gain * 0.33 +
+            xn = xn * od->gain * 0.33f +
                  asym;  // Gain reduced because d/dx(x^3) = 3x ==> Small-signal gain of 3 built into the function
-            if (xn <= -1.0)
-                xn = -2.0 / 3.0;
-            else if (xn >= 1.0)
-                xn = 2.0 / 3.0;
+            if (xn <= -1.0f)
+                xn = -2.0f / 3.0f;
+            else if (xn >= 1.0f)
+                xn = 2.0f / 3.0f;
             else
-                xn = xn - (1.0 / 3.0) * xn * xn * xn;
+                xn = xn - (1.0f / 3.0f) * xn * xn * xn;
 
             // Pre-filter for down-sampling
             // Run de-emphasis and anti-aliasing filters
-            xn = tick_filter_1p(&(od->post_emph), (od->dry * clean[i] + 0.7 * xn));
+            xn = tick_filter_1p(&(od->post_emph), (od->dry * clean[i] + 0.7f * xn));
             xn = tick_filter_1p(&(od->anti_alias), xn);
         }
         // Reset linear interpolator state variables
-        delta = 0.0;
-        deltac = 0.0;
+        delta = 0.0f;
+        deltac = 0.0f;
 
         // Zero-order hold downsampling assumes de-emphasis filter and anti-aliasing
         // filters sufficiently rejected harmonics > 1/2 base sample rate
@@ -175,54 +175,50 @@ void od_set_drive(overdrive *od, float drive_db)   // 0 dB to 45 dB
 {
     float drv = drive_db;
 
-    if (drv < 0.0)
-        drv = 0.0;
-    else if (drv > 45.0)
-        drv = 45.0;
+    if (drv < 0.0f)
+        drv = 0.0f;
+    else if (drv > 45.0f)
+        drv = 45.0f;
 
-    od->gain = powf(10.0, drv / 20.0);
+    od->gain = powf(10.0f, drv / 20.0f);
 }
 
 void od_set_tone(overdrive *od, float hf_level_db) // high pass boost/cut, +/- 12dB
 {
     float tone = hf_level_db;
 
-    if (tone < -12.0)
-        tone = -12.0;
-    else if (tone > 12.0)
-        tone = 12.0;
+    if (tone < -12.0f)
+        tone = -12.0f;
+    else if (tone > 12.0f)
+        tone = 12.0f;
 
-    od->tone = powf(10.0, tone / 20.0);
+    od->tone = powf(10.0f, tone / 20.0f);
 }
 
 void od_set_level(overdrive *od, float outlevel_db) // -40 dB to +0 dB
 {
     float vol = outlevel_db;
 
-    if (vol < -40.0)
-        vol = 40.0;
-    if (vol > 0.0)
-        vol = 0.0;
+    if (vol < -40.0f)
+        vol = 40.0f;
+    if (vol > 0.0f)
+        vol = 0.0f;
 
-    od->level = powf(10.0, vol / 20.0);
+    od->level = powf(10.0f, vol / 20.0f);
 }
 
 void od_set_dry(overdrive *od, float dry) {
-    if (dry < 0.0)
-        od->dry = 0.0;
-    else if (dry > 1.0)
-        od->dry = 1.0;
+    if (dry < 0.0f)
+        od->dry = 0.0f;
+    else if (dry > 1.0f)
+        od->dry = 1.0f;
     else
         od->dry = dry;
 }
 
 bool od_set_bypass(overdrive *od, bool bypass) {
     if (!bypass) {
-        if (od->bypass)
-            od->bypass = false;
-        else {
-            od->bypass = true;
-        }
+        od->bypass = !od->bypass;
     } else {
         od->bypass = true;
     }
@@ -237,7 +233,7 @@ void overdrive_tick(overdrive *od, float *x) {
     if (od->bypass)
         return;
     // Run pre-emphasis filter
-    for (int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < n; i++) {
         od->procbuf[i] = tick_filter_1p(&(od->pre_emph), x[i]);
     }
 
@@ -246,8 +242,8 @@ void overdrive_tick(overdrive *od, float *x) {
     //cubic_clip(od, n, 0.1, od->procbuf, x);   // Cubic: x - b*x^3
 
     // Output level and tone control
-    for (int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < n; i++) {
         x[i] = od->procbuf[i] * od->level;
-        x[i] = 0.25 * x[i] + tick_filter_1p(&(od->tone_lp), x[i]) + od->tone * tick_filter_1p(&(od->tone_hp), x[i]);
+        x[i] = 0.25f * x[i] + tick_filter_1p(&(od->tone_lp), x[i]) + od->tone * tick_filter_1p(&(od->tone_hp), x[i]);
     }
 }

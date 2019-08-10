@@ -6,10 +6,10 @@
 //
 
 void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0) {
-    float w0 = 2.0 * M_PI * f0 / fs;
+    float w0 = 2.0f * M_PI * f0 / fs;
     float a1;
     float b0, b1;
-    float g = 1.0;  // This could be brought out into a user-configurable param
+    float g = 1.0f;  // This could be brought out into a user-configurable param
     cf->gain = g;
     cf->fs = fs;
 
@@ -23,9 +23,9 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
             // In below implementation gain is redistributed to the numerator:
             //    h[n] = gb0*x[n] - gb1*x[n-1] - a1*y[n-1]
             a1 = -expf(-w0);
-            g = (1.0 + a1) / 1.12;
+            g = (1.0f + a1) / 1.12f;
             b0 = g;
-            b1 = 0.12 * g; //0.12 zero improves RC filter emulation at higher freqs.
+            b1 = 0.12f * g; //0.12 zero improves RC filter emulation at higher freqs.
             break;
         case HPF1P:
             //1-pole high pass filter coefficients
@@ -35,7 +35,7 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
             // In below implementation gain is redistributed to the numerator:
             //    h[n] = g*x[n] - g*x[n-1] - a1*y[n-1]
             a1 = -expf(-w0);
-            g = (1.0 - a1) * 0.5;
+            g = (1.0f - a1) * 0.5f;
             b0 = g;
             b1 = -g;
             break;
@@ -51,10 +51,10 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
     cf->x1 = 0.0;
 
     // Unused for a first order filter
-    cf->a2 = 0.0;
-    cf->b2 = 0.0;
-    cf->x2 = 0.0;
-    cf->y2 = 0.0;
+    cf->a2 = 0.0f;
+    cf->b2 = 0.0f;
+    cf->x2 = 0.0f;
+    cf->y2 = 0.0f;
 
 }
 
@@ -62,6 +62,7 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
     const int RE = 0;
     const int IM = 1;
 
+    // TODO: n is float already
     float fn = (float) n;
     float fstep = (fstop - fstart) / fn;
     float fi = fstart;
@@ -70,15 +71,16 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
     float num[2] = {0, 0};
     float den[2] = {0, 0};
 
+    // TODO: n is float
     for (int i = 0; i < n; i++) {
-        num[RE] = cf->b0 + cf->b1 * cosf(2.0 * M_PI * fi / fs) + cf->b2 * cosf(4.0 * M_PI * fi / fs);
-        num[IM] = -cf->b1 * sinf(2.0 * M_PI * fi / fs) - cf->b2 * sinf(4.0 * M_PI * fi / fs);
-        den[RE] = 1.0 - cf->a1 * cosf(2.0 * M_PI * fi / fs) - cf->a2 * cosf(4.0 * M_PI * fi / fs);
-        den[IM] = cf->a1 * sinf(2.0 * M_PI * fi / fs) + cf->a2 * sinf(4.0 * M_PI * fi / fs);
+        num[RE] = cf->b0 + cf->b1 * cosf(2.0f * M_PI * fi / fs) + cf->b2 * cosf(4.0f * M_PI * fi / fs);
+        num[IM] = -cf->b1 * sinf(2.0f * M_PI * fi / fs) - cf->b2 * sinf(4.0f * M_PI * fi / fs);
+        den[RE] = 1.0f - cf->a1 * cosf(2.0f * M_PI * fi / fs) - cf->a2 * cosf(4.0f * M_PI * fi / fs);
+        den[IM] = cf->a1 * sinf(2.0f * M_PI * fi / fs) + cf->a2 * sinf(4.0f * M_PI * fi / fs);
 
-        mag[i] = 20.0 * log10(cf->gain *
+        mag[i] = 20.0f * log10(cf->gain *
                               sqrtf((num[RE] * num[RE] + num[IM] * num[IM]) / (den[RE] * den[RE] + den[IM] * den[IM])));
-        phase[i] = 0.0; // TODO: Implement phase calculation
+        phase[i] = 0.0f; // TODO: Implement phase calculation
 
         frq[i] = fi;
         fi += fstep;
@@ -115,8 +117,8 @@ void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *
     float kz = kz_;
     float fs = fs_;
 
-    if (kz == 0.0)
-        kz = 2.0 * fs;
+    if (kz == 0.0f)
+        kz = 2.0f * fs;
 
     float kz2 = kz * kz;
 
@@ -128,11 +130,11 @@ void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *
     float A2 = den[0];
 
     num[2] = (B0 * kz2 + B1 * kz + B2) / (A0 * kz2 + A1 * kz + A2);
-    num[1] = (2.0 * B2 - 2.0 * B0 * kz2) / (A0 * kz2 + A1 * kz + A2);
+    num[1] = (2.0f * B2 - 2.0f * B0 * kz2) / (A0 * kz2 + A1 * kz + A2);
     num[0] = (B0 * kz2 - B1 * kz + B2) / (A0 * kz2 + A1 * kz + A2);
 
     den[2] = -(A0 * kz2 - A1 * kz + A2) / (A0 * kz2 + A1 * kz + A2);      // negated
-    den[1] = -(2.0 * A2 - 2.0 * A0 * kz2) / (A0 * kz2 + A1 * kz + A2);    // negated
+    den[1] = -(2.0f * A2 - 2.0f * A0 * kz2) / (A0 * kz2 + A1 * kz + A2);    // negated
     den[0] = 0.0;  // should not be used
 
 }

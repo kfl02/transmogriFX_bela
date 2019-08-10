@@ -21,12 +21,12 @@ sqr(float x) {
 inline float
 soft_clip(float xn_) {
 
-    float xn = 2.0 * xn_ - 1.0;
-    if (xn > 1.0) xn = 1.0;
-    else if (xn < -1.0) xn = -1.0;
-    else if (xn < 0.0) xn = sqr(xn + 1.0) - 1.0;
-    else xn = 1.0 - sqr(1.0 - xn);
-    return 0.5 * (xn + 1.0);
+    float xn = 2.0f * xn_ - 1.0f;
+    if (xn > 1.0f) xn = 1.0f;
+    else if (xn < -1.0f) xn = -1.0f;
+    else if (xn < 0.0f) xn = sqr(xn + 1.0f) - 1.0f;
+    else xn = 1.0f - sqr(1.0f - xn);
+    return 0.5f * (xn + 1.0f);
 }
 
 sh_mod *
@@ -42,33 +42,33 @@ make_sample_hold(sh_mod *sh, float fs, int N) {
     sh->sclk = (bool *) malloc(sizeof(bool) * N);
 
     for (int i = 0; i < N; i++) {
-        sh->adsr_env[i] = 0.0;
-        sh->lfo[i] = 0.0;
-        sh->hfo[i] = 0.0;
-        sh->swave[i] = 0.0;
+        sh->adsr_env[i] = 0.0f;
+        sh->lfo[i] = 0.0f;
+        sh->hfo[i] = 0.0f;
+        sh->swave[i] = 0.0f;
         sh->sclk[i] = false;
     }
 
     sh->fs = fs;
-    sh->ifs = 1.0 / sh->fs;
+    sh->ifs = 1.0f / sh->fs;
     sh->NS = N;
 
-    float rate = 6.0;
-    float hfr = 4.7 * rate;
-    float Trate = 1000.0 / rate;
+    float rate = 6.0f;
+    float hfr = 4.7f * rate;
+    float Trate = 1000.0f / rate;
 
     //Initialize ramp rates
-    adsr_set_attack(sh->ad, Trate / 8.0);
-    adsr_set_decay(sh->ad, Trate / 8.0);
-    adsr_set_sustain(sh->ad, 0.36);
-    adsr_set_release(sh->ad, Trate / 4.0);
-    adsr_set_trigger_timeout(sh->ad, 0.5 / rate);
+    adsr_set_attack(sh->ad, Trate / 8.0f);
+    adsr_set_decay(sh->ad, Trate / 8.0f);
+    adsr_set_sustain(sh->ad, 0.36f);
+    adsr_set_release(sh->ad, Trate / 4.0f);
+    adsr_set_trigger_timeout(sh->ad, 0.5f / rate);
     sh->en_adsr = true;
 
     //Initialize ramp rates
     sh->dt_lfo = sh->ifs * rate;
     sh->dt_hfo = sh->ifs * hfr;
-    sh->steepness = 3.0;  //how abruptly it transitions from one step to the next
+    sh->steepness = 3.0f;  //how abruptly it transitions from one step to the next
     sh->mode = SH_RAND;
     sh->n_seq_steps = 6;
     for (int i = 0; i < sh->n_seq_steps; i++) {
@@ -77,11 +77,11 @@ make_sample_hold(sh_mod *sh, float fs, int N) {
     }
     //Initialize state variables
     sh->seq_step = 0;
-    sh->ramp_lfo = 0.0;
-    sh->ramp_hfo = 0.0;
-    sh->last_hfo_sample = 0.0;
-    sh->last_wave = 0.0;
-    sh->dl = 0.0;
+    sh->ramp_lfo = 0.0f;
+    sh->ramp_hfo = 0.0f;
+    sh->last_hfo_sample = 0.0f;
+    sh->last_wave = 0.0f;
+    sh->dl = 0.0f;
 
     return sh;
 }
@@ -98,8 +98,8 @@ run_modulator(sh_mod *sh) {
         else if (sh->mode == SH_SEQ)
             sh->ramp_hfo = sh->sequence[sh->seq_step];
 
-        if (sh->ramp_lfo >= 1.0) {
-            sh->ramp_lfo = 0.0;
+        if (sh->ramp_lfo >= 1.0f) {
+            sh->ramp_lfo = 0.0f;
             sh->sclk[i] = true;
             sh->seq_step += 1;  //go to next value sequence
             if (sh->seq_step >= sh->n_seq_steps) sh->seq_step = 0; //reset sequencer
@@ -107,10 +107,10 @@ run_modulator(sh_mod *sh) {
             sh->sclk[i] = false;
         }
 
-        if (sh->ramp_hfo > 1.0) {
-            sh->ramp_hfo = 1.0;
-        } else if (sh->ramp_hfo < 0.0) {
-            sh->ramp_hfo = 0.0;
+        if (sh->ramp_hfo > 1.0f) {
+            sh->ramp_hfo = 1.0f;
+        } else if (sh->ramp_hfo < 0.0f) {
+            sh->ramp_hfo = 0.0f;
         }
 
         sh->lfo[i] = soft_clip(sh->steepness * sh->ramp_lfo);
@@ -124,7 +124,7 @@ run_sample_hold(sh_mod *sh, float *output) {
     adsr_tick_n(sh->ad, sh->adsr_env);
     for (int i = 0; i < sh->NS; i++) {
 
-        if (sh->sclk[i] == true) {
+        if (sh->sclk[i]) {
             sh->dl = (sh->hfo[i] - sh->last_hfo_sample);
             sh->last_wave = sh->last_hfo_sample;
             sh->last_hfo_sample = sh->hfo[i];
@@ -146,10 +146,7 @@ bool
 sample_hold_set_active(sh_mod *sh, bool act) {
     //toggle state if act is true
     if (act) {
-        if (sh->en_adsr)
-            sh->en_adsr = false;
-        else
-            sh->en_adsr = true;
+        sh->en_adsr = !sh->en_adsr;
     } else //always deactivate if false
     {
         sh->en_adsr = false;
@@ -160,15 +157,15 @@ sample_hold_set_active(sh_mod *sh, bool act) {
 
 void
 sample_hold_set_rate(sh_mod *sh, float rate) {
-    float hfr = 4.7 * rate;
-    float Trate = 1000.0 / rate;
+    float hfr = 4.7f * rate;
+    float Trate = 1000.0f / rate;
 
     //Initialize ramp rates
-    adsr_set_attack(sh->ad, Trate / 10.0);
-    adsr_set_decay(sh->ad, Trate / 20.0);
-    adsr_set_sustain(sh->ad, 0.75);
-    adsr_set_release(sh->ad, Trate / 16.0);
-    adsr_set_trigger_timeout(sh->ad, 0.5 / rate);
+    adsr_set_attack(sh->ad, Trate / 10.0f);
+    adsr_set_decay(sh->ad, Trate / 20.0f);
+    adsr_set_sustain(sh->ad, 0.75f);
+    adsr_set_release(sh->ad, Trate / 16.0f);
+    adsr_set_trigger_timeout(sh->ad, 0.5f / rate);
     sh->en_adsr = true;
 
     //Initialize ramp rates
