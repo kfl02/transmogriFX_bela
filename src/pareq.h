@@ -29,48 +29,53 @@
 #include <math.h>
 
 
-class Pareq
-{
+class Pareq {
 public:
 
-    Pareq (void);
-    ~Pareq (void);
-    
-    void setfsamp (float fsamp);
-    void setparam (float f, float g)
-    {
-    _f0 = f;
-    _g0 = powf (10.0f, 0.05f * g);
-    _touch0++;
+    Pareq(void);
+
+    ~Pareq(void);
+
+    void setfsamp(float fsamp);
+
+    void setparam(float f, float g) {
+        _f0 = f;
+        _g0 = powf(10.0f, 0.05f * g);
+        _touch0++;
     }
-    void reset (void);
-    void prepare (int nsamp);
-    void process (int nsamp, int nchan, float *data[])
-    {
-    if (_state != BYPASS) process1 (nsamp, nchan, data);
+
+    void reset(void);
+
+    void prepare(int nsamp);
+
+    void process(int nsamp, int nchan, float *data[]) {
+        if (_state != BYPASS) process1(nsamp, nchan, data);
     }
 
 private:
 
-    enum { BYPASS, STATIC, SMOOTH, MAXCH = 4 };
+    enum {
+        BYPASS, STATIC, SMOOTH, MAXCH = 4
+    };
 
-    void calcpar1 (int nsamp, float g, float f);
-    void process1 (int nsamp, int nchan, float *data[]);
+    void calcpar1(int nsamp, float g, float f);
 
-    volatile int16_t  _touch0;
-    volatile int16_t  _touch1;
-    bool              _bypass;
-    int               _state;
-    float             _fsamp;
+    void process1(int nsamp, int nchan, float *data[]);
 
-    float             _g0, _g1;
-    float             _f0, _f1;
-    float             _c1, _dc1;
-    float             _c2, _dc2;
-    float             _gg, _dgg;
+    volatile int16_t _touch0;
+    volatile int16_t _touch1;
+    bool _bypass;
+    int _state;
+    float _fsamp;
 
-    float             _z1 [MAXCH];
-    float             _z2 [MAXCH];
+    float _g0, _g1;
+    float _f0, _f1;
+    float _c1, _dc1;
+    float _c2, _dc2;
+    float _gg, _dgg;
+
+    float _z1[MAXCH];
+    float _z2[MAXCH];
 };
 
 

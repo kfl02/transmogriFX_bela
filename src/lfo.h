@@ -3,15 +3,15 @@
 #ifndef LFO_H
 #define LFO_H
 
-const int INT_TRI       = 0;
-const int TRI           = 1;
-const int SINE          = 2;
-const int SQUARE        = 3;
-const int EXP           = 4;
-const int RELAX         = 5;
-const int HYPER         = 6;
-const int HYPER_SINE    = 7;
-const int MAX_LFOS      = 7;
+const int INT_TRI = 0;
+const int TRI = 1;
+const int SINE = 2;
+const int SQUARE = 3;
+const int EXP = 4;
+const int RELAX = 5;
+const int HYPER = 6;
+const int HYPER_SINE = 7;
+const int MAX_LFOS = 7;
 
 
 typedef struct lfoparams_t {
@@ -24,12 +24,12 @@ typedef struct lfoparams_t {
     float lfo;
     float x;
     int startup_delay;
-    
+
     //Triangle wave state variables
     float ktri;
     float trisign;
     float trilfo;
-    
+
     //Sine oscillator state variables
     float ksin;
     float sin_part;
@@ -49,19 +49,23 @@ typedef struct lfoparams_t {
     float exp_max;
     float exp_sv;
     float exp_x;
-    
+
     //globals
     float current_rate;
-    
+
     //Select LFO type 
     unsigned int lfo_type;
 } lfoparams;
 
-lfoparams* init_lfo(lfoparams*, float, float, float);
-void update_lfo(lfoparams*, float, float);
-void set_lfo_type(lfoparams*, unsigned int);
-void get_lfo_name(unsigned int, char*);
-float run_lfo(lfoparams* );
+lfoparams *init_lfo(lfoparams *, float, float, float);
+
+void update_lfo(lfoparams *, float, float);
+
+void set_lfo_type(lfoparams *, unsigned int);
+
+void get_lfo_name(unsigned int, char *);
+
+float run_lfo(lfoparams *);
 
 #endif //LFO_H
 

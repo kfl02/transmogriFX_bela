@@ -8,13 +8,12 @@
 #define ADSR_H
 
 //ADSR States
-const int ADSR_STATE_ATTACK     = 0;
-const int ADSR_STATE_DECAY      = 1;
-const int ADSR_STATE_SUSTAIN    = 2;
-const int ADSR_STATE_RELEASE    = 3;
+const int ADSR_STATE_ATTACK = 0;
+const int ADSR_STATE_DECAY = 1;
+const int ADSR_STATE_SUSTAIN = 2;
+const int ADSR_STATE_RELEASE = 3;
 
-typedef struct adsr_t
-{
+typedef struct adsr_t {
     // System properties
     float fs, ifs;          //Sampling frequency and its inverse
     int NS;                 //Number of samples in loop
@@ -37,40 +36,40 @@ typedef struct adsr_t
 } adsr;
 
 //Use this function to instantiate a new adsr struct
-adsr*
-make_adsr(adsr* ad, float fs, int N);
+adsr *
+make_adsr(adsr *ad, float fs, int N);
 
 //This is where it all happens.
 // It assumes "output" is pre-allocated to > size N
 // given in make_adsr()
 void
-adsr_tick_n(adsr* ad, float* output);
+adsr_tick_n(adsr *ad, float *output);
 
 //User parameters
 
 //Output level (scale)
 void
-adsr_set_amplitude(adsr* ad, float a);
+adsr_set_amplitude(adsr *ad, float a);
 
 //Velocity -- default is sqrt(2)
 void
-adsr_set_velocity(adsr* ad, float v);
+adsr_set_velocity(adsr *ad, float v);
 
 //Attack time in units of ms
 void
-adsr_set_attack(adsr* ad, float a);
+adsr_set_attack(adsr *ad, float a);
 
 //Decay time in units of ms
 void
-adsr_set_decay(adsr* ad, float d);
+adsr_set_decay(adsr *ad, float d);
 
 //Sustain gain 0 to 1
 void
-adsr_set_sustain(adsr* ad, float s);
+adsr_set_sustain(adsr *ad, float s);
 
 //Release time in units of ms
 void
-adsr_set_release(adsr* ad, float r);
+adsr_set_release(adsr *ad, float r);
 
 //
 //  Triggering
@@ -102,12 +101,12 @@ adsr_set_release(adsr* ad, float r);
 
 //Set trigger: "true", Clear trigger "false"
 void
-adsr_set_trigger_state(adsr* ad, bool t);
+adsr_set_trigger_state(adsr *ad, bool t);
 
 //Set trigger timeout if not manually resetting it
 //takes time in seconds
 //negative number means no timeout
 void
-adsr_set_trigger_timeout(adsr* ad, float t);
+adsr_set_trigger_timeout(adsr *ad, float t);
 
 #endif //ADSR_H

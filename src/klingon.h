@@ -12,8 +12,7 @@
 #include "iir_1pole.h"
 #include "kot_tonestack.h"
 
-typedef struct klingon_t
-{
+typedef struct klingon_t {
     float fs;  // Sampling frequency
     float clipper_fs; // nonlinear processing sampling frequency
     unsigned int oversample;  // Oversampling rate
@@ -43,7 +42,7 @@ typedef struct klingon_t
 
     // Tonestack
     kot_stack stack;
-    
+
     // Clipping look-up function
     vi_trace clip;
     vi_trace hard_clip;
@@ -57,21 +56,22 @@ typedef struct klingon_t
 } klingon;
 
 // Allocate the klingon struct and set default values
-klingon* make_klingon(klingon* kot, unsigned int oversample, unsigned int bsz, float fs);
-void klingon_cleanup(klingon* kot);
+klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, float fs);
+
+void klingon_cleanup(klingon *kot);
 
 // Typical real-time user-configurable parameters
-void kot_set_drive(klingon* kot, float drive_db);   // 0 dB to 45 dB
-void kot_set_tone(klingon* kot, float lp_level_db); // high frequency cut, -60dB to 0dB
-void kot_set_boost(klingon* kot, float boost);  // Boost pot control, 0.0 to 1.0
-void kot_set_mix(klingon* kot, float hard);  // Hard/Soft control, 0.0 to 1.0
-void kot_set_level(klingon* kot, float outlevel_db); // -40 dB to +0 dB
-bool kot_set_bypass(klingon* kot, bool bypass);
+void kot_set_drive(klingon *kot, float drive_db);   // 0 dB to 45 dB
+void kot_set_tone(klingon *kot, float lp_level_db); // high frequency cut, -60dB to 0dB
+void kot_set_boost(klingon *kot, float boost);  // Boost pot control, 0.0 to 1.0
+void kot_set_mix(klingon *kot, float hard);  // Hard/Soft control, 0.0 to 1.0
+void kot_set_level(klingon *kot, float outlevel_db); // -40 dB to +0 dB
+bool kot_set_bypass(klingon *kot, bool bypass);
 
 // Reconfigure first stage pre-emphasis filter
-void compute_s_biquad(float r1, float r2, float c1, float c2, float* num, float* den);
+void compute_s_biquad(float r1, float r2, float c1, float c2, float *num, float *den);
 
 // Run the klingon effect
-void klingon_tick(klingon* kot, float* x);
+void klingon_tick(klingon *kot, float *x);
 
 #endif //KLINGON_H

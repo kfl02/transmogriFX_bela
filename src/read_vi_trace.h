@@ -5,26 +5,25 @@
 
 #include <math.h>
 
-typedef struct vi_trace_t
-{
+typedef struct vi_trace_t {
     int cnt;
     float minamp, maxamp;
     float di;
 
-    float* volt;
-    float* amp;  // Not strictly needed, but might be ueful for
-                 // user interface purposes
+    float *volt;
+    float *amp;  // Not strictly needed, but might be ueful for
+    // user interface purposes
 } vi_trace;
 
-int load_vi_data(vi_trace* vi, char* filename);
-void vi_trace_cleanup(vi_trace* vi);
+int load_vi_data(vi_trace *vi, char *filename);
+
+void vi_trace_cleanup(vi_trace *vi);
 
 //
 // Lagrange polynomial interpolator
 // 
-inline float vi_trace_interp(vi_trace* vi, float x_)
-{
-    float x = (x_ - vi->minamp)*vi->di;
+inline float vi_trace_interp(vi_trace *vi, float x_) {
+    float x = (x_ - vi->minamp) * vi->di;
     float nx = x;
     float fl = floorf(nx);
     x = x - fl;
@@ -32,18 +31,15 @@ inline float vi_trace_interp(vi_trace* vi, float x_)
 
     // Expecting a function that is flatline at each
     // element at each extreme
-    if ( n > (vi->cnt - 3) )
-    {
+    if (n > (vi->cnt - 3)) {
         return vi->volt[vi->cnt - 2];
-    }
-    else if (n < 2)
-    {
+    } else if (n < 2) {
         return vi->volt[1];
     }
-    float p0 = vi->volt[n-1];
+    float p0 = vi->volt[n - 1];
     float p1 = vi->volt[n];
-    float p2 = vi->volt[n+1];
-    float p3 = vi->volt[n+2];
+    float p2 = vi->volt[n + 1];
+    float p3 = vi->volt[n + 2];
 
     float c0p0 = -0.16666666667f * p0;
     float c1p1 = 0.5f * p1;

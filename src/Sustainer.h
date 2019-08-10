@@ -28,26 +28,35 @@
 const float LOG_10 = 2.302585f;
 #define dB2rap(dB) (float)((expf((dB)*LOG_10/20.0f)))
 
-class Sustainer
-{
+class Sustainer {
 public:
-    Sustainer (float SAMPLE_RATE);
-    ~Sustainer ();
-    void cleanup ();
+    Sustainer(float SAMPLE_RATE);
+
+    ~Sustainer();
+
+    void cleanup();
+
     void init(float SAMPLE_RATE, int PER);
 
-    void tick_n (float *input);
-    void changepar (int npar, int value);
-    int getpar (int npar);
-    void setpreset (int npreset);
-    void setGain (float g);
-    void setSustain (float s);
-    bool setBypass ();
-    void get_envelope(float* env);
+    void tick_n(float *input);
+
+    void changepar(int npar, int value);
+
+    int getpar(int npar);
+
+    void setpreset(int npreset);
+
+    void setGain(float g);
+
+    void setSustain(float s);
+
+    bool setBypass();
+
+    void get_envelope(float *env);
 
     //can use the envelope generator elsewhere
     float *envelope;
-    
+
     int Ppreset;
 
 private:
@@ -58,12 +67,12 @@ private:
 
     int PERIOD;
     int timer, hold;
-    float level, fsustain, input,tmpgain;
+    float level, fsustain, input, tmpgain;
     float prls, compeak, compg;
     float compenv, oldcompenv;
     float calpha, cbeta;
     float cthresh, cratio, cpthresh;
-    
+
 };
 
 

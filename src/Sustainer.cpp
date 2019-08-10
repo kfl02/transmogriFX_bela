@@ -27,14 +27,12 @@
 
 #include "Sustainer.h"
 
-Sustainer::Sustainer (float SAMPLE_RATE)
-{
+Sustainer::Sustainer(float SAMPLE_RATE) {
     init(SAMPLE_RATE, 0);
-    cleanup ();
+    cleanup();
 };
 
-Sustainer::~Sustainer ()
-{
+Sustainer::~Sustainer() {
 
 };
 
@@ -42,8 +40,7 @@ Sustainer::~Sustainer ()
  * Cleanup the effect
  */
 void
-Sustainer::cleanup ()
-{
+Sustainer::cleanup() {
     compeak = 0.0f;
     compenv = 0.0f;
     oldcompenv = 0.0f;
@@ -51,9 +48,8 @@ Sustainer::cleanup ()
 };
 
 void
-Sustainer::init(float SAMPLE_RATE, int PER)
-{
-    float cSAMPLE_RATE = 1.0/SAMPLE_RATE;
+Sustainer::init(float SAMPLE_RATE, int PER) {
+    float cSAMPLE_RATE = 1.0 / SAMPLE_RATE;
     Pvolume = 64;
     Psustain = 64;
     fsustain = 0.5f;
@@ -61,66 +57,64 @@ Sustainer::init(float SAMPLE_RATE, int PER)
     bypass = true;
 
     float tmp = 0.01f;  //10 ms decay time on peak detectors
-    prls = 1.0f - (cSAMPLE_RATE/(cSAMPLE_RATE + tmp));
+    prls = 1.0f - (cSAMPLE_RATE / (cSAMPLE_RATE + tmp));
 
     tmp = 0.05f; //50 ms att/rel on compressor
-    calpha =  cSAMPLE_RATE/(cSAMPLE_RATE + tmp);
+    calpha = cSAMPLE_RATE / (cSAMPLE_RATE + tmp);
     cbeta = 1.0f - calpha;
     cthresh = 0.25f;
     cratio = 0.25f;
 
     timer = 0;
-    hold = (int) (SAMPLE_RATE*0.0125);  //12.5ms
-    
-    PERIOD = PER;
-    
-    envelope = new float[PERIOD];
-    for(int i=0; i < PERIOD; i++) envelope[i] = 0.0;
+    hold = (int) (SAMPLE_RATE * 0.0125);  //12.5ms
 
-    setpreset (0);
+    PERIOD = PER;
+
+    envelope = new float[PERIOD];
+    for (int i = 0; i < PERIOD; i++) envelope[i] = 0.0;
+
+    setpreset(0);
 }
 
 /*
  * Effect output
  */
 void
-Sustainer::tick_n (float *x)
-{
+Sustainer::tick_n(float *x) {
     int i;
     float smpl = 0.0f;
 
-    for (i = 0; i<PERIOD; i++) {  //apply compression to auxresampled
-        smpl = input*x[i];
-        if(fabs(smpl) > compeak) {
+    for (i = 0; i < PERIOD; i++) {  //apply compression to auxresampled
+        smpl = input * x[i];
+        if (fabs(smpl) > compeak) {
             compeak = fabs(smpl);   //First do peak detection on the signal
             timer = 0;
         }
-        if(timer>hold) {
+        if (timer > hold) {
             compeak *= prls;
             timer--;
         }
         envelope[i] = compeak;
         timer++;
-        
-        if(!bypass)
-        {
+
+        if (!bypass) {
             compenv = cbeta * oldcompenv + calpha * compeak;       //Next average into envelope follower
             oldcompenv = compenv;
-    
-            if(compenv > cpthresh) {                              //if envelope of signal exceeds thresh, then compress
-                compg = cpthresh + cpthresh*(compenv - cpthresh)/compenv;
-                cpthresh = cthresh + cratio*(compg - cpthresh);   //cpthresh changes dynamically
-                tmpgain = compg/compenv;
+
+            if (compenv > cpthresh) {                              //if envelope of signal exceeds thresh, then compress
+                compg = cpthresh + cpthresh * (compenv - cpthresh) / compenv;
+                cpthresh = cthresh + cratio * (compg - cpthresh);   //cpthresh changes dynamically
+                tmpgain = compg / compenv;
             } else {
                 tmpgain = 1.0f;
             }
-    
-            if(compenv < cpthresh) cpthresh = compenv;
-            if(cpthresh < cthresh) cpthresh = cthresh;
-    
-            x[i] = smpl*tmpgain * level;
+
+            if (compenv < cpthresh) cpthresh = compenv;
+            if (cpthresh < cthresh) cpthresh = cthresh;
+
+            x[i] = smpl * tmpgain * level;
         }
-        
+
     };
     //End compression
 };
@@ -132,84 +126,77 @@ Sustainer::tick_n (float *x)
 
 
 void
-Sustainer::setpreset (int npreset)
-{
+Sustainer::setpreset(int npreset) {
     const int PRESET_SIZE = 2;
     const int NUM_PRESETS = 3;
     int presets[NUM_PRESETS][PRESET_SIZE] = {
-        //Moderate
-        {79, 54},
-        //Extreme
-        {16, 127},
-        //Mild
-        {120, 15},
+            //Moderate
+            {79,  54},
+            //Extreme
+            {16,  127},
+            //Mild
+            {120, 15},
 
     };
 
     for (int n = 0; n < PRESET_SIZE; n++)
-        changepar (n, presets[npreset][n]);
+        changepar(n, presets[npreset][n]);
 
     Ppreset = npreset;
 };
 
-void 
-Sustainer::setGain(float g)
-{
+void
+Sustainer::setGain(float g) {
     level = dB2rap(-30.0f * (1.0f - g));
 }
 
-void 
-Sustainer::setSustain(float s)
-{
+void
+Sustainer::setSustain(float s) {
     float fsustain = s;
     cratio = 1.25f - fsustain;
     input = dB2rap (42.0f * fsustain - 6.0f);
-    cthresh = 0.25 + fsustain;  
+    cthresh = 0.25 + fsustain;
 }
 
 void
-Sustainer::changepar (int npar, int value)
-{
+Sustainer::changepar(int npar, int value) {
     switch (npar) {
-    case 0:
-        Pvolume = value;
-        setGain( ((float) Pvolume/127.0f) );
-        break;
-    case 1:
-        Psustain = value;
-        fsustain =  (float) Psustain/127.0f;
-        setSustain(fsustain);
-        break;
+        case 0:
+            Pvolume = value;
+            setGain(((float) Pvolume / 127.0f));
+            break;
+        case 1:
+            Psustain = value;
+            fsustain = (float) Psustain / 127.0f;
+            setSustain(fsustain);
+            break;
 
     };
 };
 
 int
-Sustainer::getpar (int npar)
-{
+Sustainer::getpar(int npar) {
     switch (npar) {
-    case 0:
-        return (Pvolume);
-        break;
-    case 1:
-        return (Psustain);
-        break;
+        case 0:
+            return (Pvolume);
+            break;
+        case 1:
+            return (Psustain);
+            break;
     };
     return (0);         //in case of bogus parameter number
 };
 
-bool 
-Sustainer::setBypass()
-{
-    if(bypass == true) bypass = false;
+bool
+Sustainer::setBypass() {
+    if (bypass == true) bypass = false;
     else bypass = true;
     return bypass;
 }
 
-void 
-Sustainer::get_envelope(float* env)
-{
-    for(int i = 0; i<PERIOD; i++){
+void
+Sustainer::get_envelope(float *env) {
+    for (int i = 0; i < PERIOD; i++) {
         env[i] = envelope[i];
     }
 }

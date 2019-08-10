@@ -5,8 +5,8 @@
 
 #include "lfo.h"
 
-const int MODERATE      = 0;
-const int TREM_SQUARE   = 1;
+const int MODERATE = 0;
+const int TREM_SQUARE = 1;
 
 typedef struct trem_t {
     float fs;
@@ -17,25 +17,30 @@ typedef struct trem_t {
     int lfo_type;
 
     //modulation
-    lfoparams* lfo;
+    lfoparams *lfo;
 
 } trem_coeffs;
 
 //Initialize the struct and allocate memory
-trem_coeffs* make_trem(trem_coeffs*, float);
+trem_coeffs *make_trem(trem_coeffs *, float);
 
 // input sample, pot gain (0...1), iwah struct
-float trem_tick(trem_coeffs*, float);
-void trem_tick_n(trem_coeffs*, float*, int);
+float trem_tick(trem_coeffs *, float);
+
+void trem_tick_n(trem_coeffs *, float *, int);
 
 //Select preset circuit voicings
-void trem_circuit_preset(trem_coeffs*, int );
+void trem_circuit_preset(trem_coeffs *, int);
 
 //settings
-void trem_set_lfo_rate(trem_coeffs*, float);
-void trem_set_lfo_depth(trem_coeffs*, float);
-void trem_set_lfo_gain(trem_coeffs*, float);
-void trem_set_lfo_type(trem_coeffs*, unsigned int);
-bool trem_toggle_bypass(trem_coeffs*);
+void trem_set_lfo_rate(trem_coeffs *, float);
+
+void trem_set_lfo_depth(trem_coeffs *, float);
+
+void trem_set_lfo_gain(trem_coeffs *, float);
+
+void trem_set_lfo_type(trem_coeffs *, unsigned int);
+
+bool trem_toggle_bypass(trem_coeffs *);
 
 #endif //TREM_H

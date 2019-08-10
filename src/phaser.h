@@ -7,14 +7,14 @@
 
 const inst PHASER_MAX_STAGES = 24;
 
-const int PHASER_DEFAULT    = 0;
-const int PHASE_90          = 1;
+const int PHASER_DEFAULT = 0;
+const int PHASE_90 = 1;
 
 typedef struct phaser_t {
     bool bypass;
     bool reset; //used to tell whether state variables have been reset
     float fs; //sampling frequency
-    
+
     //Number of phaser stages
     size_t n_stages;
 
@@ -56,30 +56,39 @@ typedef struct phaser_t {
     float gfb[PHASER_MAX_STAGES];
 
     //modulation
-    lfoparams* mod;
+    lfoparams *mod;
 
 } phaser_coeffs;
 
 //Initialize the struct and allocate memory
-phaser_coeffs* make_phaser(phaser_coeffs*, float);
+phaser_coeffs *make_phaser(phaser_coeffs *, float);
 
 //(float x, float gp, iwah_coeffs* cf)
 // input sample, pot gain (0...1), iwah struct
-float phaser_tick(float, phaser_coeffs*);
-void phaser_tick_n( phaser_coeffs*, int, float*);
+float phaser_tick(float, phaser_coeffs *);
+
+void phaser_tick_n(phaser_coeffs *, int, float *);
 
 //Select preset circuit voicings
-void phaser_circuit_preset(int , phaser_coeffs* );
+void phaser_circuit_preset(int, phaser_coeffs *);
 
 //Settings
-bool phaser_toggle_bypass(phaser_coeffs* cf);
-void phaser_set_mix(phaser_coeffs* cf, float wet);
-void phaser_set_nstages(phaser_coeffs* cf, int nstages);
-void phaser_set_lfo_type(phaser_coeffs* cf, int n);
-void phaser_set_lfo_rate(phaser_coeffs* cf, float rate);
-void phaser_set_lfo_depth(phaser_coeffs* cf, float depth, int stage);
-void phaser_set_lfo_width(phaser_coeffs* cf, float width, int stage);
-void phaser_set_feedback(phaser_coeffs* cf, float fb, int stage);
-void phaser_set_distortion(phaser_coeffs* cf, float d);
+bool phaser_toggle_bypass(phaser_coeffs *cf);
+
+void phaser_set_mix(phaser_coeffs *cf, float wet);
+
+void phaser_set_nstages(phaser_coeffs *cf, int nstages);
+
+void phaser_set_lfo_type(phaser_coeffs *cf, int n);
+
+void phaser_set_lfo_rate(phaser_coeffs *cf, float rate);
+
+void phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage);
+
+void phaser_set_lfo_width(phaser_coeffs *cf, float width, int stage);
+
+void phaser_set_feedback(phaser_coeffs *cf, float fb, int stage);
+
+void phaser_set_distortion(phaser_coeffs *cf, float d);
 
 #endif //PHASER_H

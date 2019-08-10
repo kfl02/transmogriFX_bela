@@ -48,15 +48,14 @@
 #define SVF_H
 
 
-typedef struct sv_filter_t
-{
+typedef struct sv_filter_t {
     float fs;   //Sampling Frequency
     float fc;   //Filter resonance frequency
 
     //User options
-      //filter output mixing coefficients:
+    //filter output mixing coefficients:
     float lmix, bmix, hmix;
-      //gain and clipping options
+    //gain and clipping options
     bool normalize;
     bool outclip;
 
@@ -72,47 +71,47 @@ typedef struct sv_filter_t
     float f1;
 } sv_filter;
 
-sv_filter*
-svf_make_filter(sv_filter* s, float fs);
+sv_filter *
+svf_make_filter(sv_filter *s, float fs);
 
 //Processing functions
-  //Run the filter at a fixed Q and center frequency.
-  //Useful for filters that aren't continuously changed
+//Run the filter at a fixed Q and center frequency.
+//Useful for filters that aren't continuously changed
 void
-svf_tick_n(sv_filter* s, float* x, int N);
+svf_tick_n(sv_filter *s, float *x, int N);
 
-  //Functions to continuously modulate filter with parameter f.
-    //No distortion, no output limiting
+//Functions to continuously modulate filter with parameter f.
+//No distortion, no output limiting
 void
-svf_tick_fmod_n(sv_filter* s, float* x, float *f, int N);
+svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N);
 
-  //Set drive level with "svf_set_drive()" to adjust amount of distortion
+//Set drive level with "svf_set_drive()" to adjust amount of distortion
 void
-svf_tick_fmod_soft_clip_n(sv_filter* s, float* x, float *f, int N);
+svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N);
 
 //settings
 float
-svf_compute_f (sv_filter* s, float fc);
+svf_compute_f(sv_filter *s, float fc);
 
 void
-svf_set_q(sv_filter* s, float Q);
+svf_set_q(sv_filter *s, float Q);
 
 void
-svf_set_drive(sv_filter* s, float drive_);
+svf_set_drive(sv_filter *s, float drive_);
 
 void
-svf_set_mix_lpf(sv_filter* s, float mix_);
+svf_set_mix_lpf(sv_filter *s, float mix_);
 
 void
-svf_set_mix_bpf(sv_filter* s, float mix_);
+svf_set_mix_bpf(sv_filter *s, float mix_);
 
 void
-svf_set_mix_hpf(sv_filter* s, float mix_);
+svf_set_mix_hpf(sv_filter *s, float mix_);
 
 void
-svf_set_normalize(sv_filter* s, bool n);
+svf_set_normalize(sv_filter *s, bool n);
 
 void
-svf_set_outclip(sv_filter* s, bool clip_output);
+svf_set_outclip(sv_filter *s, bool clip_output);
 
 #endif //SVF_H

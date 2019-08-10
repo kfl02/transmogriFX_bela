@@ -9,8 +9,7 @@
 
 #include "iir_1pole.h"
 
-typedef struct kot_stack_t
-{
+typedef struct kot_stack_t {
     float fs;  //Samplerate
 
     // Circuit component values
@@ -32,16 +31,16 @@ typedef struct kot_stack_t
 
 } kot_stack;
 
-void kotstack_init(kot_stack* ks, float fs_);
+void kotstack_init(kot_stack *ks, float fs_);
 
 // User functions
-void kotstack_set_tone(kot_stack* ks, float tone);
-void kotstack_set_boost(kot_stack* ks, float boost);
+void kotstack_set_tone(kot_stack *ks, float tone);
+
+void kotstack_set_boost(kot_stack *ks, float boost);
 
 // Run filter
-inline float kotstack_tick(kot_stack* ks, float x)
-{
-    return tick_filter_1p_g(&(ks->st2), tick_filter_biquad(&(ks->st1), x) );
+inline float kotstack_tick(kot_stack *ks, float x) {
+    return tick_filter_1p_g(&(ks->st2), tick_filter_biquad(&(ks->st1), x));
 }
 
 #endif //KOT_STACK_H

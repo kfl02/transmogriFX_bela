@@ -3,13 +3,13 @@
 #ifndef IWAH_H
 #define IWAH_H
 
-const int GCB       = 0;    //Common Dunlop GCB-95
-const int VOX       = 1;    //Vox V847 voicing
-const int DUNLOP    = 2;    //"The Original" Crybaby
-const int MCCOY     = 3;    //Clyde McCoy voicing
-const int VOCAL     = 4;   //Vox with a little extra Q and some low-end brought up a bit
-const int EXTREME   = 5;    //crazy synth-like
-const int MAX_WAHS  = 6;  //Update as wahs are added
+const int GCB = 0;    //Common Dunlop GCB-95
+const int VOX = 1;    //Vox V847 voicing
+const int DUNLOP = 2;    //"The Original" Crybaby
+const int MCCOY = 3;    //Clyde McCoy voicing
+const int VOCAL = 4;   //Vox with a little extra Q and some low-end brought up a bit
+const int EXTREME = 5;    //crazy synth-like
+const int MAX_WAHS = 6;  //Update as wahs are added
 
 typedef struct iwah_t {
     //Circuit parameters
@@ -22,7 +22,7 @@ typedef struct iwah_t {
     float Rp; //resistor placed parallel with the inductor
     float Ri; //input feed resistor
     float Rs; //RLC tank to BJT base resistor (dry mix)
-    
+
     //Gain-setting components
     float Rc; //BJT gain stage collector resistor
     float Rpot; //Pot resistance value
@@ -61,25 +61,26 @@ typedef struct iwah_t {
     //First order high-pass filter state variables
     float yh1;
     float xh1;
-    
+
     //Bypass the effect
     bool bypass;
 
 } iwah_coeffs;
 
 //Initialize the struct and allocate memory
-iwah_coeffs* make_iwah(iwah_coeffs*, float);
+iwah_coeffs *make_iwah(iwah_coeffs *, float);
 
 //(float x, float gp, iwah_coeffs* cf)
 // input sample, pot gain (0...1), iwah struct
-float iwah_tick(float, float, iwah_coeffs*);
-void iwah_tick_n(iwah_coeffs*, float*, float*, int );
+float iwah_tick(float, float, iwah_coeffs *);
+
+void iwah_tick_n(iwah_coeffs *, float *, float *, int);
 
 //Select preset circuit voicings
-void iwah_circuit_preset(int , iwah_coeffs*, float );
+void iwah_circuit_preset(int, iwah_coeffs *, float);
 
 //Bypass effect
-void iwah_bypass(iwah_coeffs*, bool);
+void iwah_bypass(iwah_coeffs *, bool);
 
 #endif //IWAH_H
 
