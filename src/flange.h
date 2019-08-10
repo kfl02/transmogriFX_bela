@@ -5,6 +5,7 @@
 #ifndef TFX_FLANGE_H
 #define TFX_FLANGE_H
 
+#include "constants.h"
 #include "biquad.h"
 #include "lfo.h"
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include "lfo.h"
 
 lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
@@ -48,12 +49,12 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     lp->trilfo = p;
 
     //Sine wave LFO variables
-    lp->ksin = M_PI * frq / fs;
-    lp->sin_part = sin(2.0f * M_PI * phase / 360.0f);
-    lp->cos_part = cos(2.0f * M_PI * phase / 360.0f);
+    lp->ksin = PI * frq / fs;
+    lp->sin_part = sin(2.0f * PI * phase / 360.0f);
+    lp->cos_part = cos(2.0f * PI * phase / 360.0f);
 
     //Relaxation oscillator parameters
-    float ie = 1.0f / (1.0f - 1.0f / M_E);
+    float ie = 1.0f / (1.0f - 1.0f / E);
     float k = expf(-2.0f * fosc / fs);
 
     lp->rlx_k = k;
@@ -70,8 +71,8 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     lp->exp_ik = k;
     lp->exp_k = 1.0f / k;
     lp->exp_x = k;
-    lp->exp_min = 1.0f / M_E;
-    lp->exp_max = 1.0f + 1.0f / M_E;
+    lp->exp_min = 1.0f / E;
+    lp->exp_max = 1.0f + 1.0f / E;
     lp->exp_sv = lp->exp_min;
 
     //Globals
@@ -101,7 +102,7 @@ void update_lfo(lfoparams *lp, float fosc, float fs) {
     lp->ktri = frq / fs;
 
     //Sine LFO
-    lp->ksin = M_PI * frq / fs;
+    lp->ksin = PI * frq / fs;
 
     //Relaxation oscillator parameters
     float k = expf(-2.0f * fosc / fs);
@@ -120,8 +121,8 @@ void update_lfo(lfoparams *lp, float fosc, float fs) {
         lp->exp_x = lp->exp_ik;
     }
 
-    lp->exp_min = 1.0f / M_E;
-    lp->exp_max = 1.0f + 1.0f / M_E;
+    lp->exp_min = 1.0f / E;
+    lp->exp_max = 1.0f + 1.0f / E;
 
     if (lp->exp_sv < lp->exp_min) {
         lp->exp_sv = lp->exp_min;

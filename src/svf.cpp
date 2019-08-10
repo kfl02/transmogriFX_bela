@@ -24,10 +24,10 @@ svf_make_filter(sv_filter *s, float fs) {
 
     svf_set_drive(s, 0.25f);
 
-    //s->f = 2.0 * sinf (M_PI * s->fc / s->fs);
+    //s->f = 2.0 * sinf (PI * s->fc / s->fs);
     //Very little error for fc < fs/4
     //Reasonably accurate up to fs/2 because of double sample rate processing
-    s->fcnst = 2.0f * M_PI / s->fs;
+    s->fcnst = 2.0f * PI / s->fs;
     s->f = svf_compute_f(s, fc);
     svf_set_q(s, 4.0f);
     s->g = s->q;

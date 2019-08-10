@@ -8,6 +8,7 @@
 #ifndef KLINGON_H
 #define KLINGON_H
 
+#include "constants.h"
 #include "read_vi_trace.h"
 #include "iir_1pole.h"
 #include "kot_tonestack.h"

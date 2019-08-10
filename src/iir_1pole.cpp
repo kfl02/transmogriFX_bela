@@ -1,4 +1,5 @@
 #include <math.h>
+
 #include "iir_1pole.h"
 
 //
@@ -6,7 +7,7 @@
 //
 
 void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0) {
-    float w0 = 2.0f * M_PI * f0 / fs;
+    float w0 = 2.0f * PI * f0 / fs;
     float a1;
     float b0, b1;
     float g = 1.0f;  // This could be brought out into a user-configurable param
@@ -74,10 +75,10 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
 
     // TODO: n is float
     for (int i = 0; i < n; i++) {
-        num[RE] = cf->b0 + cf->b1 * cosf(2.0f * M_PI * fi / fs) + cf->b2 * cosf(4.0f * M_PI * fi / fs);
-        num[IM] = -cf->b1 * sinf(2.0f * M_PI * fi / fs) - cf->b2 * sinf(4.0f * M_PI * fi / fs);
-        den[RE] = 1.0f - cf->a1 * cosf(2.0f * M_PI * fi / fs) - cf->a2 * cosf(4.0f * M_PI * fi / fs);
-        den[IM] = cf->a1 * sinf(2.0f * M_PI * fi / fs) + cf->a2 * sinf(4.0f * M_PI * fi / fs);
+        num[RE] = cf->b0 + cf->b1 * cosf(2.0f * PI * fi / fs) + cf->b2 * cosf(4.0f * PI * fi / fs);
+        num[IM] = -cf->b1 * sinf(2.0f * PI * fi / fs) - cf->b2 * sinf(4.0f * PI * fi / fs);
+        den[RE] = 1.0f - cf->a1 * cosf(2.0f * PI * fi / fs) - cf->a2 * cosf(4.0f * PI * fi / fs);
+        den[IM] = cf->a1 * sinf(2.0f * PI * fi / fs) + cf->a2 * sinf(4.0f * PI * fi / fs);
 
         mag[i] = 20.0f * log10(cf->gain *
                                sqrtf((num[RE] * num[RE] + num[IM] * num[IM]) /

@@ -47,6 +47,7 @@
 #ifndef SVF_H
 #define SVF_H
 
+#include "constants.h"
 
 typedef struct sv_filter_t {
     float fs;   //Sampling Frequency

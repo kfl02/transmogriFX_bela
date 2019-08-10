@@ -3,6 +3,8 @@
 #ifndef BIQUAD_H
 #define BIQUAD_H
 
+#include "constants.h"
+
 const int LPF = 0;
 const int HPF = 1;
 const int BPF = 2;

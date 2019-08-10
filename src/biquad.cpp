@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "biquad.h"
 
 float *
@@ -19,7 +20,7 @@ make_butterworth_coeffs(int order, float *coeffs) {
 
             coeffs[k - 1] =
                     1.0f /
-                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
+                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     } else { //odd
@@ -28,7 +29,7 @@ make_butterworth_coeffs(int order, float *coeffs) {
 
             coeffs[k - 1] =
                     1.0 /
-                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * M_PI)); //1/x returns filter stage Q factor
+                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
             //printf("%d, %f\n", k, coeffs[k-1]);
         }
     }
@@ -38,7 +39,7 @@ make_butterworth_coeffs(int order, float *coeffs) {
 
 void
 biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
-    float w0 = 2.0f * M_PI * f0 / fs;
+    float w0 = 2.0f * PI * f0 / fs;
     float c = cos(w0);
     float s = sin(w0);
     float alpha = s / (2.0f * Q);

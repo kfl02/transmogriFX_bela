@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <string.h>
+
 #include "pareq.h"
 
 
@@ -104,7 +105,7 @@ void Pareq::prepare(int nsamp) {
 void Pareq::calcpar1(int nsamp, float g, float f) {
     float b, c1, c2, gg;
 
-    f *= float(M_PI) / _fsamp;
+    f *= float(PI) / _fsamp;
     b = 2 * f / sqrtf(g);
     gg = 0.5f * (g - 1);
     c1 = -cosf(2 * f);

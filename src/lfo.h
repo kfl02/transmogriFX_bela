@@ -1,5 +1,7 @@
 #pragma once
 
+#include "constants.h"
+
 #ifndef LFO_H
 #define LFO_H
 

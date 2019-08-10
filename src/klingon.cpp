@@ -89,8 +89,8 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
     float c_fb = 100e-12f;  // Sets low-pass roll-off
     float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
 
-    float fc_fb = 1.0f / (2.0f * M_PI * 10000.0f * c_fb);  // Low pass cut-off
-    float fc_ff = 1.0f / (2.0f * M_PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
+    float fc_fb = 1.0f / (2.0f * PI * 10000.0f * c_fb);  // Low pass cut-off
+    float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
 
     compute_filter_coeffs_1p(&(kot->pre_emph159), HPF1P, kot->fs, fc_ff);
     compute_filter_coeffs_1p(&(kot->post_emph), LPF1P, kot->clipper_fs, fc_fb);
@@ -223,7 +223,7 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
     float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
     float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
     float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
-    float fc_ff = 1.0f / (2.0f * M_PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
+    float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
 
     compute_filter_coeffs_1p(&(kot->pre_emph159), HPF1P, kot->fs, fc_ff);
 

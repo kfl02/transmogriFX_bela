@@ -3,9 +3,10 @@
 #ifndef PHASER_H
 #define PHASER_H
 
-#include <lfo.h>
+#include "constants.h"
+#include "lfo.h"
 
-const inst PHASER_MAX_STAGES = 24;
+const int PHASER_MAX_STAGES = 24;
 
 const int PHASER_DEFAULT = 0;
 const int PHASE_90 = 1;

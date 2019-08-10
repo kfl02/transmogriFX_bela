@@ -48,4 +48,4 @@ add_executable(transmogriFX_bela
         src/trem.cpp
         src/trem.h
         src/usb_backpack.cpp
-        src/usb_backpack.h)
+        src/usb_backpack.h src/constants.h)

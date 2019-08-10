@@ -20,8 +20,8 @@ typedef struct adsr_t {
 
     // Parameters
     float amplitude;//Final peak value 
-    float sustain;  //Expressed as aratio of amplitude: 0.0 to 1.0
-    float velocity; //Expressed as aratio of amplitude: 1.0 to inf
+    float sustain;  //Expressed as ratio of amplitude: 0.0 to 1.0
+    float velocity; //Expressed as ratio of amplitude: 1.0 to inf
     float pk;       //computed from velocity and amplitude
     float atk;      //A
     float dcy;      //D

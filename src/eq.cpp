@@ -1,12 +1,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "eq.h"
 
 void
 eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G) {
     float A = powf(10.0f, G / 40.0f);
-    float w0 = 2.0f * M_PI * f0 / fs;
+    float w0 = 2.0f * PI * f0 / fs;
     float c = cosf(w0);
     float s = sinf(w0);
 
@@ -80,8 +81,8 @@ void
 eq_update_gain(eq_coeffs *cf, float G) {
     float A = powf(10.0f, G / 40.0f);
 
-    float iA = 1.0 / A;
-    float sqrtA2 = 2.0 * sqrtf(A);
+    float iA = 1.0f / A;
+    float sqrtA2 = 2.0f * sqrtf(A);
     float a0, a1, a2;
     float b0, b1, b2;
 
@@ -164,7 +165,7 @@ make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float
     }
 
     float nb = (float) nbands;
-    float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1)));
+    float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1.0f)));
     float Q = 0.25f * (m + 1.0f) / (m - 1.0f);
 
     eq = (eq_filters *) malloc(sizeof(eq_filters));
@@ -215,10 +216,9 @@ tick_eq_band(eq_coeffs *cf, float x) {
 
 
 float geq_tick(eq_filters *eq, float x_) {
-    int i;
     float x = x_;
 
-    for (i = 0; i < (eq->nbands + 2); i++) {
+    for (int i = 0; i < (eq->nbands + 2); i++) {
         x = tick_eq_band(eq->band[i], x);
     }
 
@@ -245,7 +245,7 @@ float sqr(float x) {
 }
 
 void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) {
-    float dp = 2.0f * M_PI;
+    float dp = 2.0f * PI;
     // z^-1 = cos(w) - j*sin(w)
     // z^-2 = cos(2*w) - j*sin(2w)
 
@@ -280,7 +280,7 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
         r[i].r = magn / magd;
         r[i].i = an - ad;
 
-        //printf("%f\t%f\t%f\n", fs*w/dp, 20.0*log10(r[i].r), 180.0*r[i].i/(M_PI));
+        //printf("%f\t%f\t%f\n", fs*w/dp, 20.0*log10(r[i].r), 180.0*r[i].i/(PI));
 
         w += dw;
     }

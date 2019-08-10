@@ -7,6 +7,8 @@
 #ifndef IIR1P_H
 #define IIR1P_H
 
+#include "constants.h"
+
 const int LPF1P = 0;
 const int HPF1P = 1;
 

@@ -13,6 +13,7 @@
 // End DEBUG
 //
 
+#include "constants.h"
 #include "flange.h"
 #include "lfo.h"
 #include "inductorwah.h"
@@ -66,7 +67,7 @@ phaser_coeffs *phaser;
 trem_coeffs *trem;
 //Guitar Sustainer: Dynamic range compression -- behaves most like a feedback compressor
 //From Rakarrack source repo
-Sustainer fx_sustain(44100.0);
+Sustainer fx_sustain(44100.0f);
 // Overdrive implementation based conceptually on typical guitar stompbox OD like tubescreamer
 overdrive *od;
 klingon *ko;
@@ -325,40 +326,42 @@ void set_efx_delay_norm() {
     if (knobs[LFO_RATE].active_timer != 0) {
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0, 1, 0.1, 10.0);
+        rate = map(rate, 0.0f, 1.0f, 0.1f, 10.0f);
         tflanger_setLfoRate(delayline, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1, 0.0005, 1.0);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, 0.0005f, 1.0f);
         tflanger_setLfoDepth(delayline, depth);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, 0.0, 0.0025);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1.0f, 0.0f, 0.0025f);
         tflanger_setLfoWidth(delayline, width);
         doprint = true;
     }
     if (knobs[MIX_WET].active_timer != 0) {
-        if (knobs[MIX_WET].switch_state)
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[MIX_WET].switch_state) {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, 0.0f, 1.0f);
+        } else {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, 0.0f, -1.0f);
+        }
         tflanger_setWetDry(delayline, mix);
         doprint = true;
     }
     if (knobs[REGEN].active_timer != 0) {
-        if (knobs[REGEN].switch_state)
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[REGEN].switch_state) {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, 0.0f, 1.0f);
+        } else {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, 0.0f, -1.0f);
+        }
         tflanger_setFeedBack(delayline, fb);
         doprint = true;
     }
     if (knobs[DAMPING].active_timer != 0) {
         damp = knobs[DAMPING].filtered_reading[1];
         damp *= damp;
-        damp = map(damp, 0, 1, 40.0, 7400.0);
+        damp = map(damp, 0.0f, 1.0f, 40.0f, 7400.0f);
         tflanger_setDamping(delayline, damp);
         doprint = true;
     }
@@ -376,36 +379,36 @@ void set_efx_delay_envelope() {
     //Apply settings
 
     float rate, depth, width, mix, fb, damp;
-    rate = depth = width = mix = fb = damp = 0.0;
+    rate = depth = width = mix = fb = damp = 0.0f;
     bool doprint = false;
 
     if (knobs[ENV_SNS_LFO_RATE].active_timer != 0) {
-        rate = map(knobs[LFO_RATE].filtered_reading[1], 0, 1, -10.0, 20.0);
+        rate = map(knobs[LFO_RATE].filtered_reading[1], 0.0f, 1.0f, -10.0f, 20.0f);
         tflanger_setEnvelopeRateSkew(delayline, rate);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1, -1.0, 1.0);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeDepthSkew(delayline, depth);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, -0.0025, 0.0025);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1.0f, -0.0025f, 0.0025f);
         tflanger_setEnvelopeWidthSkew(delayline, width);
         doprint = true;
     }
     if (knobs[ENV_SNS_MIX_WET].active_timer != 0) {
-        mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, -1.0, 1.0);
+        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeMixSkew(delayline, mix);
         doprint = true;
     }
     if (knobs[ENV_SNS_REGEN].active_timer != 0) {
-        fb = map(knobs[REGEN].filtered_reading[1], 0, 1, -1.0, 1.0);
+        fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeFbSkew(delayline, fb);
         doprint = true;
     }
     if (knobs[DAMPING].active_timer != 0) {
-        damp = map(knobs[DAMPING].filtered_reading[1], 0, 1, -1.0, 1.0);
+        damp = map(knobs[DAMPING].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         //tflanger_setEnvelopeDamp(delayline, damp);
         doprint = true;
     }
@@ -428,12 +431,12 @@ void set_efx_delay_pg3() {
 
 
     if (knobs[ENV_ATK].active_timer != 0) {
-        attack = map(knobs[ENV_ATK].filtered_reading[1], 0, 1, 0.0, 0.25);
+        attack = map(knobs[ENV_ATK].filtered_reading[1], 0.0f, 1.0f, 0.0f, 0.25f);
         tflanger_setEnvelopeAttack(delayline, attack);
         doprint = true;
     }
     if (knobs[ENV_RLS].active_timer != 0) {
-        release = map(knobs[ENV_RLS].filtered_reading[1], 0, 1, 0.0, 2.0);
+        release = map(knobs[ENV_RLS].filtered_reading[1], 0.0f, 1.0f, 0.0f, 2.0f);
         tflanger_setEnvelopeRelease(delayline, release);
         doprint = true;
     }
@@ -478,46 +481,48 @@ void set_efx_delay() {
 void set_efx_flange_norm() {
     //Apply settings
     float rate, depth, width, mix, fb, damp;
-    rate = depth = width = mix = fb = damp = 0.0;
+    rate = depth = width = mix = fb = damp = 0.0f;
     bool doprint = false;
 
     if (knobs[LFO_RATE].active_timer != 0) {
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0, 1, 0.1, 10.0);
+        rate = map(rate, 0.0f, 1.0f, 0.1f, 10.0f);
         tflanger_setLfoRate(flanger, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1.0, 0.0, 0.01);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, 0.0f, 0.01f);
         tflanger_setLfoDepth(flanger, depth);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, 0.0, 0.01);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1, 0.0f, 0.01f);
         tflanger_setLfoWidth(flanger, width);
         doprint = true;
     }
     if (knobs[MIX_WET].active_timer != 0) {
-        if (knobs[MIX_WET].switch_state)
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[MIX_WET].switch_state) {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1, 0.0f, 1.0f);
+        } else {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1, 0.0f, -1.0f);
+        }
         tflanger_setWetDry(flanger, mix);
         doprint = true;
     }
     if (knobs[REGEN].active_timer != 0) {
-        if (knobs[REGEN].switch_state)
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[REGEN].switch_state) {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1, 0.0f, 1.0f);
+        } else {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1, 0.0f, -1.0f);
+        }
         tflanger_setFeedBack(flanger, fb);
         doprint = true;
     }
     if (knobs[DAMPING].active_timer != 0) {
         damp = knobs[DAMPING].filtered_reading[1];
         damp *= damp;
-        damp = map(damp, 0, 1, 40.0, 7400.0);
+        damp = map(damp, 0.0f, 1.0f, 40.0f, 7400.0f);
         tflanger_setDamping(flanger, damp);
         doprint = true;
     }
@@ -525,7 +530,7 @@ void set_efx_flange_norm() {
     //doprint=false;
     if ((rtprintclock >= 20000) && (doprint)) {
         rt_printf("Flanger N Value:  FB: %f, %f\tMIX: %f\tDepth:  %f\tDamp: %f\n", knobs[REGEN].current_reading,
-                  fb * (2.0 - fabs(fb)), mix, depth, damp);
+                  fb * (2.0f - fabs(fb)), mix, depth, damp);
         rtprintclock = 0;
         doprint = true;
     }
@@ -535,41 +540,41 @@ void set_efx_flange_envelope() {
     //Apply settings
 
     float rate, depth, width, mix, fb, attack, release;
-    rate = depth = width = mix = fb = attack = release = 0.0;
+    rate = depth = width = mix = fb = attack = release = 0.0f;
     bool doprint = false;
 
     if (knobs[ENV_SNS_LFO_RATE].active_timer != 0) {
-        rate = map(knobs[LFO_RATE].filtered_reading[1], 0, 1, -10.0, 20.0);
+        rate = map(knobs[LFO_RATE].filtered_reading[1], 0.0f, 1.0f, -10.0f, 20.0f);
         tflanger_setEnvelopeRateSkew(flanger, rate);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1, -0.005, 0.005);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, -0.005f, 0.005f);
         tflanger_setEnvelopeDepthSkew(flanger, depth);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, -0.0025, 0.0025);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1.0f, -0.0025f, 0.0025f);
         tflanger_setEnvelopeWidthSkew(flanger, width);
         doprint = true;
     }
     if (knobs[ENV_SNS_MIX_WET].active_timer != 0) {
-        mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, -1.0, 1.0);
+        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeMixSkew(flanger, mix);
         doprint = true;
     }
     if (knobs[ENV_SNS_REGEN].active_timer != 0) {
-        fb = map(knobs[REGEN].filtered_reading[1], 0, 1, -1.0, 1.0);
+        fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeFbSkew(flanger, fb);
         doprint = true;
     }
     if (knobs[ENV_ATK].active_timer != 0) {
-        attack = map(knobs[ENV_ATK].filtered_reading[1], 0, 1, 0.0, 0.5);
+        attack = map(knobs[ENV_ATK].filtered_reading[1], 0.0f, 1.0f, 0.0f, 0.5f);
         tflanger_setEnvelopeAttack(flanger, attack);
         doprint = true;
     }
     if (knobs[ENV_RLS].active_timer != 0) {
-        release = map(knobs[ENV_RLS].filtered_reading[1], 0, 1, 0.0, 11.0);
+        release = map(knobs[ENV_RLS].filtered_reading[1], 0.0f, 1.0f, 0.0f, 11.0f);
         tflanger_setEnvelopeRelease(flanger, release);
         doprint = true;
     }
@@ -606,46 +611,48 @@ void set_efx_flange() {
 void set_efx_chorus_norm() {
     //Apply settings
     float rate, depth, width, mix, fb, damp;
-    rate = depth = width = mix = fb = damp = 0.0;
+    rate = depth = width = mix = fb = damp = 0.0f;
     bool doprint = false;
 
     if (knobs[LFO_RATE].active_timer != 0) {
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0, 1, 0.1, 10.0);
+        rate = map(rate, 0.0f, 1.0f, 0.1f, 10.0f);
         tflanger_setLfoRate(chorus, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1.0, 0.005, 0.035);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, 0.005f, 0.035f);
         tflanger_setLfoDepth(chorus, depth);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, 0.0, 0.005);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1.0f, 0.0f, 0.005f);
         tflanger_setLfoWidth(chorus, width);
         doprint = true;
     }
     if (knobs[MIX_WET].active_timer != 0) {
-        if (knobs[MIX_WET].switch_state)
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[MIX_WET].switch_state) {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, 0.0f, 1.0f);
+        } else {
+            mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, 0.0f, -1.0f);
+        }
         tflanger_setWetDry(chorus, mix);
         doprint = true;
     }
     if (knobs[REGEN].active_timer != 0) {
-        if (knobs[REGEN].switch_state)
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, 1.0);
-        else
-            fb = map(knobs[REGEN].filtered_reading[1], 0, 1, 0.0, -1.0);
+        if (knobs[REGEN].switch_state) {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, 0.0f, 1.0f);
+        } else {
+            fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, 0.0f, -1.0f);
+        }
         tflanger_setFeedBack(chorus, fb);
         doprint = true;
     }
     if (knobs[DAMPING].active_timer != 0) {
         damp = knobs[DAMPING].filtered_reading[1];
         damp *= damp;
-        damp = map(damp, 0, 1, 40.0, 7400.0);
+        damp = map(damp, 0.0f, 1.0f, 40.0f, 7400.0f);
         tflanger_setDamping(chorus, damp);
         doprint = true;
     }
@@ -653,7 +660,7 @@ void set_efx_chorus_norm() {
     //doprint=false;
     if ((rtprintclock >= 20000) && (doprint)) {
         rt_printf("Chorus N Value:  FB: %f, %f\tMIX: %f\tDepth:  %f\tDamp: %f\n", knobs[REGEN].current_reading,
-                  fb * (2.0 - fabs(fb)), mix, depth, damp);
+                  fb * (2.0f - fabs(fb)), mix, depth, damp);
         rtprintclock = 0;
         doprint = true;
     }
@@ -663,41 +670,41 @@ void set_efx_chorus_envelope() {
     //Apply settings
 
     float rate, depth, width, mix, fb, attack, release;
-    rate = depth = width = mix = fb = attack = release = 0.0;
+    rate = depth = width = mix = fb = attack = release = 0.0f;
     bool doprint = false;
 
     if (knobs[ENV_SNS_LFO_RATE].active_timer != 0) {
-        rate = map(knobs[LFO_RATE].filtered_reading[1], 0, 1, -10.0, 20.0);
+        rate = map(knobs[LFO_RATE].filtered_reading[1], 0.0f, 1.0f, -10.0f, 20.0f);
         tflanger_setEnvelopeRateSkew(chorus, rate);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_DEPTH].active_timer != 0) {
-        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0, 1, -0.005, 0.005);
+        depth = map(knobs[LFO_DEPTH].filtered_reading[1], 0.0f, 1.0f, -0.005f, 0.005f);
         tflanger_setEnvelopeDepthSkew(chorus, depth);
         doprint = true;
     }
     if (knobs[ENV_SNS_LFO_WIDTH].active_timer != 0) {
-        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0, 1, -0.005, 0.005);
+        width = map(knobs[LFO_WIDTH].filtered_reading[1], 0.0f, 1.0f, -0.005f, 0.005f);
         tflanger_setEnvelopeWidthSkew(chorus, width);
         doprint = true;
     }
     if (knobs[ENV_SNS_MIX_WET].active_timer != 0) {
-        mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, -1.0, 1.0);
+        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeMixSkew(chorus, mix);
         doprint = true;
     }
     if (knobs[ENV_SNS_REGEN].active_timer != 0) {
-        fb = map(knobs[REGEN].filtered_reading[1], 0, 1, -1.0, 1.0);
+        fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         tflanger_setEnvelopeFbSkew(chorus, fb);
         doprint = true;
     }
     if (knobs[ENV_ATK].active_timer != 0) {
-        attack = map(knobs[ENV_ATK].filtered_reading[1], 0, 1, 0.01, 0.5);
+        attack = map(knobs[ENV_ATK].filtered_reading[1], 0.0f, 1.0f, 0.01f, 0.5f);
         tflanger_setEnvelopeAttack(chorus, attack);
         doprint = true;
     }
     if (knobs[ENV_RLS].active_timer != 0) {
-        release = map(knobs[ENV_RLS].filtered_reading[1], 0, 1, 0.01, 11.0);
+        release = map(knobs[ENV_RLS].filtered_reading[1], 0.0f, 1.0f, 0.01f, 11.0f);
         tflanger_setEnvelopeRelease(chorus, release);
         doprint = true;
     }
@@ -732,7 +739,7 @@ void set_efx_chorus() {
 */
 void set_efx_wah_norm() {
     bool doprint = false;
-    float tmp = 0.0;
+    float tmp = 0.0f;
     if (knobs[WAH_CKT].active_timer != 0) {
         tmp = knobs[WAH_CKT].filtered_reading[1] * MAX_WAHS;
         gWahCkt = lrintf(floorf(tmp));
@@ -774,10 +781,10 @@ void set_efx_overdrive_norm() {
     //Apply settings
 
     float drive, tone, level;
-    drive = tone = level = 0.0;
+    drive = tone = level = 0.0f;
 
     if (knobs[OD_DRIVE].active_timer != 0) {
-        drive = map(knobs[OD_DRIVE].filtered_reading[1], 0, 1, 12.0, 45.0);
+        drive = map(knobs[OD_DRIVE].filtered_reading[1], 0.0f, 1.0f, 12.0f, 45.0f);
         od_set_drive(od, drive);
 
         if (rtprintclock >= 20000) {
@@ -787,7 +794,7 @@ void set_efx_overdrive_norm() {
 
     }
     if (knobs[OD_TONE].active_timer != 0) {
-        tone = map(knobs[OD_TONE].filtered_reading[1], 0, 1, -12.0, 12.0);
+        tone = map(knobs[OD_TONE].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
         od_set_tone(od, tone);
 
         if (rtprintclock >= 20000) {
@@ -797,7 +804,7 @@ void set_efx_overdrive_norm() {
 
     }
     if (knobs[OD_LEVEL].active_timer != 0) {
-        level = map(knobs[OD_LEVEL].filtered_reading[1], 0, 1, -40.0, 6.0);
+        level = map(knobs[OD_LEVEL].filtered_reading[1], 0.0f, 1.0f, -40.0f, 6.0f);
         od_set_level(od, level);
 
         if (rtprintclock >= 20000) {
@@ -830,10 +837,10 @@ void set_efx_klingon_norm() {
     //Apply settings
 
     float drive, tone, level, boost;
-    drive = tone = level = boost = 0.0;
+    drive = tone = level = boost = 0.0f;
 
     if (knobs[OD_DRIVE].active_timer != 0) {
-        drive = map(knobs[OD_DRIVE].filtered_reading[1], 0, 1, 12.0, 45.0);
+        drive = map(knobs[OD_DRIVE].filtered_reading[1], 0.0f, 1.0f, 12.0f, 45.0f);
         kot_set_drive(ko, drive);
 
         if (rtprintclock >= 20000) {
@@ -843,7 +850,7 @@ void set_efx_klingon_norm() {
 
     }
     if (knobs[OD_TONE].active_timer != 0) {
-        tone = map(knobs[OD_TONE].filtered_reading[1], 0, 1, -40.0, 0.0);
+        tone = map(knobs[OD_TONE].filtered_reading[1], 0.0f, 1.0f, -40.0f, 0.0f);
         kot_set_tone(ko, tone);
 
         if (rtprintclock >= 20000) {
@@ -853,7 +860,7 @@ void set_efx_klingon_norm() {
 
     }
     if (knobs[OD_LEVEL].active_timer != 0) {
-        level = map(knobs[OD_LEVEL].filtered_reading[1], 0, 1, -40.0, 0.0);
+        level = map(knobs[OD_LEVEL].filtered_reading[1], 0.0f, 1.0f, -40.0f, 0.0f);
         kot_set_level(ko, level);
 
         if (rtprintclock >= 20000) {
@@ -862,7 +869,7 @@ void set_efx_klingon_norm() {
         }
     }
     if (knobs[OD_BOOST].active_timer != 0) {
-        boost = map(knobs[OD_BOOST].filtered_reading[1], 0, 1, 0.0, 1.0);
+        boost = map(knobs[OD_BOOST].filtered_reading[1], 0.0f, 1.0f, 0.0f, 1.0f);
         kot_set_boost(ko, boost);
 
         if (rtprintclock >= 20000) {
@@ -892,7 +899,7 @@ void set_efx_klingon() {
 */
 void set_efx_reverb_norm() {
     float opmix, xov, rtlo, rtmid, fdamp, eql, eqh, idly;
-    xov = rtlo = rtmid = fdamp = eql = eqh = idly = opmix = 0.0;
+    xov = rtlo = rtmid = fdamp = eql = eqh = idly = opmix = 0.0f;
     bool doprint = false;
 
     if (knobs[REVERB_MIX].active_timer != 0) {
@@ -903,24 +910,24 @@ void set_efx_reverb_norm() {
         zita1.set_opmix(opmix);
         doprint = true;
     } else if (knobs[REVERB_XOV].active_timer != 0) {
-        xov = map(knobs[REVERB_XOV].filtered_reading[1], 0.0, 1.0, 50.0, 1000.0);
+        xov = map(knobs[REVERB_XOV].filtered_reading[1], 0.0f, 1.0f, 50.0f, 1000.0f);
         zita1.set_xover(xov);
         doprint = true;
     } else if (knobs[REVERB_RTLOW].active_timer != 0) {
-        rtlo = map(knobs[REVERB_RTLOW].filtered_reading[1], 0.0, 1.0, 1.0, 8.0);
+        rtlo = map(knobs[REVERB_RTLOW].filtered_reading[1], 0.0f, 1.0f, 1.0f, 8.0f);
         zita1.set_rtlow(rtlo);
         doprint = true;
     } else if (knobs[REVERB_RTMID].active_timer != 0) {
-        rtmid = map(knobs[REVERB_RTMID].filtered_reading[1], 0.0, 1.0, 1.0, 8.0);
+        rtmid = map(knobs[REVERB_RTMID].filtered_reading[1], 0.0f, 1.0f, 1.0f, 8.0f);
         zita1.set_rtmid(rtmid);
         doprint = true;
     } else if (knobs[REVERB_IDLY].active_timer != 0) {
-        idly = map(knobs[REVERB_IDLY].filtered_reading[1], 0.0, 1.0, 0.02, 0.1);
+        idly = map(knobs[REVERB_IDLY].filtered_reading[1], 0.0f, 1.0f, 0.02f, 0.1f);
         zita1.set_delay(idly);
         doprint = true;
     } else if (knobs[REVERB_FDAMP].active_timer != 0) {
         fdamp = knobs[REVERB_FDAMP].filtered_reading[1];
-        fdamp = 1500.0 + 20000.0 * fdamp * fdamp; //poor-man's log taper
+        fdamp = 1500.0f + 20000.0f * fdamp * fdamp; //poor-man's log taper
         zita1.set_fdamp(fdamp);
         doprint = true;
     }
@@ -933,19 +940,19 @@ void set_efx_reverb_norm() {
 
 void set_efx_reverb_pg2() {
     float eqlf, eqlg, eqhf, eqhg;
-    eqlf = eqlg = eqhf = eqhg = 0.0;
+    eqlf = eqlg = eqhf = eqhg = 0.0f;
     bool doprint = false;
 
     if ((knobs[REVERB_EQL_F].active_timer != 0) || (knobs[REVERB_EQL_G].active_timer != 0)) {
         eqlf = knobs[REVERB_EQL_F].filtered_reading[1];
-        eqlf = 40.0 + 460.0 * eqlf * eqlf;
-        eqlg = map(knobs[REVERB_EQL_G].filtered_reading[1], 0.0, 1.0, -12.0, 12.0);
+        eqlf = 40.0f + 460.0f * eqlf * eqlf;
+        eqlg = map(knobs[REVERB_EQL_G].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
         zita1.set_eq1(eqlf, eqlg);
         doprint = true;
     } else if ((knobs[REVERB_EQH_F].active_timer != 0) || (knobs[REVERB_EQH_G].active_timer != 0)) {
         eqhf = knobs[REVERB_EQH_F].filtered_reading[1];
-        eqhf = 750.0 + 10000.0 * eqlf * eqlf;
-        eqhg = map(knobs[REVERB_EQH_G].filtered_reading[1], 0.0, 1.0, -12.0, 12.0);
+        eqhf = 750.0f + 10000.0f * eqlf * eqlf;
+        eqhg = map(knobs[REVERB_EQH_G].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
         zita1.set_eq2(eqhf, eqhg);
         doprint = true;
     }
@@ -979,43 +986,43 @@ void set_efx_phaser_norm() {
 
     float rate, depth, width, mix, fb;
     int ns;
-    rate = depth = width = mix = fb = 0.0;
+    rate = depth = width = mix = fb = 0.0f;
     ns = 0;
     bool doprint = false;
 
     if (knobs[LFO_RATE].active_timer != 0) {
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0, 1, 0.05, 10.0);
+        rate = map(rate, 0.0f, 1.0f, 0.05f, 10.0f);
         phaser_set_lfo_rate(phaser, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
         depth = knobs[LFO_DEPTH].filtered_reading[1];
         depth *= depth;
-        depth = map(depth, 0, 1, 100.0, 1000.0);
+        depth = map(depth, 0.0f, 1.0f, 100.0f, 1000.0f);
         phaser_set_lfo_depth(phaser, depth, 0);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
         width = knobs[LFO_WIDTH].filtered_reading[1];
         width *= width;
-        width = map(width, 0, 1, 0.0, 5000.0);
+        width = map(width, 0.0f, 1.0f, 0.0f, 5000.0f);
         phaser_set_lfo_width(phaser, width, 0);
         doprint = true;
     }
     if (knobs[MIX_WET].active_timer != 0) {
-        mix = map(knobs[MIX_WET].filtered_reading[1], 0, 1, -1.0, 1.0);
+        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         phaser_set_mix(phaser, mix);
         doprint = true;
     }
     if (knobs[REGEN].active_timer != 0) {
-        fb = map(knobs[REGEN].filtered_reading[1], 0, 1, -1.0, 1.0);
+        fb = map(knobs[REGEN].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         phaser_set_feedback(phaser, fb, 3);
         doprint = true;
     }
     if (knobs[PHASER_STAGES].active_timer != 0) {
-        ns = lrintf(map(knobs[PHASER_STAGES].filtered_reading[1], 0, 1, 2.0, 24.0));
+        ns = lrintf(map(knobs[PHASER_STAGES].filtered_reading[1], 0.0f, 1.0f, 2.0f, 24.0f));
         phaser_set_nstages(phaser, ns);
         doprint = true;
     }
@@ -1054,32 +1061,32 @@ void set_efx_trem_norm() {
     float rate, depth, width, ftype;
     unsigned int lfo_type = 0;
     char lfo_name[100];
-    rate = depth = width = ftype = 0.0;
+    rate = depth = width = ftype = 0.0f;
     bool doprint = false;
 
     if (knobs[LFO_RATE].active_timer != 0) {
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0, 1, 0.05, 20.0);
+        rate = map(rate, 0.0f, 1.0f, 0.05f, 20.0f);
         trem_set_lfo_rate(trem, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
         depth = knobs[LFO_DEPTH].filtered_reading[1];
         depth *= depth;
-        depth = map(depth, 0, 1, 1.0, 2.0);
+        depth = map(depth, 0.0f, 1.0f, 1.0f, 2.0f);
         trem_set_lfo_gain(trem, depth);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
         width = knobs[LFO_WIDTH].filtered_reading[1];
-        width = map(width, 0, 1, 0.33, 1.0);
+        width = map(width, 0.0f, 1.0f, 0.33f, 1.0f);
         trem_set_lfo_depth(trem, width);
         doprint = true;
     }
     if (knobs[TREMOLO_LFO_TYPE].active_timer != 0) {
         ftype = knobs[TREMOLO_LFO_TYPE].filtered_reading[1];
-        ftype = floorf(ftype * (MAX_LFOS + 1.0));
+        ftype = floorf(ftype * (MAX_LFOS + 1.0f));
         lfo_type = lrintf(ftype);
         trem_set_lfo_type(trem, lfo_type);
         doprint = true;
@@ -1120,7 +1127,7 @@ void set_efx_sustainer_norm() {
 
     float sustain, gain;
 
-    gain = sustain = 1.0;
+    gain = sustain = 1.0f;
     bool doprint = false;
 
     if (knobs[SUSTAIN_GAIN].active_timer != 0) {
@@ -1165,14 +1172,13 @@ void set_efx_sustainer() {
 */
 
 void set_efx_geq1_norm() {
-    float g = 0.0;
-    int i = 0;
+    float g = 0.0f;
     bool doprint = false;
     int band = 0;
 
-    for (i = 0; i < geq1->nbands; i++) {
+    for (int i = 0; i < geq1->nbands; i++) {
         if (knobs[i].active_timer != 0) {
-            g = map(knobs[i].filtered_reading[1], 0.0, 1.0, -12.0, 12.0);
+            g = map(knobs[i].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
             eq_update_gain(geq1->band[i], g);
             doprint = true;
             band = i;
@@ -1193,21 +1199,22 @@ void set_efx_geq1_pg2() {
     bool doprint = false;
     int band = 0;
     if (knobs[0].active_timer != 0) {
-        g = map(knobs[0].filtered_reading[1], 0.0, 1.0, -12.0, 12.0);
+        g = map(knobs[0].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
         eq_update_gain(geq1->band[geq1->nbands], g);
         doprint = true;
     } else if (knobs[1].active_timer != 0) {
-        g = map(knobs[1].filtered_reading[1], 0.0, 1.0, -12.0, 12.0);
+        g = map(knobs[1].filtered_reading[1], 0.0f, 1.0f, -12.0f, 12.0f);
         eq_update_gain(geq1->band[geq1->nbands + 1], g);
         doprint = true;
         band = 1;
     }
 
     if ((rtprintclock >= 20000) && (doprint)) {
-        if (band == 0)
+        if (band == 0) {
             rt_printf("GEQ1 PG2 Value:  GAIN: %f\t BAND: LOW_SHELF\n", g);
-        else
+        } else {
             rt_printf("GEQ1 PG2 Value:  GAIN: %f\t BAND: HIGH_SHELF\n", g);
+        }
 
         rtprintclock = 0;
     }
@@ -1242,47 +1249,47 @@ void set_efx_envf_norm() {
     //Apply settings
 
     float rate, depth, width, mix, q, sns;
-    rate = depth = width = mix = q = sns = 0.0;
+    rate = depth = width = mix = q = sns = 0.0f;
     bool doprint = false;
 
     if (knobs[LFO_RATE].active_timer != 0) {
         //TODO:  UNIMPLEMENTED
         rate = knobs[LFO_RATE].filtered_reading[1];
         rate *= rate;
-        rate = map(rate, 0.0, 1.0, 0.1, 30.0);
+        rate = map(rate, 0.0f, 1.0f, 0.1f, 30.0f);
         envf_set_lfo_rate(ef, rate);
         doprint = true;
     }
     if (knobs[LFO_DEPTH].active_timer != 0) {
         depth = knobs[LFO_DEPTH].filtered_reading[1];
         depth *= depth;
-        depth = map(depth, 0.0, 1.0, 10.0, 1000.0);
+        depth = map(depth, 0.0f, 1.0f, 10.0f, 1000.0f);
         envf_set_depth(ef, depth);
         doprint = true;
     }
     if (knobs[LFO_WIDTH].active_timer != 0) {
         width = knobs[LFO_WIDTH].filtered_reading[1];
         width *= width;
-        width = map(width, 0.0, 1.0, 0.0, 5000.0);
+        width = map(width, 0.0f, 1.0f, 0.0f, 5000.0f);
         envf_set_width(ef, width);
         doprint = true;
     }
     if (knobs[MIX_WET].active_timer != 0) {
-        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0, 1.0, -1.0, 1.0);
+        mix = map(knobs[MIX_WET].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         envf_set_mix(ef, mix);
         doprint = true;
     }
     if (knobs[REGEN].active_timer != 0) {
         q = knobs[REGEN].filtered_reading[1];
         q *= q;
-        q = map(q, 0.0, 1.0, 0.5, 60.0);
+        q = map(q, 0.0f, 1.0f, 0.5f, 60.0f);
         envf_set_q(ef, q);
         doprint = true;
     }
     if (knobs[EF_DET_SNS].active_timer != 0) {
         sns = knobs[EF_DET_SNS].filtered_reading[1];
         sns *= sns;
-        sns = map(sns, 0.0, 1.0, -3.0, 3.0);
+        sns = map(sns, 0.0f, 1.0f, -3.0f, 3.0f);
         envf_set_sensitivity(ef, sns);
         doprint = true;
     }
@@ -1298,35 +1305,35 @@ void set_efx_envf_norm() {
 void set_efx_envf_pg2() {
     bool doprint = false;
     float hmix, bmix, lmix, atk, rls, dist;
-    hmix = bmix = lmix = atk = rls = dist = 0.0;
+    hmix = bmix = lmix = atk = rls = dist = 0.0f;
 
     if (knobs[EF_MIX_LP].active_timer != 0) {
-        lmix = map(knobs[EF_MIX_LP].filtered_reading[1], 0.0, 1.0, -1.0, 1.0);
+        lmix = map(knobs[EF_MIX_LP].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         envf_set_mix_lpf(ef, lmix);
         doprint = true;
     }
     if (knobs[EF_MIX_BP].active_timer != 0) {
-        bmix = map(knobs[EF_MIX_BP].filtered_reading[1], 0.0, 1.0, -1.0, 1.0);
+        bmix = map(knobs[EF_MIX_BP].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         envf_set_mix_bpf(ef, bmix);
         doprint = true;
     }
     if (knobs[EF_MIX_HP].active_timer != 0) {
-        hmix = map(knobs[EF_MIX_HP].filtered_reading[1], 0.0, 1.0, -1.0, 1.0);
+        hmix = map(knobs[EF_MIX_HP].filtered_reading[1], 0.0f, 1.0f, -1.0f, 1.0f);
         envf_set_mix_hpf(ef, hmix);
         doprint = true;
     }
     if (knobs[EF_ATK].active_timer != 0) {
-        atk = map(knobs[EF_ATK].filtered_reading[1], 0.0, 1.0, 0.001, 0.25);
+        atk = map(knobs[EF_ATK].filtered_reading[1], 0.0f, 1.0f, 0.001f, 0.25f);
         envf_set_atk(ef, atk);
         doprint = true;
     }
     if (knobs[EF_RLS].active_timer != 0) {
-        rls = map(knobs[EF_RLS].filtered_reading[1], 0.0, 1.0, 0.01, 2.0);
+        rls = map(knobs[EF_RLS].filtered_reading[1], 0.0f, 1.0f, 0.01f, 2.0f);
         envf_set_rls(ef, rls);
         doprint = true;
     }
     if (knobs[EF_DIST].active_timer != 0) {
-        dist = map(knobs[EF_DIST].filtered_reading[1], 0.0, 1.0, 0.001, 2.0);
+        dist = map(knobs[EF_DIST].filtered_reading[1], 0.0f, 1.0f, 0.001f, 2.0f);
         envf_set_drive(ef, dist);
         doprint = true;
     }
@@ -1342,15 +1349,15 @@ void set_efx_envf_pg3() {
     float gate_thrs, gate_knee, shmix, sht;
     int nsht;
     bool doprint = false;
-    gate_knee = gate_thrs = shmix = 0.0;
+    gate_knee = gate_thrs = shmix = 0.0f;
 
     if (knobs[EF_GATE_THRS].active_timer != 0) {
-        gate_thrs = map(knobs[EF_GATE_THRS].filtered_reading[1], 0.0, 1.0, -60.0, -12.0);
+        gate_thrs = map(knobs[EF_GATE_THRS].filtered_reading[1], 0.0f, 1.0f, -60.0f, -12.0f);
         envf_set_gate(ef, gate_thrs);
         doprint = true;
     }
     if (knobs[EF_GATE_KNEE].active_timer != 0) {
-        gate_knee = map(knobs[EF_GATE_KNEE].filtered_reading[1], 0.0, 1.0, 0.1, 12.0);
+        gate_knee = map(knobs[EF_GATE_KNEE].filtered_reading[1], 0.0f, 1.0f, 0.1f, 12.0f);
         envf_set_gate_knee(ef, gate_knee);
         doprint = true;
     }
@@ -1361,7 +1368,7 @@ void set_efx_envf_pg3() {
     }
     if (knobs[EF_SH_TYPE].active_timer != 0) {
         sht = knobs[EF_SH_TYPE].filtered_reading[1];
-        nsht = lrintf(sht * (ef->sh->max_types - 1.0));
+        nsht = lrintf(sht * (ef->sh->max_types - 1.0f));
         envf_set_sample_hold_type(ef, nsht);
         doprint = true;
     }
@@ -1387,23 +1394,23 @@ void set_efx_envf_pg3() {
 void set_efx_envf_pg4() {
     float atk, dcy, stn, rls;
     bool doprint = false;
-    atk = dcy = stn = rls = 0.0;
+    atk = dcy = stn = rls = 0.0f;
 
     if (knobs[EF_ADSR_ATK].active_timer != 0) {
         atk = knobs[EF_ADSR_ATK].filtered_reading[1];
-        atk *= atk * 1000.0;
+        atk *= atk * 1000.0f;
         envf_set_adsr_atk(ef, atk);
         doprint = true;
     }
     if (knobs[EF_ADSR_RLS].active_timer != 0) {
         rls = knobs[EF_ADSR_RLS].filtered_reading[1];
-        rls *= rls * 1000.0;
+        rls *= rls * 1000.0f;
         envf_set_adsr_rls(ef, rls);
         doprint = true;
     }
     if (knobs[EF_ADSR_DCY].active_timer != 0) {
         dcy = knobs[EF_ADSR_DCY].filtered_reading[1];
-        dcy *= dcy * 1000.0;
+        dcy *= dcy * 1000.0f;
         envf_set_adsr_dcy(ef, dcy);
         doprint = true;
     }
@@ -1449,20 +1456,20 @@ void set_efx_envf() {
 void set_efx_fbcomp_norm() {
     bool doprint = false;
     float thresh, atk, rls, ratio, olevel, wet;
-    thresh = atk = rls = ratio = olevel = wet = 0.0;
+    thresh = atk = rls = ratio = olevel = wet = 0.0f;
 
     if (knobs[FB_COMP_THRS].active_timer != 0) {
-        thresh = map(knobs[FB_COMP_THRS].filtered_reading[1], 0.0, 1.0, -60.0, -12.0);
+        thresh = map(knobs[FB_COMP_THRS].filtered_reading[1], 0.0f, 1.0f, -60.0f, -12.0f);
         feedback_compressor_set_threshold(fbcompressor, thresh);
         doprint = true;
     }
     if (knobs[FB_COMP_RATIO].active_timer != 0) {
-        ratio = map(knobs[FB_COMP_RATIO].filtered_reading[1], 0.0, 1.0, 1.0, 24.0);
+        ratio = map(knobs[FB_COMP_RATIO].filtered_reading[1], 0.0f, 1.0f, 1.0f, 24.0f);
         feedback_compressor_set_ratio(fbcompressor, ratio);
         doprint = true;
     }
     if (knobs[FB_COMP_LEVEL].active_timer != 0) {
-        olevel = map(knobs[FB_COMP_LEVEL].filtered_reading[1], 0.0, 1.0, -24.0, 6.0);
+        olevel = map(knobs[FB_COMP_LEVEL].filtered_reading[1], 0.0f, 1.0f, -24.0f, 6.0f);
         feedback_compressor_set_out_gain(fbcompressor, olevel);
         doprint = true;
     }
@@ -1474,14 +1481,14 @@ void set_efx_fbcomp_norm() {
     if (knobs[FB_COMP_ATK].active_timer != 0) {
         atk = knobs[FB_COMP_ATK].filtered_reading[1];
         atk *= atk;
-        atk = map(knobs[FB_COMP_ATK].filtered_reading[1], 0.0, 1.0, 1.0, 1000.0);
+        atk = map(knobs[FB_COMP_ATK].filtered_reading[1], 0.0f, 1.0f, 1.0f, 1000.0f);
         feedback_compressor_set_attack(fbcompressor, atk);
         doprint = true;
     }
     if (knobs[FB_COMP_RLS].active_timer != 0) {
         rls = knobs[FB_COMP_RLS].filtered_reading[1];
         rls *= rls;
-        rls = map(rls, 0.0, 1.0, 20.0, 1000.0);
+        rls = map(rls, 0.0f, 1.0f, 20.0f, 1000.0f);
         feedback_compressor_set_release(fbcompressor, rls);
         doprint = true;
     }
@@ -1510,7 +1517,7 @@ void set_efx_fbcomp() {
 */
 
 void apply_settings() {
-    if (startup_mask_timer > 0) return;
+    if (startup_mask_timer > 0) { return; }
 
     //Decide who gets analog inputs 
     switch (ain_control_effect) {
@@ -1518,8 +1525,9 @@ void apply_settings() {
             set_efx_flange();
             if (knobs[LFO_RATE].edge) {
                 knobs[LFO_RATE].edge = false;
-                if (++gFLANGE_lfo_type > MAX_LFOS)
+                if (++gFLANGE_lfo_type > MAX_LFOS) {
                     gFLANGE_lfo_type = 0;
+                }
                 tflanger_set_lfo_type(delayline, gFLANGE_lfo_type);
                 char outstr[30];
                 get_lfo_name(gFLANGE_lfo_type, outstr);
@@ -1528,10 +1536,10 @@ void apply_settings() {
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
                 pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge = false;
                 if (flanger->outGain > 0.0) {
-                    tflanger_setFinalGain(flanger, 0.0);
+                    tflanger_setFinalGain(flanger, 0.0f);
                     rt_printf("Flanger Effect BYPASSED\n");
                 } else {
-                    tflanger_setFinalGain(flanger, 1.0);
+                    tflanger_setFinalGain(flanger, 1.0f);
                     rt_printf("Flanger Effect ENABLED\n");
                 }
 
@@ -1542,8 +1550,9 @@ void apply_settings() {
             set_efx_chorus();
             if (knobs[LFO_RATE].edge) {
                 knobs[LFO_RATE].edge = false;
-                if (++gCHOR_lfo_type > MAX_LFOS)
+                if (++gCHOR_lfo_type > MAX_LFOS) {
                     gCHOR_lfo_type = 0;
+                }
                 tflanger_set_lfo_type(delayline, gCHOR_lfo_type);
                 char outstr[30];
                 get_lfo_name(gCHOR_lfo_type, outstr);
@@ -1551,11 +1560,11 @@ void apply_settings() {
             }
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
                 pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge = false;
-                if (chorus->outGain > 0.0) {
-                    tflanger_setFinalGain(chorus, 0.0);
+                if (chorus->outGain > 0.0f) {
+                    tflanger_setFinalGain(chorus, 0.0f);
                     rt_printf("Chorus Effect BYPASSED\n");
                 } else {
-                    tflanger_setFinalGain(chorus, 1.0);
+                    tflanger_setFinalGain(chorus, 1.0f);
                     rt_printf("Chorus Effect ENABLED\n");
                 }
 
@@ -1566,8 +1575,9 @@ void apply_settings() {
             set_efx_delay();
             if (knobs[LFO_RATE].edge) {
                 knobs[LFO_RATE].edge = false;
-                if (++gDLY_lfo_type > MAX_LFOS)
+                if (++gDLY_lfo_type > MAX_LFOS) {
                     gDLY_lfo_type = 0;
+                }
                 tflanger_set_lfo_type(delayline, gDLY_lfo_type);
                 char outstr[30];
                 get_lfo_name(gDLY_lfo_type, outstr);
@@ -1577,15 +1587,16 @@ void apply_settings() {
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
                 pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge = false;
                 if (delayline->outGain >= 1.0) {
-                    tflanger_setFinalGain(delayline, 0.0);
+                    tflanger_setFinalGain(delayline, 0.0f);
                     rt_printf("Delay Effect BYPASSED\n");
                 } else {
-                    tflanger_setFinalGain(delayline, 1.0);
+                    tflanger_setFinalGain(delayline, 1.0f);
                     rt_printf("Delay Effect ENABLED\n");
                 }
 
             }
             break;
+
         case SW_CTXT_WAH :
             set_efx_wah();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1605,8 +1616,8 @@ void apply_settings() {
             set_efx_reverb();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
                 pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge = false;
-                if (gReverb_wet > 0.0) {
-                    gReverb_wet = 0.0;
+                if (gReverb_wet > 0.0f) {
+                    gReverb_wet = 0.0f;
                     rt_printf("REVERB Effect BYPASSED\n");
                 } else {
                     gReverb_wet = gReverb_mix;
@@ -1614,8 +1625,8 @@ void apply_settings() {
                 }
 
             }
-
             break;
+
         case SW_CTXT_PHASE :
             set_efx_phase();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1627,8 +1638,8 @@ void apply_settings() {
                 }
 
             }
-
             break;
+
         case SW_CTXT_TREM :
             set_efx_trem();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1640,8 +1651,8 @@ void apply_settings() {
                 }
 
             }
-
             break;
+
         case SW_CTXT_ODRIVE :
             set_efx_overdrive();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1654,8 +1665,8 @@ void apply_settings() {
                 }
 
             }
-
             break;
+
         case SW_CTXT_KLGN :
             set_efx_klingon();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1668,8 +1679,8 @@ void apply_settings() {
                 }
 
             }
-
             break;
+
         case SW_CTXT_SUSTAIN :
             set_efx_sustainer();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1682,12 +1693,15 @@ void apply_settings() {
 
             }
             break;
+
         case SW_CTXT_GEQ1 :
             set_efx_geq1();
             break;
+
         case SW_CTXT_GEQ2 :
             set_efx_geq2();
             break;
+
         case SW_CTXT_ENVF :
             set_efx_envf();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1700,6 +1714,7 @@ void apply_settings() {
 
             }
             break;
+
         case SW_CTXT_FBCOMP :
             set_efx_fbcomp();
             if (pushbuttons[EFFECT_BYPASS_SWITCH].rising_edge == true) {
@@ -1716,6 +1731,7 @@ void apply_settings() {
         default :
             break;
     }
+
     if (pushbuttons[WAH_PEDAL_BYPASS].rising_edge) {
         pushbuttons[WAH_PEDAL_BYPASS].rising_edge = false;
         iwah_bypass(iwah, false);
@@ -1725,17 +1741,15 @@ void apply_settings() {
         iwah_bypass(iwah, true);
         rt_printf("WAH Effect DISABLED\n");
     }
-
-
 }
 
 void scan_inputs(BelaContext *context) {
 
-    float tmp = 0.0;
+    float tmp = 0.0f;
 
     if (knobs[gRoundRobin].knob_toggle_timer > 0) {
         knobs[gRoundRobin].knob_toggle_timer--;
-        if (knobs[gRoundRobin].knob_toggle_timer == 0) rt_printf("KNOB toggle timer CH %d EXPIRED\n", gRoundRobin);
+        if (knobs[gRoundRobin].knob_toggle_timer == 0) { rt_printf("KNOB toggle timer CH %d EXPIRED\n", gRoundRobin); }
     }
 
     for (unsigned int n = 0; n < context->audioFrames; n++) {
@@ -1873,34 +1887,35 @@ void process_digital_inputs() {
             ain_control_effect = 0;
         }
 
-        if (ain_control_effect == SW_CTXT_FLANGE)
+        if (ain_control_effect == SW_CTXT_FLANGE) {
             rt_printf("Active Effect: FLANGE, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_DELAY)
+        } else if (ain_control_effect == SW_CTXT_DELAY) {
             rt_printf("Active Effect: DELAY, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_CHORUS)
+        } else if (ain_control_effect == SW_CTXT_CHORUS) {
             rt_printf("Active Effect: CHORUS, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_WAH)
+        } else if (ain_control_effect == SW_CTXT_WAH) {
             rt_printf("Active Effect: WAH, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_REVERB)
+        } else if (ain_control_effect == SW_CTXT_REVERB) {
             rt_printf("Active Effect: REVERB, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_PHASE)
+        } else if (ain_control_effect == SW_CTXT_PHASE) {
             rt_printf("Active Effect: PHASER, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_TREM)
+        } else if (ain_control_effect == SW_CTXT_TREM) {
             rt_printf("Active Effect: TREMOLO, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_SUSTAIN)
+        } else if (ain_control_effect == SW_CTXT_SUSTAIN) {
             rt_printf("Active Effect: SUSTAIN, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_GEQ1)
+        } else if (ain_control_effect == SW_CTXT_GEQ1) {
             rt_printf("Active Effect: GEQ-PRE, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_GEQ2)
+        } else if (ain_control_effect == SW_CTXT_GEQ2) {
             rt_printf("Active Effect: GEQ-POST, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_ENVF)
+        } else if (ain_control_effect == SW_CTXT_ENVF) {
             rt_printf("Active Effect: ENV FILTER, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_FBCOMP)
+        } else if (ain_control_effect == SW_CTXT_FBCOMP) {
             rt_printf("Active Effect: FB COMPRESSOR, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_ODRIVE)
+        } else if (ain_control_effect == SW_CTXT_ODRIVE) {
             rt_printf("Active Effect: OVERDRIVE, %d\n", ain_control_effect);
-        else if (ain_control_effect == SW_CTXT_KLGN)
+        } else if (ain_control_effect == SW_CTXT_KLGN) {
             rt_printf("Active Effect: KLINGON TONE, %d\n", ain_control_effect);
+        }
     }
 
 
@@ -1911,9 +1926,9 @@ void debounce_digital_inputs(BelaContext *context) {
     for (int i = 0; i < N_PBTNS; i++) {
         status = digitalRead(context, 0, i);
         if (status) {
-            if (pushbuttons[i].integrator < pushbuttons[i].trigger) pushbuttons[i].integrator += 1;
+            if (pushbuttons[i].integrator < pushbuttons[i].trigger) { pushbuttons[i].integrator += 1; }
         } else {
-            if (pushbuttons[i].integrator > 0) pushbuttons[i].integrator -= 1;
+            if (pushbuttons[i].integrator > 0) { pushbuttons[i].integrator -= 1; }
         }
 
         if (pushbuttons[i].integrator == pushbuttons[i].trigger) {
@@ -1980,7 +1995,7 @@ void setup_digital_inputs(BelaContext *context) {
 
 bool setup(BelaContext *context, void *userData) {
     gAudioFramesPerAnalogFrame = context->audioFrames / context->analogFrames;
-    gifs = 1.0 / context->audioSampleRate;
+    gifs = 1.0f / context->audioSampleRate;
     gNframes = context->audioFrames;
 
     delayline = tflanger_init(delayline, T_ECHO, context->audioSampleRate);
@@ -1995,27 +2010,28 @@ bool setup(BelaContext *context, void *userData) {
 
     ch0_dcr->fs = context->audioSampleRate;
     ch0_dcr->ifs = gifs;
-    ch0_dcr->a = expf(-ch0_dcr->ifs * 50.0); //approximately 8 Hz
-    ch0_dcr->x1 = 0.0;
-    ch0_dcr->y1 = 0.0;
+    ch0_dcr->a = expf(-ch0_dcr->ifs * 50.0f); //approximately 8 Hz
+    ch0_dcr->x1 = 0.0f;
+    ch0_dcr->y1 = 0.0f;
 
     ch1_dcr->fs = context->audioSampleRate;
     ch1_dcr->ifs = gifs;
-    ch1_dcr->a = expf(-ch0_dcr->ifs * 50.0); //approximately 8 Hz
-    ch1_dcr->x1 = 0.0;
-    ch1_dcr->y1 = 0.0;
+    ch1_dcr->a = expf(-ch0_dcr->ifs * 50.0f); //approximately 8 Hz
+    ch1_dcr->x1 = 0.0f;
+    ch1_dcr->y1 = 0.0f;
 
 
-    float dpfc = 2.0 * M_PI * CF_CUTOFF * (gifs * ANALOG_CHANNELS);
+    float dpfc = 2.0f * PI * CF_CUTOFF * (gifs * ANALOG_CHANNELS);
+
     for (unsigned int i = 0; i < ANALOG_CHANNELS; i++) {
-        knobs[i].current_reading = 0.25;
-        knobs[i].filtered_reading[0] = 0.5;
-        knobs[i].filtered_reading[1] = 0.5;
+        knobs[i].current_reading = 0.25f;
+        knobs[i].filtered_reading[0] = 0.5f;
+        knobs[i].filtered_reading[1] = 0.5f;
         knobs[i].filtered_buf = (float *) malloc(sizeof(float) * context->audioFrames);
-        knobs[i].a = dpfc / (dpfc + 1.0);
-        knobs[i].b = 1.0 - knobs[i].a;
-        knobs[i].c = 0.5 * dpfc / (dpfc + 1.0);
-        knobs[i].d = 1.0 - knobs[i].c;
+        knobs[i].a = dpfc / (dpfc + 1.0f);
+        knobs[i].b = 1.0f - knobs[i].a;
+        knobs[i].c = 0.5f * dpfc / (dpfc + 1.0f);
+        knobs[i].d = 1.0f - knobs[i].c;
 
         //Knob switch functions
         knobs[i].switch_state = true;
@@ -2027,8 +2043,8 @@ bool setup(BelaContext *context, void *userData) {
         knobs[i].active_reset = (int) (2 * context->audioSampleRate) / (ANALOG_CHANNELS * gNframes);
         knobs[i].scan_cycle = ((int) context->audioSampleRate) * SCAN_PERIOD / (1000 * ANALOG_CHANNELS * gNframes);
         knobs[i].scan_timer = 0;
-        knobs[i].last_reading = 0.5;
-        knobs[i].dVdt = 0.01;
+        knobs[i].last_reading = 0.5f;
+        knobs[i].dVdt = 0.01f;
 
     }
     //initialize LFO shapes for each effect 
@@ -2048,9 +2064,9 @@ bool setup(BelaContext *context, void *userData) {
     tflanger_setPreset(delayline, 1);
     tflanger_setPreset(flanger, 2);
 
-    tflanger_setFinalGain(delayline, 0.0);
-    tflanger_setFinalGain(chorus, 0.0);
-    tflanger_setFinalGain(flanger, 0.0);
+    tflanger_setFinalGain(delayline, 0.0f);
+    tflanger_setFinalGain(chorus, 0.0f);
+    tflanger_setFinalGain(flanger, 0.0f);
 
     //Setup wah wah 
     iwah = make_iwah(iwah, context->audioSampleRate);
@@ -2085,16 +2101,18 @@ bool setup(BelaContext *context, void *userData) {
     kot_set_bypass(ko, true);
 
     // Graphic EQ 1
-    geq1 = make_equalizer(geq1, 6, 164.0, 5980.0, context->audioSampleRate);
+    geq1 = make_equalizer(geq1, 6, 164.0f, 5980.0f, context->audioSampleRate);
 
     // Graphic EQ 2
-    geq2 = make_equalizer(geq2, 6, 164.0, 5980.0, context->audioSampleRate);
+    geq2 = make_equalizer(geq2, 6, 164.0f, 5980.0f, context->audioSampleRate);
 
     //Envelope filter
     ef = envf_make_filter(ef, context->audioSampleRate, gNframes);
     gMaster_Envelope = (float *) malloc(sizeof(float) * gNframes);
-    for (int i = 0; i < gNframes; i++)
-        gMaster_Envelope[i] = 0.0;
+
+    for (int i = 0; i < gNframes; i++) {
+        gMaster_Envelope[i] = 0.0f;
+    }
 
     //
     // DEBUG (scope)
@@ -2133,8 +2151,9 @@ void render(BelaContext *context, void *userData) {
 
 
     for (unsigned int n = 0; n < context->audioFrames; n++) {
-        if (startup_mask_timer > 0)
+        if (startup_mask_timer > 0) {
             startup_mask_timer--;
+        }
         //scope.log(gMaster_Envelope[n], ch0[n]);
         //scope.log(ch0[n], ch1[n]);
         audioWrite(context, n, 0, ch0[n]);

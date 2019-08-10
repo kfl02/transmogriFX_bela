@@ -478,7 +478,7 @@ tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
 void
 tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_) {
     cthis->lfoPhase = lfoPhase_;
-    cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0f * M_PI);
+    cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0f * PI);
 
     tflanger_updateParams(cthis);
 }

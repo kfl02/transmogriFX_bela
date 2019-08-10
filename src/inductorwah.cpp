@@ -1,13 +1,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "inductorwah.h"
 
 void commit_circuit_config(iwah_coeffs *cf, float fs) {
     //Useful constants
     float RpRi = cf->Rp * cf->Ri / (cf->Rp + cf->Ri);
-    float f0 = 1.0f / (2.0f * M_PI * sqrtf(cf->Lp * cf->Cf));
-    float w0 = 2.0f * M_PI * f0 / fs;
+    float f0 = 1.0f / (2.0f * PI * sqrtf(cf->Lp * cf->Cf));
+    float w0 = 2.0f * PI * f0 / fs;
     float Q = RpRi * sqrtf(cf->Cf / cf->Lp);
     float c = cos(w0);
     float s = sin(w0);
@@ -38,7 +39,7 @@ void commit_circuit_config(iwah_coeffs *cf, float fs) {
 
     //Distill all down to final biquad coefficients
     float Gi = cf->Rs / (cf->Ri + cf->Rs);
-    float gbpf = 1.0f / (2.0f * M_PI * f0 * cf->Ri * cf->Cf);  //band-pass component equivalent gain
+    float gbpf = 1.0f / (2.0f * PI * f0 * cf->Ri * cf->Cf);  //band-pass component equivalent gain
 
     //Final Biquad numerator coefficients
     cf->b0 = gbpf * cf->b0b + Gi * cf->a0b;

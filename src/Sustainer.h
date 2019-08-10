@@ -25,7 +25,7 @@
 #ifndef SUSTAINER_H
 #define SUSTAINER_H
 
-const float LOG_10 = 2.302585f;
+#include "constants.h"
 
 class Sustainer {
 public:

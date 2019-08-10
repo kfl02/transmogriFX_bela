@@ -27,6 +27,8 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "constants.h"
+
 class Pareq {
 public:
     Pareq();

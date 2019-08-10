@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "phaser.h"
 
 void commit_circuit_config(phaser_coeffs *cf) {
@@ -39,8 +40,8 @@ void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
             cf->n_stages = 4;
             for (int i = 0; i < PHASER_MAX_STAGES; i++) {
                 cf->gfb[i] = 0.0f;  //feedback gains all 0
-                cf->w_min[i] = 2.0f * M_PI * 350.0f;
-                cf->w_max[i] = 2.0f * M_PI * 1800.0f;
+                cf->w_min[i] = 2.0f * PI * 350.0f;
+                cf->w_max[i] = 2.0f * PI * 1800.0f;
                 cf->w_diff[i] = cf->w_max[i] - cf->w_min[i];
                 cf->stagger[i] = false;
                 cf->apply_feedback[i] = false;
@@ -61,8 +62,8 @@ void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
             cf->n_stages = 6;
             for (int i = 0; i < PHASER_MAX_STAGES; i++) {
                 cf->gfb[i] = 0.0f;  //feedback gains all 0
-                cf->w_min[i] = 2.0f * M_PI * 350.0f;
-                cf->w_max[i] = 2.0f * M_PI * 2000.0f;
+                cf->w_min[i] = 2.0f * PI * 350.0f;
+                cf->w_max[i] = 2.0f * PI * 2000.0f;
                 cf->w_diff[i] = cf->w_max[i] - cf->w_min[i];
                 cf->stagger[i] = false;
                 cf->apply_feedback[i] = false;
@@ -255,7 +256,7 @@ phaser_set_lfo_rate(phaser_coeffs *cf, float rate) {
 
 void
 phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage) {
-    cf->w_min[stage] = 2.0f * M_PI * depth;
+    cf->w_min[stage] = 2.0f * PI * depth;
     cf->w_max[stage] = cf->w_min[stage] + cf->w_diff[stage];
 
     commit_circuit_config(cf);
@@ -263,7 +264,7 @@ phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage) {
 
 void
 phaser_set_lfo_width(phaser_coeffs *cf, float width, int stage) {
-    cf->w_diff[stage] = 2.0f * M_PI * width;
+    cf->w_diff[stage] = 2.0f * PI * width;
     cf->w_max[stage] = cf->w_min[stage] + cf->w_diff[stage];
     commit_circuit_config(cf);
 }

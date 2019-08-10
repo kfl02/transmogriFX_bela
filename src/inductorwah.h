@@ -3,6 +3,8 @@
 #ifndef IWAH_H
 #define IWAH_H
 
+#include "constants.h"
+
 const int GCB = 0;    //Common Dunlop GCB-95
 const int VOX = 1;    //Vox V847 voicing
 const int DUNLOP = 2;    //"The Original" Crybaby
