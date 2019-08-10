@@ -5,8 +5,8 @@
 //  Approximate voicing of King of Tone overdrive pedal
 //
 
-#ifndef KLINGON_H
-#define KLINGON_H
+#ifndef TRANSMOGRIFX_KLINGON_H
+#define TRANSMOGRIFX_KLINGON_H
 
 #include "constants.h"
 #include "read_vi_trace.h"
@@ -75,4 +75,4 @@ void compute_s_biquad(float r1, float r2, float c1, float c2, float *num, float 
 // Run the klingon effect
 void klingon_tick(klingon *kot, float *x);
 
-#endif //KLINGON_H
+#endif //TRANSMOGRIFX_KLINGON_H

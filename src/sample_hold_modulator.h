@@ -11,8 +11,8 @@
 // -----------------------------------------------------------------------------
 //
 
-#ifndef SH_MOD_H
-#define  SH_MOD_H
+#ifndef TRANSMOGRIFX_SH_MOD_H
+#define  TRANSMOGRIFX_SH_MOD_H
 
 #include "adsr.h"
 
@@ -83,4 +83,4 @@ sample_hold_set_max_sequences(sh_mod *sh, int max_seq);
 void
 sample_hold_set_sequence_level(sh_mod *sh, int seq, float seq_val);
 
-#endif //SH_MOD_H
+#endif //TRANSMOGRIFX_SH_MOD_H

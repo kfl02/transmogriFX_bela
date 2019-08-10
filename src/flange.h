@@ -2,8 +2,8 @@
 
 //Linear interpolated delay line
 
-#ifndef TFX_FLANGE_H
-#define TFX_FLANGE_H
+#ifndef TRANSMOGRIFX_FLANGE_H
+#define TRANSMOGRIFX_FLANGE_H
 
 #include "constants.h"
 #include "biquad.h"
@@ -113,4 +113,4 @@ float tflanger_lpfilter(fparams *, float, char);  //simple first-order low pass
 
 void tflanger_updateParams(tflanger *);
 
-#endif //TFX_FLANGE_H
+#endif //TRANSMOGRIFX_FLANGE_H

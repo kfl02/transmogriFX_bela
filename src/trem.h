@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef TREM_H
-#define TREM_H
+#ifndef TRANSMOGRIFX_TREM_H
+#define TRANSMOGRIFX_TREM_H
 
 #include "lfo.h"
 
@@ -43,4 +43,4 @@ void trem_set_lfo_type(trem_coeffs *, unsigned int);
 
 bool trem_toggle_bypass(trem_coeffs *);
 
-#endif //TREM_H
+#endif //TRANSMOGRIFX_TREM_H

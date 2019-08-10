@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef FB_COMPRESSOR_H
-#define FB_COMPRESSOR_H
+#ifndef TRANSMOGRIFX_FB_COMPRESSOR_H
+#define TRANSMOGRIFX_FB_COMPRESSOR_H
 
 typedef struct feedback_compressor_t {
     //System Parameters
@@ -124,4 +124,4 @@ feedback_compressor_update_parameters(feedback_compressor *fbc);
 void
 feedback_compressor_destructor(feedback_compressor *fbc);
 
-#endif //FB_COMPRESSOR_H
+#endif //TRANSMOGRIFX_FB_COMPRESSOR_H

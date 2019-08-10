@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef PHASER_H
-#define PHASER_H
+#ifndef TRANSMOGRIFX_PHASER_H
+#define TRANSMOGRIFX_PHASER_H
 
 #include "constants.h"
 #include "lfo.h"
@@ -92,4 +92,4 @@ void phaser_set_feedback(phaser_coeffs *cf, float fb, int stage);
 
 void phaser_set_distortion(phaser_coeffs *cf, float d);
 
-#endif //PHASER_H
+#endif //TRANSMOGRIFX_PHASER_H

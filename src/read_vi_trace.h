@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef READ_VI_TRACE_H
-#define READ_VI_TRACE_H
+#ifndef TRANSMOGRIFX_READ_VI_TRACE_H
+#define TRANSMOGRIFX_READ_VI_TRACE_H
 
 #include <math.h>
 
@@ -59,4 +59,4 @@ inline float vi_trace_interp(vi_trace *vi, float x_) {
     return x;
 }
 
-#endif // READ_VI_TRACE_H
+#endif //TRANSMOGRIFX_READ_VI_TRACE_H

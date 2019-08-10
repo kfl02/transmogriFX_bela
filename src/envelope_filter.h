@@ -10,8 +10,8 @@
 // -----------------------------------------------------------------------------
 //
 
-#ifndef ENVELOPE_F_H
-#define ENVELOPE_F_H
+#ifndef TRANSMOGRIFX_ENVELOPE_F_H
+#define TRANSMOGRIFX_ENVELOPE_F_H
 
 #include "svf.h"
 #include "sample_hold_modulator.h"
@@ -141,4 +141,4 @@ envf_set_adsr_stn(env_filter *envf, float stn_);
 void
 envf_set_adsr_rls(env_filter *envf, float rls_);
 
-#endif //ENVELOPE_F_H
+#endif //TRANSMOGRIFX_ENVELOPE_F_H

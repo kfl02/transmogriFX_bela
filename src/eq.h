@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef EQ_H
-#define EQ_H
+#ifndef TRANSMOGRIFX_EQ_H
+#define TRANSMOGRIFX_EQ_H
 
 #include "constants.h"
 
@@ -60,4 +60,5 @@ geq_tick_n(eq_filters *eq, float *xn, size_t N);
 
 void plot_response(float, float, int, eq_coeffs *, float, cx *);
 //void plot_response(float f1, float f2, int pts, eq_coeffs* cf, float fs, cx *r)
-#endif
+
+#endif //TRANSMOGRIFX_EQ_H

@@ -4,8 +4,8 @@
 // 1-pole IIR filters
 //
 
-#ifndef IIR1P_H
-#define IIR1P_H
+#ifndef TRANSMOGRIFX_IIR1P_H
+#define TRANSMOGRIFX_IIR1P_H
 
 #include "constants.h"
 
@@ -94,4 +94,4 @@ inline float tick_filter_biquad(iir_1p *f, float x) {
 
 void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *den);
 
-#endif //IIR1P_H
+#endif //TRANSMOGRIFX_IIR1P_H

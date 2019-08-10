@@ -21,8 +21,8 @@
 // ----------------------------------------------------------------------
 
 
-#ifndef PAREQ_H
-#define PAREQ_H
+#ifndef TRANSMOGRIFX_PAREQ_H
+#define TRANSMOGRIFX_PAREQ_H
 
 #include <stdint.h>
 #include <math.h>
@@ -77,4 +77,4 @@ private:
     float _z2[MAXCH];
 };
 
-#endif
+#endif //TRANSMOGRIFX_PAREQ_H

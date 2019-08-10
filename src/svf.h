@@ -44,8 +44,8 @@
 //  This i-to-R transfer was traced from a Vactrol VTL-5C3 datasheet graph
 //
 
-#ifndef SVF_H
-#define SVF_H
+#ifndef TRANSMOGRIFX_SVF_H
+#define TRANSMOGRIFX_SVF_H
 
 #include "constants.h"
 
@@ -115,4 +115,4 @@ svf_set_normalize(sv_filter *s, bool n);
 void
 svf_set_outclip(sv_filter *s, bool clip_output);
 
-#endif //SVF_H
+#endif //TRANSMOGRIFX_SVF_H

@@ -2,8 +2,8 @@
 
 #include "constants.h"
 
-#ifndef LFO_H
-#define LFO_H
+#ifndef TRANSMOGRIFX_LFO_H
+#define TRANSMOGRIFX_LFO_H
 
 const int INT_TRI = 0;
 const int TRI = 1;
@@ -69,5 +69,5 @@ void get_lfo_name(unsigned int, char *);
 
 float run_lfo(lfoparams *);
 
-#endif //LFO_H
+#endif //TRANSMOGRIFX_LFO_H
 

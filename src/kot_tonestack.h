@@ -4,8 +4,8 @@
 // KOT style tonestack
 //
 
-#ifndef KOT_STACK_H
-#define KOT_STACK_H
+#ifndef TRANSMOGRIFX_KOT_STACK_H
+#define TRANSMOGRIFX_KOT_STACK_H
 
 #include "iir_1pole.h"
 
@@ -43,4 +43,4 @@ inline float kotstack_tick(kot_stack *ks, float x) {
     return tick_filter_1p_g(&(ks->st2), tick_filter_biquad(&(ks->st1), x));
 }
 
-#endif //KOT_STACK_H
+#endif //TRANSMOGRIFX_KOT_STACK_H

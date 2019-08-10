@@ -21,8 +21,8 @@
 // -----------------------------------------------------------------------
 
 
-#ifndef REVERB_H
-#define REVERB_H
+#ifndef TRANSMOGRIFX_REVERB_H
+#define TRANSMOGRIFX_REVERB_H
 
 #include "pareq.h"
 
@@ -264,4 +264,4 @@ private:
 
 // -----------------------------------------------------------------------
 
-#endif
+#endif //TRANSMOGRIFX_REVERB_H

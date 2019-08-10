@@ -4,8 +4,8 @@
 *   ADSR implementation
 */
 
-#ifndef ADSR_H
-#define ADSR_H
+#ifndef TRANSMOGRIFX_ADSR_H
+#define TRANSMOGRIFX_ADSR_H
 
 //ADSR States
 const int ADSR_STATE_ATTACK = 0;
@@ -109,4 +109,4 @@ adsr_set_trigger_state(adsr *ad, bool t);
 void
 adsr_set_trigger_timeout(adsr *ad, float t);
 
-#endif //ADSR_H
+#endif //TRANSMOGRIFX_ADSR_H

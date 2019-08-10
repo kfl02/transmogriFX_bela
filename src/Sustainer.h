@@ -22,8 +22,8 @@
 
 */
 
-#ifndef SUSTAINER_H
-#define SUSTAINER_H
+#ifndef TRANSMOGRIFX_SUSTAINER_H
+#define TRANSMOGRIFX_SUSTAINER_H
 
 #include "constants.h"
 
@@ -73,4 +73,4 @@ private:
     float cthresh, cratio, cpthresh;
 
 };
-#endif
+#endif //TRANSMOGRIFX_SUSTAINER_H

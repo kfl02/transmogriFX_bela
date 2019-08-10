@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef IWAH_H
-#define IWAH_H
+#ifndef TRANSMOGRIFX_IWAH_H
+#define TRANSMOGRIFX_IWAH_H
 
 #include "constants.h"
 
@@ -84,4 +84,4 @@ void iwah_circuit_preset(int, iwah_coeffs *, float);
 //Bypass effect
 void iwah_bypass(iwah_coeffs *, bool);
 
-#endif //IWAH_H
+#endif //TRANSMOGRIFX_IWAH_H

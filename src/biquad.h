@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef BIQUAD_H
-#define BIQUAD_H
+#ifndef TRANSMOGRIFX_BIQUAD_H
+#define TRANSMOGRIFX_BIQUAD_H
 
 #include "constants.h"
 
@@ -42,4 +42,5 @@ make_butterworth_coeffs(int, float *);
 float
 run_filter(float, biquad_coeffs *);
 //run_filter(float x, biquad_coeffs* cf);
-#endif
+
+#endif //TRANSMOGRIFX_BIQUAD_H

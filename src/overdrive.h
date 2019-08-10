@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef OVERDRIVE_H
-#define OVERDRIVE_H
+#ifndef TRANSMOGRIFX_OVERDRIVE_H
+#define TRANSMOGRIFX_OVERDRIVE_H
 
 #include "iir_1pole.h"
 
@@ -61,4 +61,4 @@ bool od_set_bypass(overdrive *od, bool bypass);
 // Run the overdrive effect
 void overdrive_tick(overdrive *od, float *x);
 
-#endif //OVERDRIVE_H
+#endif //TRANSMOGRIFX_OVERDRIVE_H
