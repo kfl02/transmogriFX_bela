@@ -6,74 +6,74 @@
 void kotstack_compute_filter_coeffs(kot_stack *ks) {
     // Local variables to make following formulas easier
     // Tone pot ratios
-    float apos = ks->tone_pot_pos;
-    float bpos = 1.0f - apos;  // Alternate pot leg resistance ratio
+    const float apos = ks->tone_pot_pos;
+    const float bpos = 1.0f - apos;  // Alternate pot leg resistance ratio
     //printf("apos= %f, bpos= %f\n", apos, bpos);
 
     // Boost pot ratio
-    float bstpos = ks->boost_pot_pos;
+    const float bstpos = ks->boost_pot_pos;
 
     // Sampling rate
-    float fs = ks->fs;
-    float kk = 2.0f * fs;
+    const float fs = ks->fs;
+    const float kk = 2.0f * fs;
     //printf("fs= %f, kk=%f\n", fs, kk);
 
     // Circuit params
-    float rtone = ks->rtone;
-    float rboost = ks->rboost;
-    float ri = ks->ri;
-    float rc = ks->rc;
-    float ro = ks->ro;
-    float c1 = ks->c1;
-    float c2 = ks->c2;
+    const float rtone = ks->rtone;
+    const float rboost = ks->rboost;
+    const float ri = ks->ri;
+    const float rc = ks->rc;
+    const float ro = ks->ro;
+    const float c1 = ks->c1;
+    const float c2 = ks->c2;
 
     // Components as labeled in derivation
-    float ra = ri + apos * rtone;
-    float rb = bpos * rtone + rtone / fs; // This sets one of the zeros, so it needs to avoid going to zero
-    float rd = rboost * bstpos;
+    const float ra = ri + apos * rtone;
+    const float rb = bpos * rtone + rtone / fs; // This sets one of the zeros, so it needs to avoid going to zero
+    const float rd = rboost * bstpos;
     //printf("ra= %f, rb= %f, rd= %f\n", ra, rb, rd);
 
     // Substitutions as labled in derivation
-    float a0 = ro + rc;
-    float a1 = (ro + rd) * rc * c2 + ro * rd * c2;
-    float b1 = (ro + rd) * c2;
+    const float a0 = ro + rc;
+    const float a1 = (ro + rd) * rc * c2 + ro * rd * c2;
+    const float b1 = (ro + rd) * c2;
     //printf("a0= %f, a1= %f, b1= %f\n", a0, a1, b1);
 
-    float N0 = a0;
-    float N1 = rb * c1 * a0 + a1;
-    float N2 = rb * c1 * a1;
-    float D0 = 1.0;
-    float D1 = rb * c1 + c1 * a0 + b1;
-    float D2 = rb * c1 * b1 + c1 * a1;
+    const float N0 = a0;
+    const float N1 = rb * c1 * a0 + a1;
+    const float N2 = rb * c1 * a1;
+    const float D0 = 1.0;
+    const float D1 = rb * c1 + c1 * a0 + b1;
+    const float D2 = rb * c1 * b1 + c1 * a1;
     //printf("N0= %f, N1= %f, N2= %f, D0= %f, D1= %f, D2= %f\n", N0, N1, N2, D0, D1, D2);
 
     // Analog Filter consolidated coefficients
 
     // Stage 1 filter (order 2)
     // vxvi = gvx*(s*s + A1*s + A0)/(s*s + B1*s + B0)
-    float gvx = N2 / (N2 + ra * D2);
-    float A0 = N0 / N2;
-    float A1 = N1 / N2;
-    float B0 = (N0 + ra * D0) / (N2 + ra * D2);
-    float B1 = (N1 + ra * D1) / (N2 + ra * D2);
+    const float gvx = N2 / (N2 + ra * D2);
+    const float A0 = N0 / N2;
+    const float A1 = N1 / N2;
+    const float B0 = (N0 + ra * D0) / (N2 + ra * D2);
+    const float B1 = (N1 + ra * D1) / (N2 + ra * D2);
     //printf("A0= %f, A1= %f, B0= %f, B1= %f, gvx= %f\n", A0, A1, B0, B1, gvx);
 
     // Stage 2 filter (order 1)
     // vovx = gvo*(s + X0)/(s + Y0);
-    float gvo = (c2 * ro * rd) / (c2 * (ro * rd + (ro + rd) * rc));
-    float X0 = 1 / (c2 * rd);
-    float Y0 = (rc + ro) / (c2 * (ro * rd + (ro + rd) * rc));
+    const float gvo = (c2 * ro * rd) / (c2 * (ro * rd + (ro + rd) * rc));
+    const float X0 = 1 / (c2 * rd);
+    const float Y0 = (rc + ro) / (c2 * (ro * rd + (ro + rd) * rc));
 
     // Bilinear transform computations
 
     // Stage 1 filter (order 2)
     // vxviblt = gdsp*(A2blt*z2 + A1blt*z1 + 1) / ( B2blt*z2 + B1blt*z1 + 1)
-    float gblt = ((A0 + kk * A1 + kk * kk) / (B0 + kk * B1 + kk * kk));
-    float gdsp = gvx * gblt;
-    float A1blt = ((2.0f * A0 - 2.0f * kk * kk) / (A0 + kk * A1 + kk * kk));
-    float A2blt = ((A0 - kk * A1 + kk * kk) / (A0 + kk * A1 + kk * kk));
-    float B1blt = ((2.0f * B0 - 2.0f * kk * kk) / (B0 + kk * B1 + kk * kk));
-    float B2blt = ((B0 - kk * B1 + kk * kk) / (B0 + kk * B1 + kk * kk));
+    const float gblt = ((A0 + kk * A1 + kk * kk) / (B0 + kk * B1 + kk * kk));
+    const float gdsp = gvx * gblt;
+    const float A1blt = ((2.0f * A0 - 2.0f * kk * kk) / (A0 + kk * A1 + kk * kk));
+    const float A2blt = ((A0 - kk * A1 + kk * kk) / (A0 + kk * A1 + kk * kk));
+    const float B1blt = ((2.0f * B0 - 2.0f * kk * kk) / (B0 + kk * B1 + kk * kk));
+    const float B2blt = ((B0 - kk * B1 + kk * kk) / (B0 + kk * B1 + kk * kk));
 
     ks->st1.fs = ks->fs;
     ks->st1.a1 = -B1blt;  // negate because of filter implementation
@@ -85,10 +85,10 @@ void kotstack_compute_filter_coeffs(kot_stack *ks) {
 
     // Stage 2 filter (order 1)
     // vovxblt = gdsp2*(X0blt*z1 + 1)/(Y0blt*z1 + 1)
-    float g2blt = (X0 + kk) / (Y0 + kk);
-    float gdsp2 = gvo * g2blt;
-    float X0blt = (X0 - kk) / (X0 + kk);
-    float Y0blt = (Y0 - kk) / (Y0 + kk);
+    const float g2blt = (X0 + kk) / (Y0 + kk);
+    const float gdsp2 = gvo * g2blt;
+    const float X0blt = (X0 - kk) / (X0 + kk);
+    const float Y0blt = (Y0 - kk) / (Y0 + kk);
 
     ks->st2.fs = ks->fs;
     ks->st2.a1 = -Y0blt;  // negate because of filter implementation
@@ -107,8 +107,8 @@ void kotstack_init(kot_stack *ks, float fs_) {
     ks->fs = fs_;
 
     // Powers of 10
-    float k = 1000.0f;
-    float n = 1.0e-9f;
+    const float k = 1000.0f;
+    const float n = 1.0e-9f;
 
     // Tonestack components
     ks->ri = 1.0f * k;

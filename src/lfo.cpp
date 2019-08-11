@@ -8,9 +8,10 @@
 lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     lp = (lfoparams *) malloc(sizeof(lfoparams));
 
-    float ts = 1.0f / fs;
-    float frq = 2.0f * fosc;
-    float t = 4.0f * frq * frq * ts * ts;
+    const float ts = 1.0f / fs;
+    const float frq = 2.0f * fosc;
+    const float t = 4.0f * frq * frq * ts * ts;
+
     float p = phase / 180.0f;  //Phase can be as large as desired to delay LFO startup
 
     if (p < 0.0f) {
@@ -20,7 +21,7 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     p /= frq;
     p *= fs;
 
-    int phdly = (int) p;
+    const int phdly = (int) p;
 
     lp->startup_delay = phdly;
 
@@ -55,8 +56,8 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
     lp->cos_part = cos(2.0f * PI * phase / 360.0f);
 
     //Relaxation oscillator parameters
-    float ie = 1.0f / (1.0f - 1.0f / E);
-    float k = expf(-2.0f * fosc / fs);
+    static const float ie = 1.0f / (1.0f - 1.0f / E);
+    const float k = expf(-2.0f * fosc / fs);
 
     lp->rlx_k = k;
     lp->rlx_ik = 1.0f - k;
@@ -85,9 +86,9 @@ lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
 }
 
 void update_lfo(lfoparams *lp, float fosc, float fs) {
-    float ts = 1.0f / fs;
-    float frq = 2.0f * fosc;
-    float t = 4.0f * frq * frq * ts * ts;
+    const float ts = 1.0f / fs;
+    const float frq = 2.0f * fosc;
+    const float t = 4.0f * frq * frq * ts * ts;
 
     //record the new setting 
     lp->current_rate = fosc;
@@ -251,7 +252,7 @@ float run_exp_lfo(lfoparams *lp) {
 }
 
 float run_lfo(lfoparams *lp) {
-    float lfo_out = 0.0f;
+    float lfo_out;
 
     switch (lp->lfo_type) {
         case INT_TRI: //integrated triangle
@@ -357,4 +358,3 @@ void get_lfo_name(unsigned int type, char *outstring) {
 void set_lfo_type(lfoparams *lp, unsigned int type) {
     lp->lfo_type = type;
 }
-

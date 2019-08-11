@@ -38,6 +38,7 @@ soft_clip(float xn_) {
 sh_mod *
 make_sample_hold(sh_mod *sh, float fs, int N) {
     sh = (sh_mod *) malloc(sizeof(sh_mod));
+
     sh->ad = make_adsr(sh->ad, fs, N);
     sh->max_types = SH_MAX_TYPES;
     sh->adsr_env = (float *) malloc(sizeof(float) * N);
@@ -59,9 +60,9 @@ make_sample_hold(sh_mod *sh, float fs, int N) {
     sh->ifs = 1.0f / sh->fs;
     sh->NS = N;
 
-    float rate = 6.0f;
-    float hfr = 4.7f * rate;
-    float Trate = 1000.0f / rate;
+    const float rate = 6.0f;
+    const float hfr = 4.7f * rate;
+    const float Trate = 1000.0f / rate;
 
     //Initialize ramp rates
     adsr_set_attack(sh->ad, Trate / 8.0f);
@@ -173,8 +174,8 @@ sample_hold_set_active(sh_mod *sh, bool act) {
 
 void
 sample_hold_set_rate(sh_mod *sh, float rate) {
-    float hfr = 4.7f * rate;
-    float Trate = 1000.0f / rate;
+    const float hfr = 4.7f * rate;
+    const float Trate = 1000.0f / rate;
 
     //Initialize ramp rates
     adsr_set_attack(sh->ad, Trate / 10.0f);

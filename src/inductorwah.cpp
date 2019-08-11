@@ -4,13 +4,13 @@
 
 void commit_circuit_config(iwah_coeffs *cf, float fs) {
     //Useful constants
-    float RpRi = cf->Rp * cf->Ri / (cf->Rp + cf->Ri);
-    float f0 = 1.0f / (2.0f * PI * sqrtf(cf->Lp * cf->Cf));
-    float w0 = 2.0f * PI * f0 / fs;
-    float Q = RpRi * sqrtf(cf->Cf / cf->Lp);
-    float c = cos(w0);
-    float s = sin(w0);
-    float alpha = s / (2.0f * Q);
+    const float RpRi = cf->Rp * cf->Ri / (cf->Rp + cf->Ri);
+    const float f0 = 1.0f / (2.0f * PI * sqrtf(cf->Lp * cf->Cf));
+    const float w0 = 2.0f * PI * f0 / fs;
+    const float Q = RpRi * sqrtf(cf->Cf / cf->Lp);
+    const float c = cos(w0);
+    const float s = sin(w0);
+    const float alpha = s / (2.0f * Q);
 
     //High Pass Biquad Coefficients
     cf->b0h = (1.0f + c) / 2.0f;
@@ -36,8 +36,8 @@ void commit_circuit_config(iwah_coeffs *cf, float fs) {
     // updating biquad coefficients
 
     //Distill all down to final biquad coefficients
-    float Gi = cf->Rs / (cf->Ri + cf->Rs);
-    float gbpf = 1.0f / (2.0f * PI * f0 * cf->Ri * cf->Cf);  //band-pass component equivalent gain
+    const float Gi = cf->Rs / (cf->Ri + cf->Rs);
+    const float gbpf = 1.0f / (2.0f * PI * f0 * cf->Ri * cf->Cf);  //band-pass component equivalent gain
 
     //Final Biquad numerator coefficients
     cf->b0 = gbpf * cf->b0b + Gi * cf->a0b;
@@ -60,15 +60,15 @@ void commit_circuit_config(iwah_coeffs *cf, float fs) {
 
 void iwah_circuit_preset(int ckt, iwah_coeffs *cf, float fs) {
     //Useful multipliers for short-hand expression of component values
-    float k = 1000.0f;
-    float n = 1.0e-9f;
+    const float k = 1000.0f;
+    const float n = 1.0e-9f;
 
     //helper variables 
-    float ro = 0.0f;
-    float re = 0.0f;
-    float Req = 0.0f;
-    float ic = 0.0f;
-    float beta = 0.0f;
+    float ro;
+    float re;
+    float Req;
+    float ic;
+    float beta;
 
     switch (ckt) {
         case GCB: //Dunlop GCB-95 variant 
@@ -284,9 +284,9 @@ inline float sqr(float x) {
 }
 
 inline float clip1(float x) {
-    float thrs = 0.8f;
-    float nthrs = -0.72f;
-    float f = 1.25f;
+    const float thrs = 0.8f;
+    const float nthrs = -0.72f;
+    const float f = 1.25f;
 
     //Hard limiting
     if (x >= 1.2f) {
@@ -318,7 +318,7 @@ iwah_tick(float x, float gp, iwah_coeffs *cf) {
     }
 
     //The magic numbers below approximate frequency warping characteristic
-    float gw = 4.6f - 18.4f / (4.0f + gp);
+    const float gw = 4.6f - 18.4f / (4.0f + gp);
 
     //Update Biquad coefficients
     cf->a0 = cf->a0b + gw * cf->a0c;
@@ -327,18 +327,18 @@ iwah_tick(float x, float gp, iwah_coeffs *cf) {
     cf->ax = 1.0f / cf->a0;
 
     //run it through the 1-pole HPF and gain first
-    float hpf = cf->ghpf * (x - cf->xh1) - cf->a1p * cf->yh1;
+    const float hpf = cf->ghpf * (x - cf->xh1) - cf->a1p * cf->yh1;
 
     cf->xh1 = x;
     cf->yh1 = hpf;
 
     //Apply modulated biquad
-    float y0 = cf->b0 * hpf + cf->b1 * cf->x1 + cf->b2 * cf->x2
-               + (cf->a1 * cf->y1 + cf->a2 * cf->y2);
+    float y0 = (cf->b0 * hpf + cf->b1 * cf->x1 + cf->b2 * cf->x2
+               + (cf->a1 * cf->y1 + cf->a2 * cf->y2)) * cf->ax;
 
     y0 *= cf->ax;
 
-    float out = clip1(y0);
+    const float out = clip1(y0);
 
     y0 = 0.95f * y0 + 0.05f * out; //Let a little harmonic distortion feed back into the filter loop
     cf->x2 = cf->x1;

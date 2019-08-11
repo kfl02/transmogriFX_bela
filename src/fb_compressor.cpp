@@ -187,9 +187,9 @@ feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope) 
         //
 
         //Soft knee implementation
-        float sk = fbc->y1 - fbc->t;
+        const float sk = fbc->y1 - fbc->t;
         float yk = 0.0f;
-        float gk = 0.0f;
+        float gk;
 
         if (fbc->soft_knee) {
             if (sk < fbc->hknt) {
@@ -298,7 +298,7 @@ feedback_compressor_update_parameters(feedback_compressor *fbc) {
         fbc->t = powf(10.0f, fbc->threshold_db / 20.0f);
     }
     //Target makeup gain needed for given threshold and ratio setting
-    float m = powf(10.0f, (fbc->threshold_db / fbc->ratio - fbc->threshold_db) / 20.0f);
+    const float m = powf(10.0f, (fbc->threshold_db / fbc->ratio - fbc->threshold_db) / 20.0f);
 
     fbc->makeup_gain = m;
     //Feedback ratio dependent upon both threshold and ratio

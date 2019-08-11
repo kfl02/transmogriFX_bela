@@ -48,9 +48,8 @@ make_trem(trem_coeffs *cf, float fs) {
 }
 
 inline float
-trem_tick(trem_coeffs *cf, float x_) {
-    float out = x_;
-    float lfo = cf->gain * (1.0f - cf->depth * run_lfo(cf->lfo));
+trem_tick(trem_coeffs *cf, float out) {
+    const float lfo = cf->gain * (1.0f - cf->depth * run_lfo(cf->lfo));
 
     return lfo * out;
 }

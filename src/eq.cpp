@@ -6,12 +6,12 @@
 
 void
 eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G) {
-    float A = powf(10.0f, G / 40.0f);
-    float w0 = 2.0f * PI * f0 / fs;
-    float c = cosf(w0);
-    float s = sinf(w0);
+    const float A = powf(10.0f, G / 40.0f);
+    const float w0 = 2.0f * PI * f0 / fs;
+    const float c = cosf(w0);
+    const float s = sinf(w0);
+    const float alpha = s / (2.0f * Q);
 
-    float alpha = s / (2.0f * Q);
     float a0, a1, a2;
     float b0, b1, b2;
 
@@ -79,18 +79,18 @@ eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G)
 
 void
 eq_update_gain(eq_coeffs *cf, float G) {
-    float A = powf(10.0f, G / 40.0f);
+    const float A = powf(10.0f, G / 40.0f);
+    const float iA = 1.0f / A;
+    const float sqrtA2 = 2.0f * sqrtf(A);
 
-    float iA = 1.0f / A;
-    float sqrtA2 = 2.0f * sqrtf(A);
     float a0, a1, a2;
     float b0, b1, b2;
 
     a0 = a1 = a2 = 0.0f;
     b0 = b1 = b2 = 0.0f;
 
-    float c = cf->c;
-    float alpha = cf->alpha;
+    const float c = cf->c;
+    const float alpha = cf->alpha;
 
     switch (cf->type) {
         case PK_EQ:
@@ -156,7 +156,8 @@ make_eq_band(int type, eq_coeffs *cf, float fs, float f0, float Q, float G) {
 
 eq_filters *
 make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float sample_rate) {
-    float G = 0.0f;
+    const float G = 0.0f;
+
     float f1 = fstop_;
     float f0 = fstart_;
 
@@ -164,9 +165,9 @@ make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float
         f1 = sample_rate / 2.0f;
     }
 
-    float nb = (float) nbands;
-    float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1.0f)));
-    float Q = 0.25f * (m + 1.0f) / (m - 1.0f);
+    const float nb = (float) nbands;
+    const float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1.0f)));
+    const float Q = 0.25f * (m + 1.0f) / (m - 1.0f);
 
     eq = (eq_filters *) malloc(sizeof(eq_filters));
     eq->band = (eq_coeffs **) malloc((nbands + 2) * sizeof(eq_coeffs *));
@@ -226,7 +227,7 @@ float geq_tick(eq_filters *eq, float x_) {
 }
 
 void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
-    size_t cnt = eq->nbands + 2;
+    const size_t cnt = eq->nbands + 2;
     float x = 0.0f;
 
     for (size_t k = 0; k < N; k++) {
@@ -240,12 +241,13 @@ void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
     }
 }
 
+inline
 float sqr(float x) {
     return x * x;
 }
 
 void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) {
-    float dp = 2.0f * PI;
+    const float dp = 2.0f * PI;
     // z^-1 = cos(w) - j*sin(w)
     // z^-2 = cos(2*w) - j*sin(2w)
 
@@ -254,15 +256,13 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
     num[0] = num[1] = 0.0f;
     den[0] = den[1] = 0.0f;
 
-    float dw = dp * (f2 - f1) / (float) pts;
-
-    dw /= fs;
+    const float dw = (dp * (f2 - f1) / (float) pts) / fs;
 
     float w = dp * f1 / fs;
-    float magn = 0.0f;
-    float magd = 0.0f;
-    float an = 0.0f;
-    float ad = 0.0f;
+    float magn;
+    float magd;
+    float an;
+    float ad;
 
     int n = abs(pts) + 1;
 

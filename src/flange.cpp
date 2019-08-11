@@ -13,7 +13,7 @@ void tflanger_resize_delay(tflanger *cthis, float maxTime) {
     size_t nSize = lrint(maxTime * cthis->fS + 1.0f);
     float *temp = (float *) malloc(nSize * sizeof(float));
 
-    if (temp == NULL) {
+    if (temp == nullptr) {
         // TODO: error handling
         // fprintf(stderr, "Cannot allocate any more memory.  Requested increase of delay time declined");
         return;
@@ -39,9 +39,12 @@ void tflanger_resize_delay(tflanger *cthis, float maxTime) {
 tflanger *
 tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis = (tflanger *) malloc(sizeof(tflanger));
+
     cthis->maxT = maxTime;
     cthis->fS = fSampleRate;
-    size_t nSize = lrint(cthis->maxT * fSampleRate + 1.0f);
+
+    const size_t nSize = lrint(cthis->maxT * fSampleRate + 1.0f);
+
     cthis->dlyLine = (float *) malloc(nSize * sizeof(float));
 
     for (size_t i = 0; i < nSize; i++) {
@@ -61,7 +64,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     //Envelope detector
     cthis->envelope = (fparams *) malloc(sizeof(fparams));
 
-    float tc10 = 0.015f;  //About 10 Hz cutoff
+    const float tc10 = 0.015f;  //About 10 Hz cutoff
 
     cthis->envelope->alpha = 1.0f / (tc10 * cthis->fS + 1.0f);
     cthis->envelope->ialpha = 1.0f - cthis->envelope->alpha;
@@ -71,8 +74,8 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     //Attack/Release settings
     cthis->attrel = (arparams *) malloc(sizeof(arparams));
 
-    float atkt = 0.05f;
-    float rlst = 0.5f;
+    const float atkt = 0.05f;
+    const float rlst = 0.5f;
 
     cthis->attrel->y1 = 0.0f;
     cthis->attrel->atk = 1.0f / (atkt * cthis->fS + 1.0f);
@@ -83,7 +86,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     //Bypass fader
     cthis->fader = (fparams *) malloc(sizeof(fparams));
 
-    float tcf = 0.25f;  //Fader time constant
+    const float tcf = 0.25f;  //Fader time constant
 
     cthis->fader->alpha = 1.0f / (tcf * cthis->fS + 1.0f);
     cthis->fader->ialpha = 1.0f - cthis->fader->alpha;
@@ -91,7 +94,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis->fader->y1 = 0.0f;
 
     //Set some sane initial values
-    float ms = 0.001;
+    const float ms = 0.001;
 
     tflanger_setLfoDepth(cthis, (9.0f * ms)); //lfo offset, input in seconds
     tflanger_setLfoWidth(cthis, (0.8f * ms)); //lfo deviation, input in seconds will
@@ -116,9 +119,9 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     tflanger_setEnvelopeSensitivity(cthis, 1.0f);
 
     //Anti-aliasing filter
-    float fs = fSampleRate;
-    float f0 = 7200.0f;
-    float *q = NULL;
+    const float fs = fSampleRate;
+    const float f0 = 7200.0f;
+    float *q;
 
     q = make_butterworth_coeffs(8, q);
 
@@ -157,6 +160,7 @@ get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
         wet = fracWet;
     }
 
+    // TODO: use copysign
     if (wet < 0.0f) {
         sign = -1.0f;
     }
@@ -200,6 +204,7 @@ float potfunc1(float xn) {
         xn = 1.0f - (1.0f - xn) * (2.0f - x);
     }
 
+    // TODO: use copysign
     if (sign == 1) {
         xn = -xn;
     }
@@ -214,13 +219,13 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
         return;
     }
 
-    float dly = 0.0f;
-    float dlyFloor = 0.0f;
-    float fd = 0.5f;
-    float ifd = 0.5f;
+    float dly;
+    float dlyFloor;
+    float fd;
+    float ifd;
 
-    float in = 0.0f; //current sample
-    float envdet = 0.0f;
+    float in; //current sample
+    float envdet;
 
     long d = 0; //integer delay
     long d1 = 0; //integer delay - 1 
@@ -393,9 +398,8 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
 
 float
 tflanger_lpfilter(fparams *cthis, float data, char mode) {
-    float y0 = 0.0f;
+    const float y0 = cthis->alpha * data + cthis->ialpha * cthis->y1;
 
-    y0 = cthis->alpha * data + cthis->ialpha * cthis->y1;
     cthis->y1 = y0;
 
     // TODO: use enum/constant for mode
@@ -408,7 +412,7 @@ tflanger_lpfilter(fparams *cthis, float data, char mode) {
 
 float
 tflanger_atkrls(arparams *cthis, float data) {
-    float y0 = 0.0f;
+    float y0;
 
     if (data > cthis->y1) {
         y0 = cthis->atk * data + cthis->iatk * cthis->y1;  //Attack
@@ -423,7 +427,6 @@ tflanger_atkrls(arparams *cthis, float data) {
 
 void
 tflanger_updateParams(tflanger *cthis) {
-
     if ((cthis->lfoWidth + cthis->lfoDepth) >= cthis->maxT) {
         cthis->lfoWidth = cthis->maxT - cthis->lfoDepth;
     }

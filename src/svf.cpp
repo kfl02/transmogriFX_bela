@@ -16,9 +16,10 @@
 sv_filter *
 svf_make_filter(sv_filter *s, float fs) {
     s = (sv_filter *) malloc(sizeof(sv_filter));
+
     s->fs = 2.0f * fs;
 
-    float fc = 700.0f;
+    const float fc = 700.0f;
 
     svf_set_drive(s, 0.25f);
 
@@ -97,10 +98,8 @@ clip1(float x) {
 
 void
 svf_tick_n(sv_filter *s, float *x, int N) {
-    int i = 0;
-
     //double-sample rate processing, linear interpolated
-    for (i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++) {
         //Run 1 : Linear interpolate between x[n-1] and x[i]
         s->lpf = s->lpf + s->f * s->bpf;
         s->hpf = s->g5 * (x[i] + s->x1) - s->lpf - s->q * s->bpf;
@@ -122,10 +121,8 @@ svf_tick_n(sv_filter *s, float *x, int N) {
 
 void
 svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N) {
-    int i = 0;
-
     //double-sample rate processing, linear interpolated
-    for (i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++) {
         //Run 1 : Linear interpolate between x[n-1] and x[i]
         s->lpf = s->lpf + 0.5f * (f[i] + s->f1) * s->bpf;
         s->hpf = s->g5 * (x[i] + s->x1) - s->lpf - s->q * s->bpf;
@@ -162,7 +159,9 @@ svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
 
         s->x1 = x[i];
         s->f1 = f[i];
+
         x[i] = s->lmix * s->lpf + s->hmix * s->hpf + s->bmix * s->bpf;
+
         if (!s->normalize) {
             x[i] *= s->gout;
         }
@@ -199,7 +198,7 @@ svf_set_drive(sv_filter *s, float drive_) {
         drive = 2.0f;
     }
 
-    float idrive = 1.0f / (drive + 0.001f);
+    const float idrive = 1.0f / (drive + 0.001f);
 
     s->drive = 0.5f * (drive + 0.001f);
     s->idrive = idrive;

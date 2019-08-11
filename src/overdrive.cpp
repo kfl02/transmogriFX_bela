@@ -56,15 +56,15 @@ inline float sqr(float x) {
 
 // Quadratic clipping function
 // Linear between nthrs and thrs, uses x - a*x^2 type of function above threshold
-float thrs = 0.8f;
-float nthrs = -0.72f;
-float f = 1.25f;
+const float thrs = 0.8f;
+const float nthrs = -0.72f;
+const float f = 1.25f;
 
 void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain processing and dry mix
 {
     float xn = 0.0f;
-    float dx = 0.0f;
-    float dc = 0.0f;
+    float dx;
+    float dc;
     float delta = 0.0f;
     float deltac = 0.0f;
 
@@ -83,8 +83,12 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
             delta += dx;
             deltac += dc;
             //Hard limiting
-            if (xn >= 1.2f) { xn = 1.2f; }
-            if (xn <= -1.12f) { xn = -1.12f; }
+            if (xn >= 1.2f) {
+                xn = 1.2f;
+            }
+            if (xn <= -1.12f) {
+                xn = -1.12f;
+            }
 
             //Soft clipping
             if (xn > thrs) {
@@ -112,7 +116,7 @@ void clipper_tick(overdrive *od, int N, float *x, float *clean)  // Add in gain 
 
 // Cubic clipping function
 void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
-    float xn = 0.0f;
+    float xn;
     float dx = 0.0f;
     float dc = 0.0f;
     float delta = 0.0f;
@@ -131,6 +135,7 @@ void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
             // Cubic clipping
             xn = xn * od->gain * 0.33f +
                  asym;  // Gain reduced because d/dx(x^3) = 3x ==> Small-signal gain of 3 built into the function
+
             if (xn <= -1.0f) {
                 xn = -2.0f / 3.0f;
             } else if (xn >= 1.0f) {
@@ -236,7 +241,7 @@ bool od_set_bypass(overdrive *od, bool bypass) {
 
 // Run the overdrive effect
 void overdrive_tick(overdrive *od, float *x) {
-    unsigned int n = od->blksz;
+    const unsigned int n = od->blksz;
 
     if (od->bypass) {
         return;

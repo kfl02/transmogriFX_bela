@@ -46,8 +46,8 @@ envf_make_filter(env_filter *envf, float fs, int N) {
     envf_set_gate_knee(envf, envf->knee_db);
     envf->yn = 0.0f;
 
-    float fl = 50.0f;
-    float fh = 4000.0f;
+    const float fl = 50.0f;
+    const float fh = 4000.0f;
     float fnl = svf_compute_f(envf->svf, fl);
     float fnh = svf_compute_f(envf->svf, fh);
 
@@ -67,9 +67,7 @@ envf_make_filter(env_filter *envf, float fs, int N) {
 }
 
 inline float
-soft_clip(float xn_) {
-    float xn = xn_;
-
+soft_clip(float xn) {
     if (xn > 1.0f) {
         xn = 1.0f;
     } else if (xn < -1.0f) {
@@ -90,9 +88,9 @@ sqr(float x) {
 
 inline float
 clamp(float x) {
-    float thrs = 0.8f;
-    float nthrs = -0.72f;
-    float f = 1.25f;
+    const float thrs = 0.8f;
+    const float nthrs = -0.72f;
+    const float f = 1.25f;
 
     //Hard limiting
     if (x >= 1.2f) {
@@ -133,8 +131,8 @@ soft_gate(float xn_) {
 //Processing functions
 void
 envf_tick_n(env_filter *envf, float *x, float *e) {
-    float ei = 0.0f;
-    float a = 0.0f;
+    float ei;
+    float a;
 
     if (envf->bypass) {
         return;

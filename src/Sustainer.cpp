@@ -80,7 +80,7 @@ Sustainer::init(float SAMPLE_RATE, int PER) {
 void
 Sustainer::tick_n(float *x) {
     int i;
-    float smpl = 0.0f;
+    float smpl;
 
     for (i = 0; i < PERIOD; i++) {  //apply compression to auxresampled
         smpl = input * x[i];

@@ -7,7 +7,8 @@
 //
 
 void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0) {
-    float w0 = 2.0f * PI * f0 / fs;
+    const float w0 = 2.0f * PI * f0 / fs;
+
     float a1;
     float b0, b1;
     float g = 1.0f;  // This could be brought out into a user-configurable param
@@ -44,7 +45,6 @@ void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0)
             break;
     }
 
-
     cf->b0 = b0;
     cf->b1 = b1;
     cf->a1 = -a1;  // filter implementation uses addition instead of subtraction
@@ -65,11 +65,11 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
     const int IM = 1;
 
     // TODO: n is float already
-    float fn = (float) n;
-    float fstep = (fstop - fstart) / fn;
-    float fi = fstart;
-    float fs = cf->fs;
+    const float fn = n;
+    const float fstep = (fstop - fstart) / fn;
+    const float fs = cf->fs;
 
+    float fi = fstart;
     float num[2] = {0, 0};
     float den[2] = {0, 0};
 
@@ -118,20 +118,20 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
 
 void s_biquad_to_z_biquad(float sgain, float fs_, float kz_, float *num, float *den) {
     float kz = kz_;
-    float fs = fs_;
+    const float fs = fs_;
 
     if (kz == 0.0f) {
         kz = 2.0f * fs;
     }
 
-    float kz2 = kz * kz;
+    const float kz2 = kz * kz;
 
-    float B0 = num[2] * sgain;
-    float B1 = num[1] * sgain;
-    float B2 = num[0] * sgain;
-    float A0 = den[2];
-    float A1 = den[1];
-    float A2 = den[0];
+    const float B0 = num[2] * sgain;
+    const float B1 = num[1] * sgain;
+    const float B2 = num[0] * sgain;
+    const float A0 = den[2];
+    const float A1 = den[1];
+    const float A2 = den[0];
 
     num[2] = (B0 * kz2 + B1 * kz + B2) / (A0 * kz2 + A1 * kz + A2);
     num[1] = (2.0f * B2 - 2.0f * B0 * kz2) / (A0 * kz2 + A1 * kz + A2);

@@ -3,7 +3,6 @@
 #include "phaser.h"
 
 void commit_circuit_config(phaser_coeffs *cf) {
-
     //There is always something to calculate for position zero
     cf->a1p_min[0] = -expf(-(cf->w_min[0]) / cf->fs);
     cf->a1p_max[0] = -expf(-(cf->w_max[0]) / cf->fs);
@@ -168,14 +167,15 @@ phaser_modulate(phaser_coeffs *cf) {
 
 inline float
 phaser_tick(float x_, phaser_coeffs *cf) {
-    size_t st = 0;
-    size_t stn = 0;
-    size_t stag = 0;
-
     phaser_modulate(cf);
+
     cf->ph1[0] = x_ + cf->fb;
     cf->fb = 0.0f;
-    for (st = 0; st < cf->n_stages; st++) {
+
+    for (size_t st = 0; st < cf->n_stages; st++) {
+        size_t stn = 0;
+        size_t stag = 0;
+
         if (cf->stagger[st]) {
             stag = st;
         } else {

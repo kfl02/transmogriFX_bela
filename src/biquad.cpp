@@ -35,10 +35,10 @@ make_butterworth_coeffs(int order, float *coeffs) {
 
 void
 biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
-    float w0 = 2.0f * PI * f0 / fs;
-    float c = cos(w0);
-    float s = sin(w0);
-    float alpha = s / (2.0f * Q);
+    const float w0 = 2.0f * PI * f0 / fs;
+    const float c = cos(w0);
+    const float s = sin(w0);
+    const float alpha = s / (2.0f * Q);
     float a0, a1, a2;
     float b0, b1, b2;
 

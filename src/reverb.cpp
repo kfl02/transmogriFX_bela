@@ -54,7 +54,7 @@ void Diff1::fini() {
     delete[] _line;
 
     _size = 0;
-    _line = 0;
+    _line = nullptr;
 }
 
 
@@ -63,7 +63,7 @@ void Diff1::fini() {
 
 Delay::Delay() :
         _size(0),
-        _line(0) {
+        _line(nullptr) {
 }
 
 
@@ -86,7 +86,7 @@ void Delay::fini() {
     delete[] _line;
 
     _size = 0;
-    _line = 0;
+    _line = nullptr;
 }
 
 
@@ -95,7 +95,7 @@ void Delay::fini() {
 
 Vdelay::Vdelay() :
         _size(0),
-        _line(0) {
+        _line(nullptr) {
 }
 
 
@@ -119,7 +119,7 @@ void Vdelay::fini() {
     delete[] _line;
 
     _size = 0;
-    _line = 0;
+    _line = nullptr;
 }
 
 
@@ -186,20 +186,18 @@ Reverb::~Reverb() {
 
 
 void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
-    int i, k1, k2;
-
     inp[0] = new float[frame_size];
     inp[1] = new float[frame_size];
     out_mono = new float[frame_size];
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         out[i] = new float[frame_size];
     }
-    for (i = 0; i < frame_size; i++) {
+    for (int i = 0; i < frame_size; i++) {
         inp[0][i] = 0.0;
         inp[1][i] = 0.0;
         out_mono[i] = 0.0;
-        for (k1 = 0; k1 < 4; k1++) {
+        for (int k1 = 0; k1 < 4; k1++) {
             out[k1][i] = 0.0;
         }
     }
@@ -230,7 +228,9 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
     _vdelay0.init((int) (0.1f * _fsamp));
     _vdelay1.init((int) (0.1f * _fsamp));
 
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
+        int k1, k2;
+
         k1 = (int) (floorf(_tdiff1[i] * _fsamp + 0.5f));
         k2 = (int) (floorf(_tdelay[i] * _fsamp + 0.5f));
         _diff1[i].init(k1, (i & 1) ? -0.6f : 0.6f);
@@ -354,7 +354,6 @@ void Reverb::prepare(int nfram) {
 
 
 void Reverb::process(int nfram, float *inp[], float *out[]) {
-    int i, n;
     float *p0, *p1;
     float *q0, *q1;//, *q2, *q3;
     float t, g, x0, x1, x2, x3, x4, x5, x6, x7;
@@ -368,7 +367,7 @@ void Reverb::process(int nfram, float *inp[], float *out[]) {
 //    q2 = out [2];
 //    q3 = out [3];
 
-    for (i = 0; i < nfram; i++) {
+    for (int i = 0; i < nfram; i++) {
         _vdelay0.write(p0[i]);
         _vdelay1.write(p1[i]);
 
@@ -447,12 +446,12 @@ void Reverb::process(int nfram, float *inp[], float *out[]) {
     }
 
     //n = _ambis ? 4 : 2;
-    n = 2;
+    int n = 2;
     _pareq1.process(nfram, n, out);
     _pareq2.process(nfram, n, out);
 //    if (!_ambis)
 //    {
-    for (i = 0; i < nfram; i++) {
+    for (int i = 0; i < nfram; i++) {
         _g0 += _d0;
         q0[i] += _g0 * p0[i];
         q1[i] += _g0 * p1[i];
@@ -461,7 +460,6 @@ void Reverb::process(int nfram, float *inp[], float *out[]) {
 }
 
 void Reverb::tick_mono(int frames, float *audio) {
-    int i, k;
     int fr = frames;
     float *inp_[2];
 
@@ -473,7 +471,7 @@ void Reverb::tick_mono(int frames, float *audio) {
     out_[0] = out[0];
     out_[1] = out[1];
 
-    for (i = 0; i < frames; i++) {
+    for (int i = 0; i < frames; i++) {
         inp_[0][i] = audio[i];
         inp_[1][i] = audio[i];
         out_[0][i] = 0.0;
@@ -486,14 +484,14 @@ void Reverb::tick_mono(int frames, float *audio) {
             _nsamp = _fragm;
         }
 
-        k = (_nsamp < frames) ? _nsamp : frames;
+        int k = (_nsamp < frames) ? _nsamp : frames;
 
         process(k, inp_, out_);
 
-        for (i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             inp_[i] += k;
         }
-        for (i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             out_[i] += k;
         }
 
@@ -502,7 +500,7 @@ void Reverb::tick_mono(int frames, float *audio) {
     }
 
     //Overwrite input buffer
-    for (i = 0; i < fr; i++) {
+    for (int i = 0; i < fr; i++) {
         out_mono[i] = (out[0][i] + out[1][i]);
         audio[i] = out_mono[i];
     }

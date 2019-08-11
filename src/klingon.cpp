@@ -47,12 +47,12 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
 
     // First-stage pre-emphasis, if using other schematic sources
     // (biquad_pre_emph)*gain + x
-    float k = 1000.0f;
-    float n = 1e-9f;
-    float r1 = 27.0f * k;
-    float r2 = 33.0f * k;
-    float c1 = 10.0f * n;
-    float c2 = 10.0f * n;
+    const float k = 1000.0f;
+    const float n = 1e-9f;
+    const float r1 = 27.0f * k;
+    const float r2 = 33.0f * k;
+    const float c1 = 10.0f * n;
+    const float c2 = 10.0f * n;
 
     float num[3];
     float den[3];
@@ -80,14 +80,14 @@ klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, f
     //
 
     // Extract pot resistance from gain (dB) setting
-    float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
-    float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
+    const float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
+    const float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
 
-    float c_fb = 100e-12f;  // Sets low-pass roll-off
-    float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
+    const float c_fb = 100e-12f;  // Sets low-pass roll-off
+    const float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
 
-    float fc_fb = 1.0f / (2.0f * PI * 10000.0f * c_fb);  // Low pass cut-off
-    float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
+    const float fc_fb = 1.0f / (2.0f * PI * 10000.0f * c_fb);  // Low pass cut-off
+    const float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
 
     compute_filter_coeffs_1p(&(kot->pre_emph159), HPF1P, kot->fs, fc_ff);
     compute_filter_coeffs_1p(&(kot->post_emph), LPF1P, kot->clipper_fs, fc_fb);
@@ -148,9 +148,9 @@ void compute_s_biquad(float r1, float r2, float c1, float c2, float *num, float 
 void clipper_tick(klingon *kot, int N, float *x, float *clean)  // Add in gain processing and dry mix
 {
     float xn = 0.0f;
-    float dx = 0.0f;
+    float dx;
     float delta = 0.0f;
-    float tmp = 0.0f;
+    float tmp;
 
     for (int i = 0; i < N; i++) {
         // Compute deltas for linear interpolation (upsampling)
@@ -205,8 +205,8 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
     drv = powf(10.0f, (drv + 0.341f) / 20.0f);
 
     // Work backward through gain stages to get pot value adjustment
-    float gl = 33.0f * 27.0f / (33.0f + 27.0f);
-    float gb = 22.0f;
+    const float gl = 33.0f * 27.0f / (33.0f + 27.0f);
+    const float gb = 22.0f;
 
     // pot setting required to get requested gain
     kot->gain = (drv / gb - 1.0f) * gl;
@@ -217,10 +217,10 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
     //
 
     // Extract pot resistance from gain (dB) setting
-    float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
-    float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
-    float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
-    float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
+    const float pot_fb = (kot->gain - 10.0f);  // Portion in op amp feedback
+    const float pot_ff = 100.0f - pot_fb + 10.0f; // Portion in series with following gain stage input
+    const float c_ff = 100e-9f;   // Sets high-pass feeding into second gain stage
+    const float fc_ff = 1.0f / (2.0f * PI * 1000.0f * pot_ff * c_ff);     // High-pass cut-off
 
     compute_filter_coeffs_1p(&(kot->pre_emph159), HPF1P, kot->fs, fc_ff);
 
@@ -258,7 +258,7 @@ void kot_set_boost(klingon *kot, float boost) // second high pass cut
 
 void kot_set_mix(klingon *kot, float hard)  // Dry/Wet control, 0.0 to 1.0
 {
-    float mix = hard;
+    float mix;
 
     if (hard > 1.0f) {
         mix = 1.0f;
@@ -298,7 +298,7 @@ bool kot_set_bypass(klingon *kot, bool bypass) {
 // Run the klingon effect
 void klingon_tick(klingon *kot, float *x) {
     // TODO: resolve unsigned int vs. int
-    unsigned int n = kot->blksz;
+    const unsigned int n = kot->blksz;
 
     if (kot->bypass) {
         return;
