@@ -55,7 +55,6 @@ typedef struct tflanger_t {
     size_t maxDly;
 
     //LFO
-    float lfoConst;
     float maxLfoRate;
     lfoparams *lfopar;
 
@@ -69,7 +68,7 @@ typedef struct tflanger_t {
 
 } tflanger;
 
-tflanger *tflanger_init(tflanger *, float, float); //provide maximum delay time and the sample rate
+tflanger *tflanger_init(float, float); //provide maximum delay time and the sample rate
 void tflanger_destroy(tflanger *);  //cleanup
 
 void tflanger_tick(tflanger *, int, float *, float *);  //main processing routine. Returns output in the same buffer

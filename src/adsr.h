@@ -8,10 +8,12 @@
 #define TRANSMOGRIFX_ADSR_H
 
 //ADSR States
-const int ADSR_STATE_ATTACK = 0;
-const int ADSR_STATE_DECAY = 1;
-const int ADSR_STATE_SUSTAIN = 2;
-const int ADSR_STATE_RELEASE = 3;
+enum adsr_state {
+    ADSR_STATE_ATTACK,
+    ADSR_STATE_DECAY,
+    ADSR_STATE_SUSTAIN,
+    ADSR_STATE_RELEASE
+};
 
 typedef struct adsr_t {
     // System properties
@@ -30,46 +32,38 @@ typedef struct adsr_t {
     int trig_timeout;  //max time to hold trigger if not externally reset
 
     // State variables
-    int state;      //ADSR State machine current state
+    adsr_state state;      //ADSR State machine current state
     int trig_timer; //can set trigger and have it automatically clear
     float sv;       //the ADSR state variable
 } adsr;
 
 //Use this function to instantiate a new adsr struct
-adsr *
-make_adsr(adsr *ad, float fs, int N);
+adsr * make_adsr(float fs, int N);
 
 //This is where it all happens.
 // It assumes "output" is pre-allocated to > size N
 // given in make_adsr()
-void
-adsr_tick_n(adsr *ad, float *output);
+void adsr_tick_n(adsr *ad, float *output);
 
 //User parameters
 
 //Output level (scale)
-void
-adsr_set_amplitude(adsr *ad, float a);
+void adsr_set_amplitude(adsr *ad, float a);
 
 //Velocity -- default is sqrt(2)
-void
-adsr_set_velocity(adsr *ad, float v);
+void adsr_set_velocity(adsr *ad, float v);
 
 //Attack time in units of ms
-void
-adsr_set_attack(adsr *ad, float a);
+void adsr_set_attack(adsr *ad, float a);
 
 //Decay time in units of ms
-void
-adsr_set_decay(adsr *ad, float d);
+void adsr_set_decay(adsr *ad, float d);
 
 //Sustain gain 0 to 1
-void
-adsr_set_sustain(adsr *ad, float s);
+void adsr_set_sustain(adsr *ad, float s);
 
 //Release time in units of ms
-void
-adsr_set_release(adsr *ad, float r);
+void adsr_set_release(adsr *ad, float r);
 
 //
 //  Triggering
@@ -100,13 +94,11 @@ adsr_set_release(adsr *ad, float r);
 //
 
 //Set trigger: "true", Clear trigger "false"
-void
-adsr_set_trigger_state(adsr *ad, bool t);
+void adsr_set_trigger_state(adsr *ad, bool t);
 
 //Set trigger timeout if not manually resetting it
 //takes time in seconds
 //negative number means no timeout
-void
-adsr_set_trigger_timeout(adsr *ad, float t);
+void adsr_set_trigger_timeout(adsr *ad, float t);
 
 #endif //TRANSMOGRIFX_ADSR_H

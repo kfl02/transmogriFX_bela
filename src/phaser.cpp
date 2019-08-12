@@ -31,7 +31,7 @@ void commit_circuit_config(phaser_coeffs *cf) {
     }
 }
 
-void phaser_circuit_preset(int ckt, phaser_coeffs *cf) {
+void phaser_circuit_preset(phaser_mode ckt, phaser_coeffs *cf) {
     switch (ckt) {
         case PHASE_90:
             cf->n_stages = 4;
@@ -94,13 +94,14 @@ void zero_state_variables(phaser_coeffs *cf) {
     cf->reset = false;
 }
 
-phaser_coeffs *
-make_phaser(phaser_coeffs *cf, float fs) {
+phaser_coeffs *make_phaser(float fs) {
+    phaser_coeffs *cf,;
+
     //First malloc the struct
     cf = (phaser_coeffs *) malloc(sizeof(phaser_coeffs));
     cf->fs = fs;
     //setup LFO
-    cf->mod = init_lfo(cf->mod, 1.0f, cf->fs, 0.0f);
+    cf->mod = init_lfo(1.0f, cf->fs, 0.0f);
 
     //Default to something that makes decent sound
     phaser_circuit_preset(PHASER_DEFAULT, cf);
@@ -142,8 +143,7 @@ inline float clip_hard(float x) {
     return x;
 }
 
-inline void
-phaser_modulate(phaser_coeffs *cf) {
+inline void phaser_modulate(phaser_coeffs *cf) {
     size_t st = 0;
     float lfo = 1.0f - run_lfo(cf->mod);
     lfo += lfo * lfo;
@@ -165,8 +165,7 @@ phaser_modulate(phaser_coeffs *cf) {
     }
 }
 
-inline float
-phaser_tick(float x_, phaser_coeffs *cf) {
+inline float phaser_tick(float x_, phaser_coeffs *cf) {
     phaser_modulate(cf);
 
     cf->ph1[0] = x_ + cf->fb;
@@ -200,8 +199,7 @@ phaser_tick(float x_, phaser_coeffs *cf) {
     return out;
 }
 
-void
-phaser_tick_n(phaser_coeffs *cf, int n, float *x) {
+void phaser_tick_n(phaser_coeffs *cf, int n, float *x) {
     if (cf->bypass) {
         if (cf->reset) {
             zero_state_variables(cf);
@@ -216,16 +214,14 @@ phaser_tick_n(phaser_coeffs *cf, int n, float *x) {
     }
 }
 
-void
-phaser_set_nstages(phaser_coeffs *cf, int nstages) {
+void phaser_set_nstages(phaser_coeffs *cf, int nstages) {
     //TODO: Check feedback not coming from invalid stage
     cf->n_stages = nstages;
 
     commit_circuit_config(cf);
 }
 
-void
-phaser_set_mix(phaser_coeffs *cf, float wet) {
+void phaser_set_mix(phaser_coeffs *cf, float wet) {
     float wet_ = wet;
     float gain = 1.0f + 2.0f * fabs(wet_);
 
@@ -242,33 +238,28 @@ phaser_set_mix(phaser_coeffs *cf, float wet) {
     }
 }
 
-void
-phaser_set_lfo_type(phaser_coeffs *cf, int n) {
+void phaser_set_lfo_type(phaser_coeffs *cf, int n) {
     cf->mod->lfo_type = n;
 }
 
-void
-phaser_set_lfo_rate(phaser_coeffs *cf, float rate) {
+void phaser_set_lfo_rate(phaser_coeffs *cf, float rate) {
     update_lfo(cf->mod, rate, cf->fs);
 }
 
-void
-phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage) {
+void phaser_set_lfo_depth(phaser_coeffs *cf, float depth, int stage) {
     cf->w_min[stage] = 2.0f * PI * depth;
     cf->w_max[stage] = cf->w_min[stage] + cf->w_diff[stage];
 
     commit_circuit_config(cf);
 }
 
-void
-phaser_set_lfo_width(phaser_coeffs *cf, float width, int stage) {
+void phaser_set_lfo_width(phaser_coeffs *cf, float width, int stage) {
     cf->w_diff[stage] = 2.0f * PI * width;
     cf->w_max[stage] = cf->w_min[stage] + cf->w_diff[stage];
     commit_circuit_config(cf);
 }
 
-void
-phaser_set_feedback(phaser_coeffs *cf, float fb, int stage) {
+void phaser_set_feedback(phaser_coeffs *cf, float fb, int stage) {
     cf->gfb[stage] = fb;
 
     if (fb == 0.0f) {
@@ -278,8 +269,7 @@ phaser_set_feedback(phaser_coeffs *cf, float fb, int stage) {
     }
 }
 
-void
-phaser_set_distortion(phaser_coeffs *cf, float d) {
+void phaser_set_distortion(phaser_coeffs *cf, float d) {
     if (d < 0.001f) {
         cf->distort = 0.001f;
     } else if (d > 1000.0f) {

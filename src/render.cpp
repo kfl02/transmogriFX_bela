@@ -1347,7 +1347,7 @@ void set_efx_envf_pg2() {
 
 void set_efx_envf_pg3() {
     float gate_thrs, gate_knee, shmix, sht;
-    int nsht;
+    sh_mod_mode nsht;
     bool doprint = false;
     gate_knee = gate_thrs = shmix = 0.0f;
 
@@ -1998,9 +1998,9 @@ bool setup(BelaContext *context, void *userData) {
     gifs = 1.0f / context->audioSampleRate;
     gNframes = context->audioFrames;
 
-    delayline = tflanger_init(delayline, T_ECHO, context->audioSampleRate);
-    chorus = tflanger_init(delayline, T_CHORUS, context->audioSampleRate);
-    flanger = tflanger_init(delayline, T_FLANGE, context->audioSampleRate);
+    delayline = tflanger_init(T_ECHO, context->audioSampleRate);
+    chorus = tflanger_init(T_CHORUS, context->audioSampleRate);
+    flanger = tflanger_init(T_FLANGE, context->audioSampleRate);
 
     ch0 = (float *) malloc(sizeof(float) * context->audioFrames);
     ch1 = (float *) malloc(sizeof(float) * context->audioFrames);
@@ -2069,7 +2069,7 @@ bool setup(BelaContext *context, void *userData) {
     tflanger_setFinalGain(flanger, 0.0f);
 
     //Setup wah wah 
-    iwah = make_iwah(iwah, context->audioSampleRate);
+    iwah = make_iwah(context->audioSampleRate);
     iwah_circuit_preset(VOX, iwah, context->audioSampleRate);
     iwah_bypass(iwah, true);
 
@@ -2079,35 +2079,35 @@ bool setup(BelaContext *context, void *userData) {
     gReverb_mix = gReverb_wet;
 
     //Phaser
-    phaser = make_phaser(phaser, context->audioSampleRate);
+    phaser = make_phaser(context->audioSampleRate);
     phaser_circuit_preset(PHASE_90, phaser);
 
     //Tremolo
-    trem = make_trem(trem, context->audioSampleRate);
+    trem = make_trem(context->audioSampleRate);
 
     //Sustainer
     fx_sustain.init(context->audioSampleRate, gNframes);
     fx_sustain.setpreset(0);
 
     //Compressor
-    fbcompressor = make_feedback_compressor(fbcompressor, context->audioSampleRate, gNframes);
+    fbcompressor = make_feedback_compressor(context->audioSampleRate, gNframes);
 
     //Overdrive 
-    od = make_overdrive(od, 1, context->audioFrames, context->audioSampleRate);
+    od = make_overdrive(1, context->audioFrames, context->audioSampleRate);
     od_set_bypass(od, true);
 
     //Klingon-Tone 
-    ko = make_klingon(ko, 1, context->audioFrames, context->audioSampleRate);
+    ko = make_klingon(1, context->audioFrames, context->audioSampleRate);
     kot_set_bypass(ko, true);
 
     // Graphic EQ 1
-    geq1 = make_equalizer(geq1, 6, 164.0f, 5980.0f, context->audioSampleRate);
+    geq1 = make_equalizer(LOW_SHELF, 164.0f, 5980.0f, context->audioSampleRate);
 
     // Graphic EQ 2
-    geq2 = make_equalizer(geq2, 6, 164.0f, 5980.0f, context->audioSampleRate);
+    geq2 = make_equalizer(LOW_SHELF, 164.0f, 5980.0f, context->audioSampleRate);
 
     //Envelope filter
-    ef = envf_make_filter(ef, context->audioSampleRate, gNframes);
+    ef = envf_make_filter(context->audioSampleRate, gNframes);
     gMaster_Envelope = (float *) malloc(sizeof(float) * gNframes);
 
     for (int i = 0; i < gNframes; i++) {

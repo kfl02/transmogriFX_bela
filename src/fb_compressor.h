@@ -51,20 +51,17 @@ typedef struct feedback_compressor_t {
 //Allocate and initialize struct with sane values
 //fs = Sampling Frequency
 //N = processing block size
-feedback_compressor *
-make_feedback_compressor(feedback_compressor *fbc, float fs, int N);
+feedback_compressor *make_feedback_compressor(float fs, int N);
 
 //This is where it happens
 //x[] is expected to be of length fbc->N
-void
-feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope);
+void feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope);
 
 //Settings
 
 //Compression onset threshold
 //Units of dB: -infinity to 0 dB
-void
-feedback_compressor_set_threshold(feedback_compressor *fbc, float t_);
+void feedback_compressor_set_threshold(feedback_compressor *fbc, float t_);
 
 //Compression ratio
 //This is not a ratio in the traditional sense if linmode is set 'true'.
@@ -79,49 +76,39 @@ feedback_compressor_set_threshold(feedback_compressor *fbc, float t_);
 //the ratio represents the traditional log-linear transfer function
 //
 //input unitless: 1 to 20
-void
-feedback_compressor_set_ratio(feedback_compressor *fbc, float r_);
+void feedback_compressor_set_ratio(feedback_compressor *fbc, float r_);
 
 //input units in ms:  1 ms to 1000 ms
-void
-feedback_compressor_set_attack(feedback_compressor *fbc, float a_);
+void feedback_compressor_set_attack(feedback_compressor *fbc, float a_);
 
 //input units in ms:  10 ms to 1000 ms
-void
-feedback_compressor_set_release(feedback_compressor *fbc, float r_);
+void feedback_compressor_set_release(feedback_compressor *fbc, float r_);
 
 //input g in units of dB: -db_dynrange (-60dB) to 20 dB
-void
-feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db);
+void feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db);
 
 //Parallel compression option (wet/dry mix).  Wet range: 0.0 to 1.0
 //Can help preserve some of the transients while providing sustain
-void
-feedback_compressor_set_mix(feedback_compressor *fbc, float wet);
+void feedback_compressor_set_mix(feedback_compressor *fbc, float wet);
 
 //Either soft (true) or hard (false)
 //Default is true (soft knee)
-void
-feedback_compressor_set_knee(feedback_compressor *fbc, bool sk);
+void feedback_compressor_set_knee(feedback_compressor *fbc, bool sk);
 
 //Either linear feedback mode (true) or 
 //inverse exponential feedback yielding a traditional log-linear transfer function (false)
 //Default is false (traditional compression curve)
-void
-feedback_compressor_set_transfer_function(feedback_compressor *fbc, bool tf);
+void feedback_compressor_set_transfer_function(feedback_compressor *fbc, bool tf);
 
 //if bp = true, it is forced to bypass mode and function returns true.
 //if bp = false, bypass state is toggled and new state is returned
-bool
-feedback_compressor_set_bypass(feedback_compressor *fbc, bool bp);
+bool feedback_compressor_set_bypass(feedback_compressor *fbc, bool bp);
 
 
 //More for internal use
-void
-feedback_compressor_update_parameters(feedback_compressor *fbc);
+void feedback_compressor_update_parameters(feedback_compressor *fbc);
 
 //deallocate memory when finished using the struct
-void
-feedback_compressor_destructor(feedback_compressor *fbc);
+void feedback_compressor_destructor(feedback_compressor *fbc);
 
 #endif //TRANSMOGRIFX_FB_COMPRESSOR_H

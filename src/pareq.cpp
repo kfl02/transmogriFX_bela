@@ -53,10 +53,10 @@ void Pareq::reset() {
 
 
 void Pareq::prepare(int nsamp) {
-    bool upd = false;
-    float g, f;
-
     if (_touch1 != _touch0) {
+        bool upd = false;
+        float g, f;
+
         g = _g0;
         f = _f0;
 
@@ -123,7 +123,6 @@ void Pareq::calcpar1(int nsamp, float g, float f) {
 
 
 void Pareq::process1(int nsamp, int nchan, float *data[]) {
-    int i, j;
     float c1, c2, gg;
     float x, y, z1, z2;
     float *p;
@@ -131,8 +130,9 @@ void Pareq::process1(int nsamp, int nchan, float *data[]) {
     c1 = _c1;
     c2 = _c2;
     gg = _gg;
+
     if (_state == SMOOTH) {
-        for (i = 0; i < nchan; i++) {
+        for (int i = 0; i < nchan; i++) {
             p = data[i];
             z1 = _z1[i];
             z2 = _z2[i];
@@ -140,7 +140,7 @@ void Pareq::process1(int nsamp, int nchan, float *data[]) {
             c2 = _c2;
             gg = _gg;
 
-            for (j = 0; j < nsamp; j++) {
+            for (int j = 0; j < nsamp; j++) {
                 c1 += _dc1;
                 c2 += _dc2;
                 gg += _dgg;
@@ -160,12 +160,12 @@ void Pareq::process1(int nsamp, int nchan, float *data[]) {
         _c2 = c2;
         _gg = gg;
     } else {
-        for (i = 0; i < nchan; i++) {
+        for (int i = 0; i < nchan; i++) {
             p = data[i];
             z1 = _z1[i];
             z2 = _z2[i];
 
-            for (j = 0; j < nsamp; j++) {
+            for (int j = 0; j < nsamp; j++) {
                 x = *p;
                 y = x - c2 * z2;
                 *p++ = x - gg * (z2 + c2 * y - x);

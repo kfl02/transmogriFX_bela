@@ -12,16 +12,19 @@
 //
 
 #ifndef TRANSMOGRIFX_SH_MOD_H
-#define  TRANSMOGRIFX_SH_MOD_H
+#define TRANSMOGRIFX_SH_MOD_H
 
 #include "adsr.h"
 
 const int MAX_SEQ_STEPS = 12;
 
-const int SH_RAND = 0;  //Sample random sequence
-const int SH_RAMP = 1;  //Sample a ramp oscillator
-const int SH_SEQ = 2;  //Run as sequencer
-const int SH_MAX_TYPES = 3;
+enum sh_mod_mode {
+    SH_RAND,
+    SH_RAMP,
+    SH_SEQ,
+    SH_MAX_TYPES // TODO: really needed?
+};
+
 
 typedef struct sh_mod_t {
     //System properties
@@ -58,29 +61,22 @@ typedef struct sh_mod_t {
 } sh_mod;
 
 
-sh_mod *
-make_sample_hold(sh_mod *sh, float fs, int N);
+sh_mod *make_sample_hold(float fs, int N);
 
 //Output is a buffer assumed to be length N,
 //containing the next N samples of the SH
 //modulator waveform
-void
-run_sample_hold(sh_mod *sh, float *output);
+void run_sample_hold(sh_mod *sh, float *output);
 
 //Settings
-void
-sample_hold_set_rate(sh_mod *sh, float rate);
+void sample_hold_set_rate(sh_mod *sh, float rate);
 
-bool
-sample_hold_set_active(sh_mod *sh, bool act);
+bool sample_hold_set_active(sh_mod *sh, bool act);
 
-void
-sample_hold_set_type(sh_mod *sh, int type);
+void sample_hold_set_type(sh_mod *sh, int type);
 
-void
-sample_hold_set_max_sequences(sh_mod *sh, int max_seq);
+void sample_hold_set_max_sequences(sh_mod *sh, int max_seq);
 
-void
-sample_hold_set_sequence_level(sh_mod *sh, int seq, float seq_val);
+void sample_hold_set_sequence_level(sh_mod *sh, int seq, float seq_val);
 
 #endif //TRANSMOGRIFX_SH_MOD_H

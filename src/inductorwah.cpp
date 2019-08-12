@@ -58,7 +58,7 @@ void commit_circuit_config(iwah_coeffs *cf, float fs) {
 
 }
 
-void iwah_circuit_preset(int ckt, iwah_coeffs *cf, float fs) {
+void iwah_circuit_preset(iwah_mode ckt, iwah_coeffs *cf, float fs) {
     //Useful multipliers for short-hand expression of component values
     const float k = 1000.0f;
     const float n = 1.0e-9f;
@@ -262,8 +262,9 @@ void zero_state_variables(iwah_coeffs *cf) {
     cf->xh1 = 0.0f;
 }
 
-iwah_coeffs *
-make_iwah(iwah_coeffs *cf, float fs) {
+iwah_coeffs *make_iwah(float fs) {
+    iwah_coeffs *cf;
+
     //First malloc the struct
     cf = (iwah_coeffs *) malloc(sizeof(iwah_coeffs));
 
@@ -307,8 +308,7 @@ inline float clip1(float x) {
     return x;
 }
 
-float inline
-iwah_tick(float x, float gp, iwah_coeffs *cf) {
+inline float iwah_tick(float x, float gp, iwah_coeffs *cf) {
     //variable gp is the pot gain, nominal range 0.0 to 1.0
     //although this can be abused for extended range.
     //A value less than zero would make the filter go unstable
@@ -351,8 +351,7 @@ iwah_tick(float x, float gp, iwah_coeffs *cf) {
 
 }
 
-void
-iwah_tick_n(iwah_coeffs *cf, float *x, float *gp, int n) {
+void iwah_tick_n(iwah_coeffs *cf, float *x, float *gp, int n) {
     if (cf->bypass) {
         zero_state_variables(cf);
         return;

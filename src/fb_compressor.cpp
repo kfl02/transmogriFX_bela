@@ -25,8 +25,9 @@
 //
 
 
-feedback_compressor *
-make_feedback_compressor(feedback_compressor *fbc, float fs, int N) {
+feedback_compressor *make_feedback_compressor(float fs, int N) {
+    feedback_compressor *fbc,;
+
     fbc = (feedback_compressor *) malloc(sizeof(feedback_compressor));
 
     fbc->fs = fs;
@@ -73,8 +74,7 @@ make_feedback_compressor(feedback_compressor *fbc, float fs, int N) {
     return fbc;
 }
 
-void
-feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope) {
+void feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope) {
     // if(fbc->bypass)
     //   {
     //       if(!fbc->reset)
@@ -124,6 +124,7 @@ feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope) 
         }
 
         //Cycle Timer
+        // TODO: int to float
         if (fbc->pk_timer < fbc->pk_hold_time) {
             fbc->pk_timer++;
         } else {
@@ -286,8 +287,7 @@ feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envelope) 
     }
 }
 
-void
-feedback_compressor_update_parameters(feedback_compressor *fbc) {
+void feedback_compressor_update_parameters(feedback_compressor *fbc) {
     if (fbc->soft_knee) {
         fbc->t = powf(10.0f, (fbc->threshold_db - 3.0f) / 20.0f);
         //knee
@@ -319,8 +319,7 @@ feedback_compressor_update_parameters(feedback_compressor *fbc) {
     }  //makeup gain
 }
 
-void
-feedback_compressor_set_threshold(feedback_compressor *fbc, float t_) {
+void feedback_compressor_set_threshold(feedback_compressor *fbc, float t_) {
     float t = t_;
 
     if (t > 0.0f) {
@@ -332,8 +331,7 @@ feedback_compressor_set_threshold(feedback_compressor *fbc, float t_) {
     feedback_compressor_update_parameters(fbc);
 }
 
-void
-feedback_compressor_set_ratio(feedback_compressor *fbc, float r_) {
+void feedback_compressor_set_ratio(feedback_compressor *fbc, float r_) {
     float r = r_;
 
     if (r < 1.0f) {
@@ -347,8 +345,7 @@ feedback_compressor_set_ratio(feedback_compressor *fbc, float r_) {
     feedback_compressor_update_parameters(fbc);
 }
 
-void
-feedback_compressor_set_attack(feedback_compressor *fbc, float a_) {
+void feedback_compressor_set_attack(feedback_compressor *fbc, float a_) {
     //Expects units are in ms
     float a = a_;
 
@@ -365,8 +362,7 @@ feedback_compressor_set_attack(feedback_compressor *fbc, float a_) {
     fbc->atk0 = fbc->atk;
 }
 
-void
-feedback_compressor_set_release(feedback_compressor *fbc, float r_) {
+void feedback_compressor_set_release(feedback_compressor *fbc, float r_) {
     //Expects units are in ms
     float r = r_;
 
@@ -382,8 +378,7 @@ feedback_compressor_set_release(feedback_compressor *fbc, float r_) {
 }
 
 //input g in units of dB
-void
-feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db) {
+void feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db) {
     float g = g_db;
 
     if (g < -fbc->db_dynrange) {
@@ -402,8 +397,7 @@ feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db) {
     fbc->g = fbc->out_gain * fbc->makeup_gain;
 }
 
-void
-feedback_compressor_set_mix(feedback_compressor *fbc, float wet) {
+void feedback_compressor_set_mix(feedback_compressor *fbc, float wet) {
     float w = wet;
 
     if (w > 1.0f) {
@@ -417,15 +411,13 @@ feedback_compressor_set_mix(feedback_compressor *fbc, float wet) {
 }
 
 //Either soft (true) or hard (false)
-void
-feedback_compressor_set_knee(feedback_compressor *fbc, bool sk) {
+void feedback_compressor_set_knee(feedback_compressor *fbc, bool sk) {
     fbc->soft_knee = sk;
 
     feedback_compressor_update_parameters(fbc);
 }
 
-void
-feedback_compressor_set_transfer_function(feedback_compressor *fbc, bool tf) {
+void feedback_compressor_set_transfer_function(feedback_compressor *fbc, bool tf) {
     fbc->linmode = tf;
 
     feedback_compressor_update_parameters(fbc);
@@ -433,8 +425,7 @@ feedback_compressor_set_transfer_function(feedback_compressor *fbc, bool tf) {
 
 //if bp = true, it is forced to bypass mode.
 //if bp = false, bypass state is toggled and new state is returned
-bool
-feedback_compressor_set_bypass(feedback_compressor *fbc, bool bp) {
+bool feedback_compressor_set_bypass(feedback_compressor *fbc, bool bp) {
     if (!bp) {
         if (fbc->bypass) {
             fbc->bypass = false;
@@ -452,7 +443,6 @@ feedback_compressor_set_bypass(feedback_compressor *fbc, bool bp) {
     return fbc->bypass;
 }
 
-void
-feedback_compressor_destructor(feedback_compressor *fbc) {
+void feedback_compressor_destructor(feedback_compressor *fbc) {
     free(fbc);
 }

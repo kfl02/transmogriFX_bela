@@ -9,8 +9,10 @@
 
 #include "constants.h"
 
-const int LPF1P = 0;
-const int HPF1P = 1;
+enum iir_lp_mode {
+    LPF1P,
+    HPF1P
+};
 
 typedef struct iir_1p_t {
     float fs;
@@ -28,7 +30,7 @@ typedef struct iir_1p_t {
     float y1, y2;
 } iir_1p;
 
-void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0);
+void compute_filter_coeffs_1p(iir_1p *cf, iir_lp_mode type, float fs, float f0);
 
 // Get frequency response, phase and magnitude
 void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq, float *mag, float *phase);

@@ -13,8 +13,9 @@
 
 #include "svf.h"
 
-sv_filter *
-svf_make_filter(sv_filter *s, float fs) {
+sv_filter *svf_make_filter(float fs) {
+    sv_filter *s;
+
     s = (sv_filter *) malloc(sizeof(sv_filter));
 
     s->fs = 2.0f * fs;
@@ -49,8 +50,7 @@ svf_make_filter(sv_filter *s, float fs) {
     return s;
 }
 
-inline float
-soft_clip(sv_filter *s, float xn_) {
+inline float soft_clip(sv_filter *s, float xn_) {
     float xn = s->drive * xn_;
 
     if (xn > 1.0f) {
@@ -66,13 +66,11 @@ soft_clip(sv_filter *s, float xn_) {
     return s->idrive * xn;
 }
 
-inline float
-sqr(float x) {
+inline float sqr(float x) {
     return x * x;
 }
 
-inline float
-clip1(float x) {
+inline float clip1(float x) {
     float thrs = 0.8f;
     float nthrs = -0.72f;
     float f = 1.25f;
@@ -96,8 +94,7 @@ clip1(float x) {
     return x;
 }
 
-void
-svf_tick_n(sv_filter *s, float *x, int N) {
+void svf_tick_n(sv_filter *s, float *x, int N) {
     //double-sample rate processing, linear interpolated
     for (int i = 0; i < N; i++) {
         //Run 1 : Linear interpolate between x[n-1] and x[i]
@@ -119,8 +116,7 @@ svf_tick_n(sv_filter *s, float *x, int N) {
     }
 }
 
-void
-svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N) {
+void svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N) {
     //double-sample rate processing, linear interpolated
     for (int i = 0; i < N; i++) {
         //Run 1 : Linear interpolate between x[n-1] and x[i]
@@ -143,8 +139,7 @@ svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N) {
     }
 }
 
-void
-svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
+void svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
     //double-sample rate processing, linear interpolated
     for (int i = 0; i < N; i++) {
         //Run 1 : Linear interpolate between x[n-1] and x[i]
@@ -172,8 +167,7 @@ svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N) {
 }
 
 //Settings
-void
-svf_set_q(sv_filter *s, float Q) {
+void svf_set_q(sv_filter *s, float Q) {
     float qq = Q;
 
     if (Q < 0.5f) {
@@ -183,15 +177,13 @@ svf_set_q(sv_filter *s, float Q) {
     s->q = 1.0f / qq;
 }
 
-float
-svf_compute_f(sv_filter *s, float fc) {
+float svf_compute_f(sv_filter *s, float fc) {
     s->fc = fc;
 
     return s->fcnst * s->fc;
 }
 
-void
-svf_set_drive(sv_filter *s, float drive_) {
+void svf_set_drive(sv_filter *s, float drive_) {
     float drive = drive_ * drive_;
 
     if (drive > 2.0f) {
@@ -204,8 +196,7 @@ svf_set_drive(sv_filter *s, float drive_) {
     s->idrive = idrive;
 }
 
-void
-svf_set_mix_lpf(sv_filter *s, float mix_) {
+void svf_set_mix_lpf(sv_filter *s, float mix_) {
     float mix = mix_;
 
     if (mix > 1.0f) {
@@ -217,8 +208,7 @@ svf_set_mix_lpf(sv_filter *s, float mix_) {
     s->lmix = mix;
 }
 
-void
-svf_set_mix_bpf(sv_filter *s, float mix_) {
+void svf_set_mix_bpf(sv_filter *s, float mix_) {
     float mix = mix_;
 
     if (mix > 1.0f) {
@@ -230,8 +220,7 @@ svf_set_mix_bpf(sv_filter *s, float mix_) {
     s->bmix = mix;
 }
 
-void
-svf_set_mix_hpf(sv_filter *s, float mix_) {
+void svf_set_mix_hpf(sv_filter *s, float mix_) {
     float mix = mix_;
 
     if (mix > 1.0f) {
@@ -243,12 +232,10 @@ svf_set_mix_hpf(sv_filter *s, float mix_) {
     s->hmix = mix;
 }
 
-void
-svf_set_normalize(sv_filter *s, bool n) {
+void svf_set_normalize(sv_filter *s, bool n) {
     s->normalize = n;
 }
 
-void
-svf_set_outclip(sv_filter *s, bool clip_output) {
+void svf_set_outclip(sv_filter *s, bool clip_output) {
     s->outclip = clip_output;
 }

@@ -6,7 +6,7 @@
 // First order high-pass and low-pass filters.
 //
 
-void compute_filter_coeffs_1p(iir_1p *cf, unsigned int type, float fs, float f0) {
+void compute_filter_coeffs_1p(iir_1p *cf, iir_lp_mode type, float fs, float f0) {
     const float w0 = 2.0f * PI * f0 / fs;
 
     float a1;

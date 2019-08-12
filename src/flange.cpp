@@ -36,8 +36,9 @@ void tflanger_resize_delay(tflanger *cthis, float maxTime) {
     free(dead);
 }
 
-tflanger *
-tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
+tflanger *tflanger_init(float maxTime, float fSampleRate) {
+    tflanger *cthis;
+
     cthis = (tflanger *) malloc(sizeof(tflanger));
 
     cthis->maxT = maxTime;
@@ -58,7 +59,7 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     cthis->dlyWrite = 0;
 
     //LFO
-    cthis->lfopar = init_lfo(cthis->lfopar, 1.0f, cthis->fS, 0.0f);
+    cthis->lfopar = init_lfo(1.0f, cthis->fS, 0.0f);
     cthis->maxLfoRate = 100.0f;
 
     //Envelope detector
@@ -123,12 +124,12 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
     const float f0 = 7200.0f;
     float *q;
 
-    q = make_butterworth_coeffs(8, q);
+    q = make_butterworth_coeffs(8);
 
-    cthis->f[0] = make_biquad(LPF, cthis->f[0], fs, f0, q[0]);
-    cthis->f[1] = make_biquad(LPF, cthis->f[1], fs, f0, q[1]);
-    cthis->f[2] = make_biquad(LPF, cthis->f[2], fs, f0, q[2]);
-    cthis->f[3] = make_biquad(LPF, cthis->f[3], fs, f0, q[3]);
+    cthis->f[0] = make_biquad(LPF, fs, f0, q[0]);
+    cthis->f[1] = make_biquad(LPF, fs, f0, q[1]);
+    cthis->f[2] = make_biquad(LPF, fs, f0, q[2]);
+    cthis->f[3] = make_biquad(LPF, fs, f0, q[3]);
 
     //Feedback tap to be run back through anti-alias filter with input
     cthis->regen = 0.0f;
@@ -140,14 +141,12 @@ tflanger_init(tflanger *cthis, float maxTime, float fSampleRate) {
 }
 
 
-void
-tflanger_destroy(tflanger *cthis) {
+void tflanger_destroy(tflanger *cthis) {
     free(cthis->dlyLine);
     free(cthis);
 }
 
-void
-get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
+void get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
     float wet = 1.0f;
     float dry = 1.0f;
     float sign = 1.0f;
@@ -213,8 +212,7 @@ float potfunc1(float xn) {
 }
 
 
-void
-tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
+void tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
     if ((cthis->dry0 > 0.999f) && (cthis->trails == 0) && (cthis->outGain < 0.1f)) {
         return;
     }
@@ -396,8 +394,7 @@ tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope) {
 }
 
 
-float
-tflanger_lpfilter(fparams *cthis, float data, char mode) {
+float tflanger_lpfilter(fparams *cthis, float data, char mode) {
     const float y0 = cthis->alpha * data + cthis->ialpha * cthis->y1;
 
     cthis->y1 = y0;
@@ -410,8 +407,7 @@ tflanger_lpfilter(fparams *cthis, float data, char mode) {
     }
 }
 
-float
-tflanger_atkrls(arparams *cthis, float data) {
+float tflanger_atkrls(arparams *cthis, float data) {
     float y0;
 
     if (data > cthis->y1) {
@@ -425,8 +421,7 @@ tflanger_atkrls(arparams *cthis, float data) {
     return y0;
 }
 
-void
-tflanger_updateParams(tflanger *cthis) {
+void tflanger_updateParams(tflanger *cthis) {
     if ((cthis->lfoWidth + cthis->lfoDepth) >= cthis->maxT) {
         cthis->lfoWidth = cthis->maxT - cthis->lfoDepth;
     }
@@ -442,8 +437,7 @@ tflanger_updateParams(tflanger *cthis) {
     //printf("\n\nLFO Depth = %lf\nLFO Width = %lf\nLFO Rate = %lf\n%%Wet:  %lf\n%%Feedback: %lf\nOutput Level:  %lf\n", cthis->lfoDepth, cthis->lfoWidth, cthis->lfoRate, cthis->wet, cthis->feedBack, cthis->outGain);
 }
 
-void
-tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
+void tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
     cthis->lfoDepth = fabs(lfoDepth_);
 
     //printf("d_ = %lf\tdepth = %lf\n\n", lfoDepth_, lfoDepth);
@@ -456,8 +450,7 @@ tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
     // printf("d_ = %lf\tdepth = %lf\n\n", lfoDepth_, lfoDepth);
 }
 
-void
-tflanger_setLfoWidth(tflanger *cthis, float lfoWidth_) {
+void tflanger_setLfoWidth(tflanger *cthis, float lfoWidth_) {
     cthis->lfoWidth = fabs(lfoWidth_);
 
     if ((cthis->lfoWidth + cthis->lfoDepth) >= cthis->maxT) {
@@ -467,8 +460,7 @@ tflanger_setLfoWidth(tflanger *cthis, float lfoWidth_) {
     tflanger_updateParams(cthis);
 }
 
-void
-tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
+void tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
     cthis->lfoRate = fabs(lfoRate_);
 
     if (cthis->lfoRate >= cthis->maxLfoRate) {
@@ -478,16 +470,14 @@ tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
     update_lfo(cthis->lfopar, cthis->lfoRate, cthis->fS);
 }
 
-void
-tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_) {
+void tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_) {
     cthis->lfoPhase = lfoPhase_;
     cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0f * PI);
 
     tflanger_updateParams(cthis);
 }
 
-void
-tflanger_setWetDry(tflanger *cthis, float fracWet) {
+void tflanger_setWetDry(tflanger *cthis, float fracWet) {
     float wet = 1.0f;
     float dry = 1.0f;
 
@@ -500,8 +490,7 @@ tflanger_setWetDry(tflanger *cthis, float fracWet) {
     tflanger_updateParams(cthis);
 }
 
-void
-tflanger_setFeedBack(tflanger *cthis, float feedBack_) {
+void tflanger_setFeedBack(tflanger *cthis, float feedBack_) {
     cthis->feedBack = feedBack_;//potfunc1(feedBack_);//*(2.0 - fabs(feedBack_));
 
     if (cthis->feedBack >= 0.99f) {
@@ -511,8 +500,7 @@ tflanger_setFeedBack(tflanger *cthis, float feedBack_) {
     }
 }
 
-void
-tflanger_setDamping(tflanger *cthis, float fdamp_) {
+void tflanger_setDamping(tflanger *cthis, float fdamp_) {
     float fdamp = fdamp_;
 
     //Q of the final stage comes out ot about 0.51 
@@ -530,8 +518,7 @@ tflanger_setDamping(tflanger *cthis, float fdamp_) {
 }
 
 
-void
-tflanger_setFinalGain(tflanger *cthis, float outGain_) {
+void tflanger_setFinalGain(tflanger *cthis, float outGain_) {
     cthis->outGain = outGain_;
 
     //limit gain here to something sane
@@ -543,13 +530,11 @@ tflanger_setFinalGain(tflanger *cthis, float outGain_) {
     }
 }
 
-void
-tflanger_setTrails(tflanger *cthis, char trails) {
+void tflanger_setTrails(tflanger *cthis, char trails) {
     cthis->trails = trails;
 }
 
-void
-tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns) {
+void tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns) {
     if (sns < 0.0f) {
         cthis->envelope_sensitivity = 0.0f;
     } else if (sns > 36.0f) {
@@ -559,20 +544,17 @@ tflanger_setEnvelopeSensitivity(tflanger *cthis, float sns) {
     }
 }
 
-void
-tflanger_setEnvelopeAttack(tflanger *cthis, float atk) {
+void tflanger_setEnvelopeAttack(tflanger *cthis, float atk) {
     cthis->attrel->atk = 1.0f / (atk * cthis->fS + 1.0f);
     cthis->attrel->iatk = 1.0f - cthis->attrel->atk;
 }
 
-void
-tflanger_setEnvelopeRelease(tflanger *cthis, float rls) {
+void tflanger_setEnvelopeRelease(tflanger *cthis, float rls) {
     cthis->attrel->rls = 1.0f / (rls * cthis->fS + 1.0f);
     cthis->attrel->irls = 1.0f - cthis->attrel->rls;
 }
 
-void
-tflanger_setEnvelopeRateSkew(tflanger *cthis, float skew) {
+void tflanger_setEnvelopeRateSkew(tflanger *cthis, float skew) {
     cthis->rateskew = skew;
 
     if (skew > 100.0f) {
@@ -583,8 +565,7 @@ tflanger_setEnvelopeRateSkew(tflanger *cthis, float skew) {
     }
 }
 
-void
-tflanger_setEnvelopeDepthSkew(tflanger *cthis, float skew) {
+void tflanger_setEnvelopeDepthSkew(tflanger *cthis, float skew) {
     cthis->depthskew = skew;
 
     if (skew > 1.0f) {
@@ -595,8 +576,7 @@ tflanger_setEnvelopeDepthSkew(tflanger *cthis, float skew) {
     }
 }
 
-void
-tflanger_setEnvelopeWidthSkew(tflanger *cthis, float skew) {
+void tflanger_setEnvelopeWidthSkew(tflanger *cthis, float skew) {
     cthis->widthskew = skew;
 
     if (skew > 1.0f) {
@@ -607,8 +587,7 @@ tflanger_setEnvelopeWidthSkew(tflanger *cthis, float skew) {
     }
 }
 
-void
-tflanger_setEnvelopeFbSkew(tflanger *cthis, float skew) {
+void tflanger_setEnvelopeFbSkew(tflanger *cthis, float skew) {
     cthis->fbskew = skew;
 
     if (skew > 1.0f) {
@@ -620,8 +599,7 @@ tflanger_setEnvelopeFbSkew(tflanger *cthis, float skew) {
 }
 
 
-void
-tflanger_setEnvelopeMixSkew(tflanger *cthis, float skew) {
+void tflanger_setEnvelopeMixSkew(tflanger *cthis, float skew) {
     cthis->mixskew = skew;
 
     if (skew > 1.0f) {
@@ -636,8 +614,7 @@ void tflanger_set_lfo_type(tflanger *cthis, unsigned int type) {
     set_lfo_type(cthis->lfopar, type);
 }
 
-void
-tflanger_setPreset(tflanger *cthis, unsigned int preset) {
+void tflanger_setPreset(tflanger *cthis, unsigned int preset) {
     float ms = 0.001f;
 
     switch (preset) {

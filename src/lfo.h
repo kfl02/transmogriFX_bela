@@ -5,16 +5,16 @@
 #ifndef TRANSMOGRIFX_LFO_H
 #define TRANSMOGRIFX_LFO_H
 
-const int INT_TRI = 0;
-const int TRI = 1;
-const int SINE = 2;
-const int SQUARE = 3;
-const int EXP = 4;
-const int RELAX = 5;
-const int HYPER = 6;
-const int HYPER_SINE = 7;
-const int MAX_LFOS = 7;
-
+enum lfo_mode {
+    INT_TRI,
+    TRI,
+    SINE,
+    SQUARE,
+    EXP,
+    RELAX,
+    HYPER,
+    HYPER_SINE
+};
 
 typedef struct lfoparams_t {
     //Integrated triangle wave state variables
@@ -56,10 +56,10 @@ typedef struct lfoparams_t {
     float current_rate;
 
     //Select LFO type 
-    unsigned int lfo_type;
+    lfo_mode lfo_type;
 } lfoparams;
 
-lfoparams *init_lfo(lfoparams *, float, float, float);
+lfoparams *init_lfo(float, float, float);
 
 void update_lfo(lfoparams *, float, float);
 

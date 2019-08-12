@@ -5,7 +5,9 @@
 #include "overdrive.h"
 
 // Allocate the overdrive struct and set default values
-overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int bsz, float fs) {
+overdrive *make_overdrive(unsigned int oversample, unsigned int bsz, float fs) {
+    overdrive *od;
+
     od = (overdrive *) malloc(sizeof(overdrive));
     od->procbuf = (float *) malloc(sizeof(float) * bsz * oversample);
 

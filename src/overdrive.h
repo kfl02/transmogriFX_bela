@@ -36,7 +36,7 @@ typedef struct overdrive_t {
 } overdrive;
 
 // Allocate the overdrive struct and set default values
-overdrive *make_overdrive(overdrive *od, unsigned int oversample, unsigned int bsz, float fs);
+overdrive *make_overdrive(unsigned int oversample, unsigned int bsz, float fs);
 
 void overdrive_cleanup(overdrive *od);
 

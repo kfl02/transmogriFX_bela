@@ -1,7 +1,9 @@
 #include "klingon.h"
 
 // Allocate the klingon struct and set default values
-klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, float fs) {
+klingon *make_klingon(unsigned int oversample, unsigned int bsz, float fs) {
+    klingon *kot;
+
     kot = (klingon *) malloc(sizeof(klingon));
     kot->procbuf = (float *) malloc(sizeof(float) * bsz * oversample);
 

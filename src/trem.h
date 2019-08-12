@@ -22,7 +22,7 @@ typedef struct trem_t {
 } trem_coeffs;
 
 //Initialize the struct and allocate memory
-trem_coeffs *make_trem(trem_coeffs *, float);
+trem_coeffs *make_trem(float);
 
 // input sample, pot gain (0...1), iwah struct
 float trem_tick(trem_coeffs *, float);

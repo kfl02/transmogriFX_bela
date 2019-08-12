@@ -193,10 +193,12 @@ void Reverb::init(float fsamp, bool ambis, size_t frame_size) {
     for (int i = 0; i < 4; i++) {
         out[i] = new float[frame_size];
     }
-    for (int i = 0; i < frame_size; i++) {
+
+    for (size_t i = 0; i < frame_size; i++) {
         inp[0][i] = 0.0;
         inp[1][i] = 0.0;
         out_mono[i] = 0.0;
+
         for (int k1 = 0; k1 < 4; k1++) {
             out[k1][i] = 0.0;
         }
@@ -491,6 +493,8 @@ void Reverb::tick_mono(int frames, float *audio) {
         for (int i = 0; i < 2; i++) {
             inp_[i] += k;
         }
+
+        // TODO: out is [4], why?
         for (int i = 0; i < 2; i++) {
             out_[i] += k;
         }

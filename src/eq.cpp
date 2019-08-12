@@ -4,8 +4,7 @@
 
 #include "eq.h"
 
-void
-eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G) {
+void eq_compute_coeffs(eq_coeffs *cf, eq_mode type, float fs, float f0, float Q, float G) {
     const float A = powf(10.0f, G / 40.0f);
     const float w0 = 2.0f * PI * f0 / fs;
     const float c = cosf(w0);
@@ -77,8 +76,7 @@ eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G)
 
 }
 
-void
-eq_update_gain(eq_coeffs *cf, float G) {
+void eq_update_gain(eq_coeffs *cf, float G) {
     const float A = powf(10.0f, G / 40.0f);
     const float iA = 1.0f / A;
     const float sqrtA2 = 2.0f * sqrtf(A);
@@ -140,8 +138,7 @@ eq_update_gain(eq_coeffs *cf, float G) {
     cf->a2 = -a2;
 }
 
-eq_coeffs *
-make_eq_band(int type, eq_coeffs *cf, float fs, float f0, float Q, float G) {
+eq_coeffs *make_eq_band(eq_mode type, eq_coeffs *cf, float fs, float f0, float Q, float G) {
     cf = (eq_coeffs *) malloc(sizeof(eq_coeffs));
 
     eq_compute_coeffs(cf, type, fs, f0, Q, G);
@@ -154,8 +151,9 @@ make_eq_band(int type, eq_coeffs *cf, float fs, float f0, float Q, float G) {
     return cf;
 }
 
-eq_filters *
-make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float sample_rate) {
+eq_filters *make_equalizer(size_t nbands, float fstart_, float fstop_, float sample_rate) {
+    eq_filters *eq;
+
     const float G = 0.0f;
 
     float f1 = fstop_;
@@ -203,8 +201,7 @@ make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float
     return eq;
 }
 
-inline float
-tick_eq_band(eq_coeffs *cf, float x) {
+inline float tick_eq_band(eq_coeffs *cf, float x) {
     float y0 = cf->b0 * x + cf->b1 * cf->x1 + cf->b2 * cf->x2
                + cf->a1 * cf->y1 + cf->a2 * cf->y2;
     cf->x2 = cf->x1;
@@ -228,7 +225,7 @@ float geq_tick(eq_filters *eq, float x_) {
 
 void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
     const size_t cnt = eq->nbands + 2;
-    float x = 0.0f;
+    float x;
 
     for (size_t k = 0; k < N; k++) {
         x = xn[k];
@@ -241,8 +238,7 @@ void geq_tick_n(eq_filters *eq, float *xn, size_t N) {
     }
 }
 
-inline
-float sqr(float x) {
+inline float sqr(float x) {
     return x * x;
 }
 
@@ -257,16 +253,16 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
     den[0] = den[1] = 0.0f;
 
     const float dw = (dp * (f2 - f1) / (float) pts) / fs;
+    const int n = abs(pts) + 1;
 
     float w = dp * f1 / fs;
-    float magn;
-    float magd;
-    float an;
-    float ad;
-
-    int n = abs(pts) + 1;
 
     for (int i = 0; i < n; i++) {
+        float magn;
+        float magd;
+        float an;
+        float ad;
+
         num[0] = cf->b0 + cf->b1 * cos(-w) + cf->b2 * cos(-2.0f * w); //numerator real part
         num[1] = cf->b1 * sin(-w) + cf->b2 * sin(-2.0f * w);
         den[0] = 1.0f + cf->a1 * cos(-w) + cf->a2 * cos(-2.0f * w); //numerator real part

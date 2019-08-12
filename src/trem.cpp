@@ -33,11 +33,12 @@ void trem_circuit_preset(trem_coeffs *cf, int ckt) {
 }
 
 
-trem_coeffs *
-make_trem(trem_coeffs *cf, float fs) {
-    //First malloc the struct
+trem_coeffs *make_trem(float fs) {
+    trem_coeffs *cf;
+
+    // First malloc the struct
     cf = (trem_coeffs *) malloc(sizeof(trem_coeffs));
-    cf->lfo = init_lfo(cf->lfo, 1.0f, fs, 0.0f);
+    cf->lfo = init_lfo(1.0f, fs, 0.0f);
     cf->fs = fs;
 
     //Default to mild mannered tremolo
@@ -47,15 +48,13 @@ make_trem(trem_coeffs *cf, float fs) {
     return cf;
 }
 
-inline float
-trem_tick(trem_coeffs *cf, float out) {
+inline float trem_tick(trem_coeffs *cf, float out) {
     const float lfo = cf->gain * (1.0f - cf->depth * run_lfo(cf->lfo));
 
     return lfo * out;
 }
 
-void
-trem_tick_n(trem_coeffs *cf, float *x, int n) {
+void trem_tick_n(trem_coeffs *cf, float *x, int n) {
     if (cf->bypass) {
         return;
     }
@@ -65,8 +64,7 @@ trem_tick_n(trem_coeffs *cf, float *x, int n) {
     }
 }
 
-void
-trem_set_lfo_rate(trem_coeffs *cf, float rate) {
+void trem_set_lfo_rate(trem_coeffs *cf, float rate) {
     update_lfo(cf->lfo, rate, cf->fs);
 }
 
@@ -75,13 +73,11 @@ trem_set_lfo_depth(trem_coeffs *cf, float depth) {
     cf->depth = depth;
 }
 
-void
-trem_set_lfo_gain(trem_coeffs *cf, float gain) {
+void trem_set_lfo_gain(trem_coeffs *cf, float gain) {
     cf->gain = gain;
 }
 
-void
-trem_set_lfo_type(trem_coeffs *cf, unsigned int type) {
+void trem_set_lfo_type(trem_coeffs *cf, unsigned int type) {
     // TODO: check unsigned
     cf->lfo_type = type;
 

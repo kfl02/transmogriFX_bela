@@ -35,16 +35,14 @@ Sustainer::~Sustainer() {
 /*
  * Cleanup the effect
  */
-void
-Sustainer::cleanup() {
+void Sustainer::cleanup() {
     compeak = 0.0f;
     compenv = 0.0f;
     oldcompenv = 0.0f;
     cpthresh = cthresh; //dynamic threshold
 }
 
-void
-Sustainer::init(float SAMPLE_RATE, int PER) {
+void Sustainer::init(float SAMPLE_RATE, int PER) {
     float cSAMPLE_RATE = 1.0f / SAMPLE_RATE;
 
     Pvolume = 64;
@@ -77,8 +75,7 @@ Sustainer::init(float SAMPLE_RATE, int PER) {
 /*
  * Effect output
  */
-void
-Sustainer::tick_n(float *x) {
+void Sustainer::tick_n(float *x) {
     int i;
     float smpl;
 
@@ -131,8 +128,7 @@ static inline float dB2rap(float dB) {
  */
 
 
-void
-Sustainer::setpreset(int npreset) {
+void Sustainer::setpreset(int npreset) {
     const int PRESET_SIZE = 2;
     const int NUM_PRESETS = 3;
 
@@ -153,13 +149,11 @@ Sustainer::setpreset(int npreset) {
     Ppreset = npreset;
 }
 
-void
-Sustainer::setGain(float g) {
+void Sustainer::setGain(float g) {
     level = dB2rap(-30.0f * (1.0f - g));
 }
 
-void
-Sustainer::setSustain(float s) {
+void Sustainer::setSustain(float s) {
     float fsustain = s;
 
     cratio = 1.25f - fsustain;
@@ -167,8 +161,7 @@ Sustainer::setSustain(float s) {
     cthresh = 0.25f + fsustain;
 }
 
-void
-Sustainer::changepar(int npar, int value) {
+void Sustainer::changepar(int npar, int value) {
     // TODO: switch over enum/const
     switch (npar) {
         case 0:
@@ -184,8 +177,7 @@ Sustainer::changepar(int npar, int value) {
     }
 }
 
-int
-Sustainer::getpar(int npar) {
+int Sustainer::getpar(int npar) {
     // TODO: switch over enum/const
     switch (npar) {
         case 0:
@@ -198,15 +190,13 @@ Sustainer::getpar(int npar) {
     return (0);         //in case of bogus parameter number
 }
 
-bool
-Sustainer::setBypass() {
+bool Sustainer::setBypass() {
     bypass = !bypass;
 
     return bypass;
 }
 
-void
-Sustainer::get_envelope(float *env) {
+void Sustainer::get_envelope(float *env) {
     for (int i = 0; i < PERIOD; i++) {
         env[i] = envelope[i];
     }

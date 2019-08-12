@@ -5,15 +5,14 @@
 #include "biquad.h"
 
 float *
-make_butterworth_coeffs(int order, float *coeffs) {
-    coeffs = (float *) malloc(sizeof(float) * order);
+make_butterworth_coeffs(int order) {
+    float *coeffs = (float *) malloc(sizeof(float) * order);
 
-    int k = 1;
     int n = order;
     float fn = (float) n;
 
     if (n % 2 == 0) {
-        for (k = 1; k <= n / 2; k++) {
+        for (int k = 1; k <= n / 2; k++) {
             float fk = (float) k;
 
             coeffs[k - 1] =
@@ -21,7 +20,7 @@ make_butterworth_coeffs(int order, float *coeffs) {
                     (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
         }
     } else { //odd
-        for (k = 1; k <= (n - 1) / 2; k++) {
+        for (int k = 1; k <= (n - 1) / 2; k++) {
             float fk = (float) k;
 
             coeffs[k - 1] =
@@ -34,7 +33,7 @@ make_butterworth_coeffs(int order, float *coeffs) {
 }
 
 void
-biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
+biquad_update_coeffs(biquad_mode type, biquad_coeffs *cf, float fs, float f0, float Q) {
     const float w0 = 2.0f * PI * f0 / fs;
     const float c = cos(w0);
     const float s = sin(w0);
@@ -90,11 +89,12 @@ biquad_update_coeffs(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
     cf->a2 = a2;
 
     cf->Q = Q;
-    cf->f0 = f0;
 }
 
 biquad_coeffs *
-make_biquad(int type, biquad_coeffs *cf, float fs, float f0, float Q) {
+make_biquad(biquad_mode type, float fs, float f0, float Q) {
+    biquad_coeffs *cf;
+
     cf = (biquad_coeffs *) malloc(sizeof(biquad_coeffs));
 
     biquad_update_coeffs(type, cf, fs, f0, Q);

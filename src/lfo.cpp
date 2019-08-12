@@ -5,7 +5,9 @@
 
 #include "lfo.h"
 
-lfoparams *init_lfo(lfoparams *lp, float fosc, float fs, float phase) {
+lfoparams *init_lfo(float fosc, float fs, float phase) {
+    lfoparams *lp;
+
     lp = (lfoparams *) malloc(sizeof(lfoparams));
 
     const float ts = 1.0f / fs;
@@ -308,7 +310,7 @@ float run_lfo(lfoparams *lp) {
     return lfo_out;
 }
 
-void get_lfo_name(unsigned int type, char *outstring) {
+void get_lfo_name(lfo_mode type, char *outstring) {
     // TODO: WTF? Return a string constant
     for (int i = 0; i < 30; i++) {
         outstring[i] = '\0';
@@ -355,6 +357,6 @@ void get_lfo_name(unsigned int type, char *outstring) {
 
 }
 
-void set_lfo_type(lfoparams *lp, unsigned int type) {
+void set_lfo_type(lfoparams *lp, lfo_mode type) {
     lp->lfo_type = type;
 }

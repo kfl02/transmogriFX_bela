@@ -8,8 +8,10 @@
 
 const int PHASER_MAX_STAGES = 24;
 
-const int PHASER_DEFAULT = 0;
-const int PHASE_90 = 1;
+enum phaser_mode {
+    PHASER_DEFAULT,
+    PHASE_90
+};
 
 typedef struct phaser_t {
     bool bypass;
@@ -62,7 +64,7 @@ typedef struct phaser_t {
 } phaser_coeffs;
 
 //Initialize the struct and allocate memory
-phaser_coeffs *make_phaser(phaser_coeffs *, float);
+phaser_coeffs *make_phaser(float);
 
 //(float x, float gp, iwah_coeffs* cf)
 // input sample, pot gain (0...1), iwah struct

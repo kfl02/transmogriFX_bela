@@ -5,13 +5,14 @@
 
 #include "constants.h"
 
-const int GCB = 0;    //Common Dunlop GCB-95
-const int VOX = 1;    //Vox V847 voicing
-const int DUNLOP = 2;    //"The Original" Crybaby
-const int MCCOY = 3;    //Clyde McCoy voicing
-const int VOCAL = 4;   //Vox with a little extra Q and some low-end brought up a bit
-const int EXTREME = 5;    //crazy synth-like
-const int MAX_WAHS = 6;  //Update as wahs are added
+enum iwah_mode {
+    GCB,
+    VOX,
+    DUNLOP,
+    MCCOY,
+    VOCAL,
+    EXTREME
+};
 
 typedef struct iwah_t {
     //Circuit parameters
@@ -70,7 +71,7 @@ typedef struct iwah_t {
 } iwah_coeffs;
 
 //Initialize the struct and allocate memory
-iwah_coeffs *make_iwah(iwah_coeffs *, float);
+iwah_coeffs *make_iwah(float);
 
 //(float x, float gp, iwah_coeffs* cf)
 // input sample, pot gain (0...1), iwah struct
@@ -79,7 +80,7 @@ float iwah_tick(float, float, iwah_coeffs *);
 void iwah_tick_n(iwah_coeffs *, float *, float *, int);
 
 //Select preset circuit voicings
-void iwah_circuit_preset(int, iwah_coeffs *, float);
+void iwah_circuit_preset(iwah_mode, iwah_coeffs *, float);
 
 //Bypass effect
 void iwah_bypass(iwah_coeffs *, bool);

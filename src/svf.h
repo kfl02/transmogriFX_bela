@@ -72,47 +72,35 @@ typedef struct sv_filter_t {
     float f1;
 } sv_filter;
 
-sv_filter *
-svf_make_filter(sv_filter *s, float fs);
+sv_filter *svf_make_filter(float fs);
 
 //Processing functions
 //Run the filter at a fixed Q and center frequency.
 //Useful for filters that aren't continuously changed
-void
-svf_tick_n(sv_filter *s, float *x, int N);
+void svf_tick_n(sv_filter *s, float *x, int N);
 
 //Functions to continuously modulate filter with parameter f.
 //No distortion, no output limiting
-void
-svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N);
+void svf_tick_fmod_n(sv_filter *s, float *x, float *f, int N);
 
 //Set drive level with "svf_set_drive()" to adjust amount of distortion
-void
-svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N);
+void svf_tick_fmod_soft_clip_n(sv_filter *s, float *x, float *f, int N);
 
 //settings
-float
-svf_compute_f(sv_filter *s, float fc);
+float svf_compute_f(sv_filter *s, float fc);
 
-void
-svf_set_q(sv_filter *s, float Q);
+void svf_set_q(sv_filter *s, float Q);
 
-void
-svf_set_drive(sv_filter *s, float drive_);
+void svf_set_drive(sv_filter *s, float drive_);
 
-void
-svf_set_mix_lpf(sv_filter *s, float mix_);
+void svf_set_mix_lpf(sv_filter *s, float mix_);
 
-void
-svf_set_mix_bpf(sv_filter *s, float mix_);
+void svf_set_mix_bpf(sv_filter *s, float mix_);
 
-void
-svf_set_mix_hpf(sv_filter *s, float mix_);
+void svf_set_mix_hpf(sv_filter *s, float mix_);
 
-void
-svf_set_normalize(sv_filter *s, bool n);
+void svf_set_normalize(sv_filter *s, bool n);
 
-void
-svf_set_outclip(sv_filter *s, bool clip_output);
+void svf_set_outclip(sv_filter *s, bool clip_output);
 
 #endif //TRANSMOGRIFX_SVF_H

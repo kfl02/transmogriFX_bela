@@ -57,7 +57,7 @@ typedef struct klingon_t {
 } klingon;
 
 // Allocate the klingon struct and set default values
-klingon *make_klingon(klingon *kot, unsigned int oversample, unsigned int bsz, float fs);
+klingon *make_klingon(unsigned int oversample, unsigned int bsz, float fs);
 
 void klingon_cleanup(klingon *kot);
 

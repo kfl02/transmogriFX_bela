@@ -13,13 +13,11 @@
 
 #include    "sample_hold_modulator.h"
 
-inline float
-sqr(float x) {
+inline float sqr(float x) {
     return x * x;
 }
 
-inline float
-soft_clip(float xn_) {
+inline float soft_clip(float xn_) {
     float xn = 2.0f * xn_ - 1.0f;
 
     if (xn > 1.0f) {
@@ -35,11 +33,12 @@ soft_clip(float xn_) {
     return 0.5f * (xn + 1.0f);
 }
 
-sh_mod *
-make_sample_hold(sh_mod *sh, float fs, int N) {
+sh_mod *make_sample_hold(float fs, int N) {
+    sh_mod *sh;
+
     sh = (sh_mod *) malloc(sizeof(sh_mod));
 
-    sh->ad = make_adsr(sh->ad, fs, N);
+    sh->ad = make_adsr(fs, N);
     sh->max_types = SH_MAX_TYPES;
     sh->adsr_env = (float *) malloc(sizeof(float) * N);
     sh->lfo = (float *) malloc(sizeof(float) * N);
@@ -95,8 +94,7 @@ make_sample_hold(sh_mod *sh, float fs, int N) {
     return sh;
 }
 
-void
-run_modulator(sh_mod *sh) {
+void run_modulator(sh_mod *sh) {
     for (int i = 0; i < sh->NS; i++) {
         sh->ramp_lfo += sh->dt_lfo;
 
@@ -130,8 +128,7 @@ run_modulator(sh_mod *sh) {
     }
 }
 
-void
-run_sample_hold(sh_mod *sh, float *output) {
+void run_sample_hold(sh_mod *sh, float *output) {
     run_modulator(sh);
     adsr_tick_n(sh->ad, sh->adsr_env);
 
@@ -158,8 +155,7 @@ run_sample_hold(sh_mod *sh, float *output) {
     }
 }
 
-bool
-sample_hold_set_active(sh_mod *sh, bool act) {
+bool sample_hold_set_active(sh_mod *sh, bool act) {
     //toggle state if act is true
     if (act) {
         sh->en_adsr = !sh->en_adsr;
@@ -172,8 +168,7 @@ sample_hold_set_active(sh_mod *sh, bool act) {
     return sh->en_adsr;
 }
 
-void
-sample_hold_set_rate(sh_mod *sh, float rate) {
+void sample_hold_set_rate(sh_mod *sh, float rate) {
     const float hfr = 4.7f * rate;
     const float Trate = 1000.0f / rate;
 
@@ -190,16 +185,13 @@ sample_hold_set_rate(sh_mod *sh, float rate) {
     sh->dt_hfo = sh->ifs * hfr;
 }
 
-void
-sample_hold_set_type(sh_mod *sh, int type) {
-    int t = type;
+void sample_hold_set_type(sh_mod *sh, sh_mod_mode type) {
+    sh_mod_mode t = type;
 
     if (t >= SH_MAX_TYPES) {
         t = SH_MAX_TYPES - 1;
     } else if (t < 0) {
         t = 0;
     }
-
-    // TODO: t is never used. t instead of type in the line below?
-    sh->mode = type;
+     sh->mode = t;
 }

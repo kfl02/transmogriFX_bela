@@ -5,9 +5,11 @@
 
 #include "constants.h"
 
-const int PK_EQ = 5;
-const int LOW_SHELF = 6;
-const int HIGH_SHELF = 7;
+enum eq_mode {
+    PK_EQ,
+    LOW_SHELF,
+    HIGH_SHELF
+};
 
 typedef struct cx_t {
     float r;  //magnitude or //real
@@ -27,7 +29,7 @@ typedef struct eq_t {
     float x2;
 
     //Current settings
-    int type;
+    eq_mode type;
     float fs;
     float f0;
     float Q;
@@ -43,20 +45,15 @@ typedef struct equalizer_t {
     eq_coeffs **band;
 } eq_filters;
 
-eq_filters *
-make_equalizer(eq_filters *eq, size_t nbands, float fstart_, float fstop_, float sample_rate);
+eq_filters *make_equalizer(size_t nbands, float fstart_, float fstop_, float sample_rate);
 
-void
-eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G);
+void eq_compute_coeffs(eq_coeffs *cf, int type, float fs, float f0, float Q, float G);
 
-void
-eq_update_gain(eq_coeffs *cf, float G);
+void eq_update_gain(eq_coeffs *cf, float G);
 
-float
-geq_tick(eq_filters *eq, float x_);
+float geq_tick(eq_filters *eq, float x_);
 
-void
-geq_tick_n(eq_filters *eq, float *xn, size_t N);
+void geq_tick_n(eq_filters *eq, float *xn, size_t N);
 
 void plot_response(float, float, int, eq_coeffs *, float, cx *);
 //void plot_response(float f1, float f2, int pts, eq_coeffs* cf, float fs, cx *r)
