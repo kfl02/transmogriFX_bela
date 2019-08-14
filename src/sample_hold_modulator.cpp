@@ -189,9 +189,9 @@ void sample_hold_set_type(sh_mod *sh, sh_mod_mode type) {
     sh_mod_mode t = type;
 
     if (t >= SH_MAX_TYPES) {
-        t = SH_MAX_TYPES - 1;
+        t = SH_SEQ;
     } else if (t < 0) {
-        t = 0;
+        t = SH_RAND;
     }
      sh->mode = t;
 }

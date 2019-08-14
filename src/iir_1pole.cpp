@@ -80,8 +80,8 @@ void iir_get_response(iir_1p *cf, float n, float fstart, float fstop, float *frq
         den[RE] = 1.0f - cf->a1 * cosf(2.0f * PI * fi / fs) - cf->a2 * cosf(4.0f * PI * fi / fs);
         den[IM] = cf->a1 * sinf(2.0f * PI * fi / fs) + cf->a2 * sinf(4.0f * PI * fi / fs);
 
-        mag[i] = 20.0f * log10(cf->gain *
-                               sqrtf((num[RE] * num[RE] + num[IM] * num[IM]) /
+        mag[i] = 20.0f * std::log10(cf->gain *
+                                       std::sqrt((num[RE] * num[RE] + num[IM] * num[IM]) /
                                      (den[RE] * den[RE] + den[IM] * den[IM])));
         phase[i] = 0.0f; // TODO: Implement phase calculation
 

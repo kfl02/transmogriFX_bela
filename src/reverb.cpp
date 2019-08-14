@@ -138,12 +138,12 @@ void Vdelay::set_delay(int del) {
 void Filt1::set_params(float del, float tmf, float tlo, float wlo, float thi, float chi) {
     float g, t;
 
-    _gmf = powf(0.001f, del / tmf);
-    _glo = powf(0.001f, del / tlo) / _gmf - 1.0f;
+    _gmf = std::pow(0.001f, del / tmf);
+    _glo = std::pow(0.001f, del / tlo) / _gmf - 1.0f;
     _wlo = wlo;
-    g = powf(0.001f, del / thi) / _gmf;
+    g = std::pow(0.001f, del / thi) / _gmf;
     t = (1 - g * g) / (2 * g * g * chi);
-    _whi = (sqrtf(1 + 4 * t) - 1) / (2 * t);
+    _whi = (std::sqrt(1 + 4 * t) - 1) / (2 * t);
 }
 
 
@@ -331,8 +331,8 @@ void Reverb::prepare(int nfram) {
                 _rgxyz = 9.0f;
             }
 
-            t0 = 1.0f / sqrtf(_rtmid);
-            t1 = t0 * powf(10.0f, 0.05f * _rgxyz);
+            t0 = 1.0f / std::sqrt(_rtmid);
+            t1 = t0 * std::pow(10.0f, 0.05f * _rgxyz);
         } else {
             if (_opmix < 0.0f) {
                 _opmix = 0.0f;
@@ -342,7 +342,7 @@ void Reverb::prepare(int nfram) {
             }
 
             t0 = (1 - _opmix) * (1 + _opmix);
-            t1 = 0.7f * _opmix * (2 - _opmix) / sqrtf(_rtmid);
+            t1 = 0.7f * _opmix * (2 - _opmix) / std::sqrt(_rtmid);
         }
 
         _d0 = (t0 - _g0) / (float) nfram;
@@ -358,9 +358,9 @@ void Reverb::prepare(int nfram) {
 void Reverb::process(int nfram, float *inp[], float *out[]) {
     float *p0, *p1;
     float *q0, *q1;//, *q2, *q3;
-    float t, g, x0, x1, x2, x3, x4, x5, x6, x7;
+    float t, x0, x1, x2, x3, x4, x5, x6, x7;
 
-    g = sqrtf(0.125f);
+    const float g = std::sqrt(0.125f);
 
     p0 = inp[0];
     p1 = inp[1];
@@ -449,9 +449,11 @@ void Reverb::process(int nfram, float *inp[], float *out[]) {
 
     //n = _ambis ? 4 : 2;
     int n = 2;
+
     _pareq1.process(nfram, n, out);
     _pareq2.process(nfram, n, out);
-//    if (!_ambis)
+
+    //    if (!_ambis)
 //    {
     for (int i = 0; i < nfram; i++) {
         _g0 += _d0;

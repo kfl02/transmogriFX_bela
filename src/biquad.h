@@ -28,7 +28,7 @@ typedef struct biquad_t {
 } biquad_coeffs;
 
 
-biquad_coeffs *make_biquad(biquad_mode, float, float, float);
+biquad_coeffs *make_biquad(biquad_mode type, float fs, float f0, float Q);
 //make_biquad(int type, biquad_coeffs* cf, float fs, float f0, float Q);
 
 void biquad_update_coeffs(biquad_mode , biquad_coeffs *, float, float, float);

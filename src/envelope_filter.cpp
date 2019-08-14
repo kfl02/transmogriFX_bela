@@ -142,7 +142,7 @@ void envf_tick_n(env_filter *envf, float *x, float *e) {
         ei = e[i];
 
         //Apply gate to envelope detector
-        a = fabs(ei) - envf->thrs;
+        a = std::fabs(ei) - envf->thrs;
 
         if (a > 0.0f) {
             ei *= soft_gate(envf->knee * a);
@@ -332,7 +332,7 @@ float compute_thrsh(float db) {
         db = 0.0f;
     }
 
-    return powf(10.0f, db / 20.0f);
+    return std::pow(10.0f, db / 20.0f);
 }
 
 float compute_knee(float t, float db) {
@@ -342,7 +342,7 @@ float compute_knee(float t, float db) {
         d = 0.1f;
     }
 
-    float r = powf(10.0f, d / 20.0f);
+    float r = std::pow(10.0f, d / 20.0f);
 
     return (1.0f / t) * 2.0f / (r - 1.0f);
 }
@@ -357,7 +357,7 @@ void envf_set_gate(env_filter *envf, float thrs_) {
         thrs = 0.0f;
     }
 
-    envf->thrs = powf(10.0f, thrs / 20.0f);
+    envf->thrs = std::pow(10.0f, thrs / 20.0f);
     envf->knee = compute_knee(envf->thrs, envf->knee_db);
 }
 

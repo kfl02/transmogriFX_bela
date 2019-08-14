@@ -5,11 +5,11 @@
 void commit_circuit_config(iwah_coeffs *cf, float fs) {
     //Useful constants
     const float RpRi = cf->Rp * cf->Ri / (cf->Rp + cf->Ri);
-    const float f0 = 1.0f / (2.0f * PI * sqrtf(cf->Lp * cf->Cf));
+    const float f0 = 1.0f / (2.0f * PI * std::sqrt(cf->Lp * cf->Cf));
     const float w0 = 2.0f * PI * f0 / fs;
-    const float Q = RpRi * sqrtf(cf->Cf / cf->Lp);
-    const float c = cos(w0);
-    const float s = sin(w0);
+    const float Q = RpRi * std::sqrt(cf->Cf / cf->Lp);
+    const float c = std::cos(w0);
+    const float s = std::sin(w0);
     const float alpha = s / (2.0f * Q);
 
     //High Pass Biquad Coefficients

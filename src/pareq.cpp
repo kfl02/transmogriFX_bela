@@ -90,7 +90,7 @@ void Pareq::prepare(int nsamp) {
             }
         } else {
             _touch1 = _touch0;
-            if (fabs(_g1 - 1) < 0.001f) {
+            if (std::abs(_g1 - 1) < 0.001f) {
                 _state = BYPASS;
                 reset();
             } else {
@@ -105,7 +105,7 @@ void Pareq::calcpar1(int nsamp, float g, float f) {
     float b, c1, c2, gg;
 
     f *= float(PI) / _fsamp;
-    b = 2 * f / sqrtf(g);
+    b = 2 * f / std::sqrt(g);
     gg = 0.5f * (g - 1);
     c1 = -cosf(2 * f);
     c2 = (1 - b) / (1 + b);

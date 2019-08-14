@@ -5,10 +5,10 @@
 #include "eq.h"
 
 void eq_compute_coeffs(eq_coeffs *cf, eq_mode type, float fs, float f0, float Q, float G) {
-    const float A = powf(10.0f, G / 40.0f);
+    const float A = std::pow(10.0f, G / 40.0f);
     const float w0 = 2.0f * PI * f0 / fs;
-    const float c = cosf(w0);
-    const float s = sinf(w0);
+    const float c = std::cos(w0);
+    const float s = std::sin(w0);
     const float alpha = s / (2.0f * Q);
 
     float a0, a1, a2;
@@ -40,21 +40,21 @@ void eq_compute_coeffs(eq_coeffs *cf, eq_mode type, float fs, float f0, float Q,
             break;
 
         case LOW_SHELF:
-            b0 = A * ((A + 1.0f) - (A - 1.0f) * c + 2.0f * sqrtf(A) * alpha);
+            b0 = A * ((A + 1.0f) - (A - 1.0f) * c + 2.0f * std::sqrt(A) * alpha);
             b1 = 2.0f * A * ((A - 1.0f) - (A + 1.0f) * c);
-            b2 = A * ((A + 1.0f) - (A - 1.0f) * c - 2.0f * sqrtf(A) * alpha);
-            a0 = (A + 1.0f) + (A - 1.0f) * c + 2.0f * sqrtf(A) * alpha;
+            b2 = A * ((A + 1.0f) - (A - 1.0f) * c - 2.0f * std::sqrt(A) * alpha);
+            a0 = (A + 1.0f) + (A - 1.0f) * c + 2.0f * std::sqrt(A) * alpha;
             a1 = -2.0f * ((A - 1.0f) + (A + 1.0f) * c);
-            a2 = (A + 1.0f) + (A - 1.0f) * c - 2.0f * sqrtf(A) * alpha;
+            a2 = (A + 1.0f) + (A - 1.0f) * c - 2.0f * std::sqrt(A) * alpha;
             break;
 
         case HIGH_SHELF:
-            b0 = A * ((A + 1.0f) + (A - 1.0f) * c + 2.0f * sqrtf(A) * alpha);
+            b0 = A * ((A + 1.0f) + (A - 1.0f) * c + 2.0f * std::sqrt(A) * alpha);
             b1 = -2.0f * A * ((A - 1.0f) + (A + 1.0f) * c);
-            b2 = A * ((A + 1.0f) + (A - 1.0f) * c - 2.0f * sqrtf(A) * alpha);
-            a0 = (A + 1.0f) - (A - 1.0f) * c + 2.0f * sqrtf(A) * alpha;
+            b2 = A * ((A + 1.0f) + (A - 1.0f) * c - 2.0f * std::sqrt(A) * alpha);
+            a0 = (A + 1.0f) - (A - 1.0f) * c + 2.0f * std::sqrt(A) * alpha;
             a1 = 2.0f * ((A - 1.0f) - (A + 1.0f) * c);
-            a2 = (A + 1.0f) - (A - 1.0f) * c - 2.0f * sqrtf(A) * alpha;
+            a2 = (A + 1.0f) - (A - 1.0f) * c - 2.0f * std::sqrt(A) * alpha;
             break;
 
         default:
@@ -77,9 +77,9 @@ void eq_compute_coeffs(eq_coeffs *cf, eq_mode type, float fs, float f0, float Q,
 }
 
 void eq_update_gain(eq_coeffs *cf, float G) {
-    const float A = powf(10.0f, G / 40.0f);
+    const float A = std::pow(10.0f, G / 40.0f);
     const float iA = 1.0f / A;
-    const float sqrtA2 = 2.0f * sqrtf(A);
+    const float sqrtA2 = 2.0f * std::sqrt(A);
 
     float a0, a1, a2;
     float b0, b1, b2;
@@ -164,7 +164,7 @@ eq_filters *make_equalizer(size_t nbands, float fstart_, float fstop_, float sam
     }
 
     const float nb = (float) nbands;
-    const float m = powf(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1.0f)));
+    const float m = std::pow(2.0f, ((logf(f1 / f0) / logf(2.0f)) / (nb - 1.0f)));
     const float Q = 0.25f * (m + 1.0f) / (m - 1.0f);
 
     eq = (eq_filters *) malloc(sizeof(eq_filters));
@@ -216,7 +216,7 @@ inline float tick_eq_band(eq_coeffs *cf, float x) {
 float geq_tick(eq_filters *eq, float x_) {
     float x = x_;
 
-    for (int i = 0; i < (eq->nbands + 2); i++) {
+    for (size_t i = 0; i < (eq->nbands + 2); i++) {
         x = tick_eq_band(eq->band[i], x);
     }
 
@@ -253,7 +253,7 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
     den[0] = den[1] = 0.0f;
 
     const float dw = (dp * (f2 - f1) / (float) pts) / fs;
-    const int n = abs(pts) + 1;
+    const int n = std::abs(pts) + 1;
 
     float w = dp * f1 / fs;
 
@@ -263,13 +263,13 @@ void plot_response(float f1, float f2, int pts, eq_coeffs *cf, float fs, cx *r) 
         float an;
         float ad;
 
-        num[0] = cf->b0 + cf->b1 * cos(-w) + cf->b2 * cos(-2.0f * w); //numerator real part
-        num[1] = cf->b1 * sin(-w) + cf->b2 * sin(-2.0f * w);
-        den[0] = 1.0f + cf->a1 * cos(-w) + cf->a2 * cos(-2.0f * w); //numerator real part
-        den[1] = cf->a1 * sin(-w) + cf->a2 * sin(-2.0f * w);
+        num[0] = cf->b0 + cf->b1 * std::cos(-w) + cf->b2 * std::cos(-2.0f * w); //numerator real part
+        num[1] = cf->b1 * std::sin(-w) + cf->b2 * std::sin(-2.0f * w);
+        den[0] = 1.0f + cf->a1 * std::cos(-w) + cf->a2 * std::cos(-2.0f * w); //numerator real part
+        den[1] = cf->a1 * std::sin(-w) + cf->a2 * std::sin(-2.0f * w);
 
-        magn = sqrtf(sqr(num[0]) + sqr(num[1]));
-        magd = sqrtf(sqr(den[0]) + sqr(den[1]));
+        magn = std::sqrt(sqr(num[0]) + sqr(num[1]));
+        magd = std::sqrt(sqr(den[0]) + sqr(den[1]));
         an = atanf(num[1] / num[0]); //angle of numerator
         ad = atanf(den[1] / den[0]); //angle of denominator
 

@@ -153,10 +153,11 @@ void adsr_tick_n(adsr *ad, float *output) {
                 }  //Redundant but paranoia safety
                 break;
 
-            default:
+            case ADSR_STATE_SUSTAIN:
                 ad->state = ADSR_STATE_RELEASE;  //more paranoia
                 break;
         }
+
         output[i] = ad->sv;
     }
 }

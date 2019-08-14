@@ -95,7 +95,7 @@ void zero_state_variables(phaser_coeffs *cf) {
 }
 
 phaser_coeffs *make_phaser(float fs) {
-    phaser_coeffs *cf,;
+    phaser_coeffs *cf;
 
     //First malloc the struct
     cf = (phaser_coeffs *) malloc(sizeof(phaser_coeffs));
@@ -223,7 +223,7 @@ void phaser_set_nstages(phaser_coeffs *cf, int nstages) {
 
 void phaser_set_mix(phaser_coeffs *cf, float wet) {
     float wet_ = wet;
-    float gain = 1.0f + 2.0f * fabs(wet_);
+    float gain = 1.0f + 2.0f * std::abs(wet_);
 
     if (gain > 2.0f) {
         gain = 4.0f - gain;
@@ -238,7 +238,7 @@ void phaser_set_mix(phaser_coeffs *cf, float wet) {
     }
 }
 
-void phaser_set_lfo_type(phaser_coeffs *cf, int n) {
+void phaser_set_lfo_type(phaser_coeffs *cf, lfo_mode n) {
     cf->mod->lfo_type = n;
 }
 
@@ -262,11 +262,7 @@ void phaser_set_lfo_width(phaser_coeffs *cf, float width, int stage) {
 void phaser_set_feedback(phaser_coeffs *cf, float fb, int stage) {
     cf->gfb[stage] = fb;
 
-    if (fb == 0.0f) {
-        cf->apply_feedback[stage] = false;
-    } else {
-        cf->apply_feedback[stage] = true;
-    }
+    cf->apply_feedback[stage] = fb != 0.0f;
 }
 
 void phaser_set_distortion(phaser_coeffs *cf, float d) {

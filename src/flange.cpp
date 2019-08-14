@@ -10,7 +10,7 @@
 
 void tflanger_resize_delay(tflanger *cthis, float maxTime) {
     //printf("Updating delay line size.\n");
-    size_t nSize = lrint(maxTime * cthis->fS + 1.0f);
+    size_t nSize = std::lrint(maxTime * cthis->fS + 1.0f);
     float *temp = (float *) malloc(nSize * sizeof(float));
 
     if (temp == nullptr) {
@@ -44,7 +44,7 @@ tflanger *tflanger_init(float maxTime, float fSampleRate) {
     cthis->maxT = maxTime;
     cthis->fS = fSampleRate;
 
-    const size_t nSize = lrint(cthis->maxT * fSampleRate + 1.0f);
+    const size_t nSize = std::lrint(cthis->maxT * fSampleRate + 1.0f);
 
     cthis->dlyLine = (float *) malloc(nSize * sizeof(float));
 
@@ -147,8 +147,8 @@ void tflanger_destroy(tflanger *cthis) {
 }
 
 void get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
-    float wet = 1.0f;
-    float dry = 1.0f;
+    float wet;
+    float dry;
     float sign = 1.0f;
 
     if (fracWet >= 1.0f) {
@@ -184,7 +184,7 @@ void get_wet_dry_mix(float fracWet, float *wet_out, float *dry_out) {
 }
 
 float potfunc1(float xn) {
-    float x = 0.0f;
+    float x;
     int sign = 0;
 
     if (xn < 0.0f) {
@@ -363,12 +363,12 @@ void tflanger_tick(tflanger *cthis, int nframes, float *samples, float *envelope
         //calculate delay variables
         lfo *= cthis->lfoWidth0;
         dly = cthis->fS * (cthis->lfoDepth0 + lfo);
-        dlyFloor = floor(dly);
+        dlyFloor = std::floor(dly);
         fd = (dly - dlyFloor);
         ifd = 1.0f - fd;
 
         //set up high delay tap
-        d = lrint(dlyFloor);
+        d = std::lrint(dlyFloor);
         d1 = d + 1;
         d = cthis->dlyWrite - d;
         d1 = cthis->dlyWrite - d1;
@@ -438,7 +438,7 @@ void tflanger_updateParams(tflanger *cthis) {
 }
 
 void tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
-    cthis->lfoDepth = fabs(lfoDepth_);
+    cthis->lfoDepth = std::abs(lfoDepth_);
 
     //printf("d_ = %lf\tdepth = %lf\n\n", lfoDepth_, lfoDepth);
 
@@ -451,7 +451,7 @@ void tflanger_setLfoDepth(tflanger *cthis, float lfoDepth_) {
 }
 
 void tflanger_setLfoWidth(tflanger *cthis, float lfoWidth_) {
-    cthis->lfoWidth = fabs(lfoWidth_);
+    cthis->lfoWidth = std::abs(lfoWidth_);
 
     if ((cthis->lfoWidth + cthis->lfoDepth) >= cthis->maxT) {
         tflanger_resize_delay(cthis, cthis->lfoWidth + cthis->lfoDepth);
@@ -461,7 +461,7 @@ void tflanger_setLfoWidth(tflanger *cthis, float lfoWidth_) {
 }
 
 void tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
-    cthis->lfoRate = fabs(lfoRate_);
+    cthis->lfoRate = std::abs(lfoRate_);
 
     if (cthis->lfoRate >= cthis->maxLfoRate) {
         cthis->lfoRate = cthis->maxLfoRate;
@@ -472,7 +472,7 @@ void tflanger_setLfoRate(tflanger *cthis, float lfoRate_) {
 
 void tflanger_setLfoPhase(tflanger *cthis, float lfoPhase_) {
     cthis->lfoPhase = lfoPhase_;
-    cthis->lfoPhase = fmod(cthis->lfoPhase, 2.0f * PI);
+    cthis->lfoPhase = std::fmod(cthis->lfoPhase, 2.0f * PI);
 
     tflanger_updateParams(cthis);
 }

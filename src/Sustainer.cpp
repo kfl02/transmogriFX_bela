@@ -82,8 +82,8 @@ void Sustainer::tick_n(float *x) {
     for (i = 0; i < PERIOD; i++) {  //apply compression to auxresampled
         smpl = input * x[i];
 
-        if (fabs(smpl) > compeak) {
-            compeak = fabs(smpl);   //First do peak detection on the signal
+        if (std::abs(smpl) > compeak) {
+            compeak = std::abs(smpl);   //First do peak detection on the signal
             timer = 0;
         }
         if (timer > hold) {

@@ -204,7 +204,7 @@ void kot_set_drive(klingon *kot, float drive_db)   // 0 dB to 45 dB
     }
 
     // Convert gain given in dB to absolute value
-    drv = powf(10.0f, (drv + 0.341f) / 20.0f);
+    drv = std::pow(10.0f, (drv + 0.341f) / 20.0f);
 
     // Work backward through gain stages to get pot value adjustment
     const float gl = 33.0f * 27.0f / (33.0f + 27.0f);
@@ -246,7 +246,7 @@ void kot_set_tone(klingon *kot, float hf_level_db) {
         tone = 0.0f;
     }
 
-    kot->tone = powf(10.0f, tone / 20.0f);  // not used elsewhere, might delete
+    kot->tone = std::pow(10.0f, tone / 20.0f);  // not used elsewhere, might delete
 
     // Tone control moved to kot_tonestack.h/cpp 
     kotstack_set_tone(&(kot->stack), kot->tone);
@@ -284,7 +284,7 @@ void kot_set_level(klingon *kot, float outlevel_db) // -40 dB to +0 dB
         vol = 0.0f;
     }
 
-    kot->level = powf(10.0f, vol / 20.0f);
+    kot->level = std::pow(10.0f, vol / 20.0f);
 }
 
 bool kot_set_bypass(klingon *kot, bool bypass) {

@@ -7,8 +7,8 @@
 #ifndef TRANSMOGRIFX_CONSTANTS_H
 #define TRANSMOGRIFX_CONSTANTS_H
 
-const float E = 2.71828182845904523536F
-const float LOG_10 = 2.30258509299404568402f;
-const float PI = 3.14159265358979323846f;
+extern const float E;
+extern const float LOG_10;
+extern const float PI;
 
 #endif //TRANSMOGRIFX_CONSTANTS_H

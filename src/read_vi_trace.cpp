@@ -12,7 +12,7 @@ int load_vi_data(vi_trace *vi, char *filename) {
     FILE *handle;
     handle = fopen(filename, "r");
 
-    if (handle == NULL) {
+    if (handle == 0) {
         return -1;
     }
 
@@ -20,7 +20,7 @@ int load_vi_data(vi_trace *vi, char *filename) {
 
     int cnt = 0;
 
-    while (fgets(outstr, 100, handle) != NULL) {
+    while (fgets(outstr, 100, handle) != 0) {
         sscanf(outstr, "%e%e", &a, &v);
         cnt++;
     }

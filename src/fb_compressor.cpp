@@ -26,7 +26,7 @@
 
 
 feedback_compressor *make_feedback_compressor(float fs, int N) {
-    feedback_compressor *fbc,;
+    feedback_compressor *fbc;
 
     fbc = (feedback_compressor *) malloc(sizeof(feedback_compressor));
 
@@ -55,7 +55,7 @@ feedback_compressor *make_feedback_compressor(float fs, int N) {
 
     feedback_compressor_update_parameters(fbc);
 
-    fbc->dynrange = powf(10.0f, -fbc->db_dynrange / 20.0f);
+    fbc->dynrange = std::pow(10.0f, -fbc->db_dynrange / 20.0f);
 
     fbc->gain = 1.0f;
     fbc->y1 = 0.0f;
@@ -218,7 +218,6 @@ void feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envel
             //fbc->gain = 1.0 + fbc->y1*fbc->mk + fbc->tk; < further refactored
             fbc->gain = yk * fbc->mk + fbc->tkp1;
         } else  { //linear in log domain
-            // TODO: expf_neon
             // fbc->gain = expf_neon(fbc->ak * (fbc->tk + yk * fbc->mk));
             fbc->gain = expf( fbc->ak*(fbc->tk + yk*fbc->mk) );
         }
@@ -289,16 +288,16 @@ void feedback_compressor_tick_n(feedback_compressor *fbc, float *x, float *envel
 
 void feedback_compressor_update_parameters(feedback_compressor *fbc) {
     if (fbc->soft_knee) {
-        fbc->t = powf(10.0f, (fbc->threshold_db - 3.0f) / 20.0f);
+        fbc->t = std::pow(10.0f, (fbc->threshold_db - 3.0f) / 20.0f);
         //knee
         fbc->knt = fbc->t;
         fbc->hknt = 0.5f * fbc->knt;
         fbc->iknt = 1.0f / fbc->knt;
     } else {
-        fbc->t = powf(10.0f, fbc->threshold_db / 20.0f);
+        fbc->t = std::pow(10.0f, fbc->threshold_db / 20.0f);
     }
     //Target makeup gain needed for given threshold and ratio setting
-    const float m = powf(10.0f, (fbc->threshold_db / fbc->ratio - fbc->threshold_db) / 20.0f);
+    const float m = std::pow(10.0f, (fbc->threshold_db / fbc->ratio - fbc->threshold_db) / 20.0f);
 
     fbc->makeup_gain = m;
     //Feedback ratio dependent upon both threshold and ratio
@@ -308,7 +307,7 @@ void feedback_compressor_update_parameters(feedback_compressor *fbc) {
     fbc->tkp1 = fbc->tk + 1.0f;
     fbc->tpik = fbc->t + 1.414f / fbc->k;
 
-    float y = powf(10.0f, fbc->threshold_db * (1.0f - 1.0f / fbc->ratio) / 20.0f);
+    float y = std::pow(10.0f, fbc->threshold_db * (1.0f - 1.0f / fbc->ratio) / 20.0f);
 
     fbc->ak = logf(1.0f + fbc->tk - y * fbc->k) / (fbc->tk - y * fbc->k);
 
@@ -387,8 +386,8 @@ void feedback_compressor_set_out_gain(feedback_compressor *fbc, float g_db) {
         g = 20.0f;
     }
 
-    fbc->out_gain = powf(10.0f, g / 20.0f);
-    fbc->lmt_thrsh = powf(10.0f, (g + 6.0f) / 20.0f);
+    fbc->out_gain = std::pow(10.0f, g / 20.0f);
+    fbc->lmt_thrsh = std::pow(10.0f, (g + 6.0f) / 20.0f);
 
     if (fbc->lmt_thrsh > 1.0f) {
         fbc->lmt_thrsh = 1.0f;

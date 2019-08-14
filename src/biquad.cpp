@@ -17,7 +17,7 @@ make_butterworth_coeffs(int order) {
 
             coeffs[k - 1] =
                     1.0f /
-                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
+                    (-2.0f * std::cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
         }
     } else { //odd
         for (int k = 1; k <= (n - 1) / 2; k++) {
@@ -25,7 +25,7 @@ make_butterworth_coeffs(int order) {
 
             coeffs[k - 1] =
                     1.0f /
-                    (-2.0f * cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
+                    (-2.0f * std::cos((2.0f * fk + fn - 1.0f) / (2.0f * fn) * PI)); //1/x returns filter stage Q factor
         }
     }
 
@@ -35,8 +35,8 @@ make_butterworth_coeffs(int order) {
 void
 biquad_update_coeffs(biquad_mode type, biquad_coeffs *cf, float fs, float f0, float Q) {
     const float w0 = 2.0f * PI * f0 / fs;
-    const float c = cos(w0);
-    const float s = sin(w0);
+    const float c = std::cos(w0);
+    const float s = std::sin(w0);
     const float alpha = s / (2.0f * Q);
     float a0, a1, a2;
     float b0, b1, b2;

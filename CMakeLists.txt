@@ -46,4 +46,5 @@ add_executable(transmogriFX_bela
         src/svf.h
         src/trem.cpp
         src/trem.h
-        src/constants.h)
+        src/constants.h
+        src/render.cpp src/constants.cpp)

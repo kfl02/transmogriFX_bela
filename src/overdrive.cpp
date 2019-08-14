@@ -129,6 +129,8 @@ void cubic_clip(overdrive *od, int N, float asym, float *x, float *clean) {
         xn = x[i] + delta; // Linear interpolation up-sampling
         xn *= od->gain; // Apply gain
         clean[i] = clean[i] + deltac; // Upsample clean signal for mix
+
+        // TODO: never used
         delta += dx;
         deltac += dc;
 
@@ -191,7 +193,7 @@ void od_set_drive(overdrive *od, float drive_db)   // 0 dB to 45 dB
         drv = 45.0f;
     }
 
-    od->gain = powf(10.0f, drv / 20.0f);
+    od->gain = std::pow(10.0f, drv / 20.0f);
 }
 
 void od_set_tone(overdrive *od, float hf_level_db) // high pass boost/cut, +/- 12dB
@@ -204,7 +206,7 @@ void od_set_tone(overdrive *od, float hf_level_db) // high pass boost/cut, +/- 1
         tone = 12.0f;
     }
 
-    od->tone = powf(10.0f, tone / 20.0f);
+    od->tone = std::pow(10.0f, tone / 20.0f);
 }
 
 void od_set_level(overdrive *od, float outlevel_db) // -40 dB to +0 dB
@@ -218,7 +220,7 @@ void od_set_level(overdrive *od, float outlevel_db) // -40 dB to +0 dB
         vol = 0.0f;
     }
 
-    od->level = powf(10.0f, vol / 20.0f);
+    od->level = std::pow(10.0f, vol / 20.0f);
 }
 
 void od_set_dry(overdrive *od, float dry) {

@@ -54,12 +54,12 @@ lfoparams *init_lfo(float fosc, float fs, float phase) {
 
     //Sine wave LFO variables
     lp->ksin = PI * frq / fs;
-    lp->sin_part = sin(2.0f * PI * phase / 360.0f);
-    lp->cos_part = cos(2.0f * PI * phase / 360.0f);
+    lp->sin_part = std::sin(2.0f * PI * phase / 360.0f);
+    lp->cos_part = std::cos(2.0f * PI * phase / 360.0f);
 
     //Relaxation oscillator parameters
     static const float ie = 1.0f / (1.0f - 1.0f / E);
-    const float k = expf(-2.0f * fosc / fs);
+    float k = expf(-2.0f * fosc / fs);
 
     lp->rlx_k = k;
     lp->rlx_ik = 1.0f - k;
@@ -71,7 +71,7 @@ lfoparams *init_lfo(float fosc, float fs, float phase) {
     lp->rlx_lfo = 0.0;
 
     //Exponential oscillator parameters
-    k = expf(-2.0f * 1.3133f * fosc / fs);
+    k = std::exp(-2.0f * 1.3133f * fosc / fs);
     lp->exp_ik = k;
     lp->exp_k = 1.0f / k;
     lp->exp_x = k;
@@ -82,7 +82,7 @@ lfoparams *init_lfo(float fosc, float fs, float phase) {
     //Globals
     lp->current_rate = fosc;
     // TODO: type should be const/enum
-    lp->lfo_type = 0; //integrated triangle
+    lp->lfo_type = INT_TRI; //integrated triangle
 
     return lp;
 }
@@ -294,12 +294,12 @@ float run_lfo(lfoparams *lp) {
 
         case HYPER: //smooth bottom, triangular top
             lfo_out = run_integrated_triangle_lfo(lp);
-            lfo_out = 1.0f - fabs(lfo_out - 0.5f);
+            lfo_out = 1.0f - std::abs(lfo_out - 0.5f);
             break;
 
         case HYPER_SINE:  //Sine bottom, triangular top
             lfo_out = run_sine_lfo(lp);
-            lfo_out = 1.0f - fabs(lfo_out - 0.5f);
+            lfo_out = 1.0f - std::abs(lfo_out - 0.5f);
             break;
 
         default:
